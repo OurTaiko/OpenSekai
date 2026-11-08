@@ -14,6 +14,10 @@ namespace Sekai.Core.Live
 		private const int InputTmpCount = 128;
 		private const int MaxFingerCount = 10;
 		private const float TargetFrameTime = 1f / 60f;
+		// Below this |hi-speed| a note past the judge line falls back to sliding off at 1x.
+		private const float MinScrollSpeed = 0.0001f;
+		// Distances (seconds at 1x) this close to zero count as "on the judge line".
+		private const float JudgeLineDistanceEpsilon = 0.00001f;
 		private const int MouseFallbackTouchId = -1;
 		private const int MouseFallbackFingerId = 0;
 
@@ -68,7 +72,13 @@ namespace Sekai.Core.Live
 		private LiveViewBase[] liveViews;
 		private MusicScore musicScore;
 		private NoteBase[] noteArray = Array.Empty<NoteBase>();
-		private NoteBase[] highSpeedNoteArray = Array.Empty<NoteBase>();
+		private NoteScrollTimeline scrollTimeline = NoteScrollTimeline.Create(null);
+		// noteArray indices ordered by the time each note (or one of its children) first comes on screen.
+		private int[] spawnOrder = Array.Empty<int>();
+		private float[] spawnTimes = Array.Empty<float>();
+		private int spawnIndex;
+		// noteArray indices of spawned, unfinished notes, kept in score-time order for judgment.
+		private readonly List<int> activeNoteIndices = new List<int>();
 		private EventBase[] eventArray = Array.Empty<EventBase>();
 		private int eventStartIndex;
 		private readonly Dictionary<int, (double time, InputTouchPhase phase)> lastTouches;
@@ -91,7 +101,6 @@ namespace Sekai.Core.Live
 		public ScoreLogic scoreLogic;
 		public SkillLogic skillLogic = new NullSkillLogic();
 		public int noteStartIndex;
-		public int highSpeedNoteStartIndex;
 		public int result;
 		public int TapCount { get; set; }
 		public double currentGameTime;
@@ -99,7 +108,7 @@ namespace Sekai.Core.Live
 
 		public LiveScore Score => scoreLogic?.score ?? default;
 
-		public bool IsNotesAllFinished => noteStartIndex >= noteArray.Length && highSpeedNoteStartIndex >= highSpeedNoteArray.Length;
+		public bool IsNotesAllFinished => spawnIndex >= spawnOrder.Length && activeNoteIndices.Count == 0;
 
 		public bool IsPerfectCombo => scoreLogic?.IsPerfectCombo ?? false;
 
@@ -140,11 +149,12 @@ namespace Sekai.Core.Live
 
 			musicScore.InjectSkillFeverForCreatorScore(bootData?.MusicData?.Vocal?.musicId ?? bootData?.MusicData?.Music?.id ?? 0);
 			noteArray = SortNotes(musicScore.NoteArray);
-			highSpeedNoteArray = noteArray.Where(note => note != null && !Mathf.Approximately(note.speedRatio, 1f)).ToArray();
+			scrollTimeline = NoteScrollTimeline.Create(musicScore.musicScoreInfoArray);
+			BuildSpawnOrder();
 			eventArray = SortEvents(musicScore.EventArray);
 			BindNoteCallbacks(noteArray);
 			BindEventCallbacks(eventArray);
-			LiveViewExt.CreateNotePool(liveViews, LiveUtility.CalculateMaxSimultaneousNotes(musicScore, noteDisplayTimeOffset));
+			LiveViewExt.CreateNotePool(liveViews, LiveUtility.CalculateMaxSimultaneousNotes(musicScore, CalcFirstVisibleTime));
 			calcCamera = CameraUtility.GetFrontCamera();
 			if (calcCamera == null)
 			{
@@ -191,7 +201,8 @@ namespace Sekai.Core.Live
 		private void ResetScoreState()
 		{
 			noteStartIndex = 0;
-			highSpeedNoteStartIndex = 0;
+			spawnIndex = 0;
+			activeNoteIndices.Clear();
 			eventStartIndex = 0;
 			result = 0;
 			TapCount = 0;
@@ -339,94 +350,42 @@ namespace Sekai.Core.Live
 
 		private void UpdateNote()
 		{
-			for (int i = noteStartIndex; i < noteArray.Length; i++)
+			float spawnLimit = currentFrameInfo.time + TargetFrameTime;
+			while (spawnIndex < spawnOrder.Length && spawnTimes[spawnIndex] <= spawnLimit)
 			{
-				NoteBase note = noteArray[i];
-				if (note == null)
-				{
-					if (i == noteStartIndex)
-					{
-						noteStartIndex++;
-					}
-					continue;
-				}
-
-				if (note.State == NoteState.Done)
-				{
-					if (i == noteStartIndex)
-					{
-						noteStartIndex++;
-					}
-					continue;
-				}
-
-				if (!Mathf.Approximately(note.speedRatio, 1f))
-				{
-					if (i == noteStartIndex)
-					{
-						noteStartIndex++;
-					}
-					continue;
-				}
-
-				float offsetTime = CalcTimeOffset(note);
-				if (IsJudgeTimingTimeOffsetHighSpeedNote(offsetTime, note))
-				{
-					break;
-				}
-				if (offsetTime < 0f && currentFrameInfo.time >= note.MusicScoreInfo.time)
-				{
-					offsetTime = -offsetTime;
-				}
-				note.Excute(currentFrameInfo, offsetTime);
-				if (note.State == NoteState.Done && i == noteStartIndex)
-				{
-					noteStartIndex++;
-				}
-				else if (note.State != NoteState.Done)
-				{
-					UpdateJudgmentNoteArray(note);
-				}
+				InsertActiveNote(spawnOrder[spawnIndex]);
+				spawnIndex++;
 			}
 
-			for (int i = highSpeedNoteStartIndex; i < highSpeedNoteArray.Length; i++)
+			int keep = 0;
+			for (int i = 0; i < activeNoteIndices.Count; i++)
 			{
-				NoteBase note = highSpeedNoteArray[i];
-				if (note == null)
+				int index = activeNoteIndices[i];
+				NoteBase note = noteArray[index];
+				if (note.State != NoteState.Done)
 				{
-					if (i == highSpeedNoteStartIndex)
-					{
-						highSpeedNoteStartIndex++;
-					}
-					continue;
+					note.Excute(currentFrameInfo, CalcTimeOffset(note));
 				}
 
 				if (note.State == NoteState.Done)
 				{
-					if (i == highSpeedNoteStartIndex)
-					{
-						highSpeedNoteStartIndex++;
-					}
 					continue;
 				}
 
-				float offsetTime = currentFrameInfo.time >= note.MusicScoreInfo.time
-					? noteDisplayTimeOffset
-					: CalcTimeOffset(note);
-				if (IsJudgeTimingTimeOffsetNote(offsetTime, note))
-				{
-					break;
-				}
+				UpdateJudgmentNoteArray(note);
+				activeNoteIndices[keep++] = index;
+			}
 
-				note.Excute(currentFrameInfo, offsetTime);
-				if (note.State == NoteState.Done && i == highSpeedNoteStartIndex)
-				{
-					highSpeedNoteStartIndex++;
-				}
-				else if (note.State != NoteState.Done)
-				{
-					UpdateJudgmentNoteArray(note);
-				}
+			activeNoteIndices.RemoveRange(keep, activeNoteIndices.Count - keep);
+			AdvanceFinishedNotes();
+		}
+
+		private void InsertActiveNote(int index)
+		{
+			int position = activeNoteIndices.BinarySearch(index);
+			if (position < 0)
+			{
+				activeNoteIndices.Insert(~position, index);
 			}
 		}
 
@@ -443,19 +402,52 @@ namespace Sekai.Core.Live
 			}
 		}
 
-		private bool IsJudgeTimingTimeOffsetHighSpeedNote(float timeOffset, NoteBase note)
+		/// <summary>
+		/// Orders notes by when they first come on screen. With negative or zero hi-speed this is not score-time
+		/// order, so the update loop can no longer stop at the first note that is still off screen.
+		/// </summary>
+		private void BuildSpawnOrder()
 		{
-			return note != null && note.State != NoteState.Playing && IsJudgeTimingTimeOffsetNote(timeOffset, note);
-		}
-
-		private bool IsJudgeTimingTimeOffsetNote(float timeOffset, NoteBase note)
-		{
-			if (note == null || Mathf.Approximately(timeOffset, 0f))
+			spawnTimes = new float[noteArray.Length];
+			spawnOrder = new int[noteArray.Length];
+			for (int i = 0; i < noteArray.Length; i++)
 			{
-				return false;
+				NoteBase note = noteArray[i];
+				float spawnTime = CalcFirstVisibleTime(note);
+				if (note.NoteList != null)
+				{
+					foreach (NoteBase child in note.NoteList)
+					{
+						if (child != null && child != note)
+						{
+							spawnTime = Mathf.Min(spawnTime, CalcFirstVisibleTime(child));
+						}
+					}
+				}
+
+				spawnTimes[i] = spawnTime;
+				spawnOrder[i] = i;
 			}
 
-			return currentFrameInfo.time + timeOffset + TargetFrameTime <= note.MusicScoreInfo.time;
+			// Ties keep score-time order (noteArray is sorted by time).
+			float[] keys = spawnTimes;
+			Array.Sort(spawnOrder, (a, b) =>
+			{
+				int compare = keys[a].CompareTo(keys[b]);
+				return compare != 0 ? compare : a.CompareTo(b);
+			});
+			float[] sortedTimes = new float[spawnOrder.Length];
+			for (int i = 0; i < spawnOrder.Length; i++)
+			{
+				sortedTimes[i] = keys[spawnOrder[i]];
+			}
+			spawnTimes = sortedTimes;
+		}
+
+		private float CalcFirstVisibleTime(NoteBase note)
+		{
+			float noteTime = note.MusicScoreInfo.time;
+			return scrollTimeline.FirstVisibleTime(scrollTimeline.PositionAt(noteTime), note.speedRatio, noteDisplayTimeOffset, noteTime);
 		}
 
 		private void UpdateJudgmentNoteArray(NoteBase note)
@@ -1142,6 +1134,12 @@ namespace Sekai.Core.Live
 			return skillLogic?.UpdateResult(result) ?? result;
 		}
 
+		/// <summary>
+		/// Display window passed to <see cref="NoteBase.Excute"/>. Notes turn it into a progress with
+		/// (now + offset - noteTime) / offset, so the window is chosen to make that progress equal
+		/// 1 - distance / noteDisplayTime, where distance comes from the scroll timeline. Zero means the note
+		/// is on the judge line (progress 1).
+		/// </summary>
 		private float CalcTimeOffset(NoteBase note)
 		{
 			if (note == null)
@@ -1149,87 +1147,30 @@ namespace Sekai.Core.Live
 				return 0f;
 			}
 
-			float currentProgress = currentFrameInfo.bar + currentFrameInfo.barProgress;
-			float noteProgress = note.MusicScoreInfo.bar + note.MusicScoreInfo.barProgress;
-			float speedRatio = CalcNoteSpeedRatio(currentProgress, noteProgress);
-			if (Mathf.Approximately(speedRatio, 0f))
+			float now = currentFrameInfo.time;
+			float noteTime = note.MusicScoreInfo.time;
+			float untilHit = noteTime - now;
+			if (untilHit <= 0f)
+			{
+				// Past its time a note keeps sliding down at the current speed, whatever its direction,
+				// so a missed note leaves through the bottom of the screen.
+				float speed = Mathf.Abs(scrollTimeline.SpeedAt(now) * note.speedRatio);
+				return speed < MinScrollSpeed ? noteDisplayTimeOffset : noteDisplayTimeOffset / speed;
+			}
+
+			float distance = (float)((scrollTimeline.PositionAt(noteTime) - scrollTimeline.PositionAt(now)) * note.speedRatio);
+			if (Mathf.Abs(distance) <= JudgeLineDistanceEpsilon)
 			{
 				return 0f;
 			}
 
-			return noteDisplayTimeOffset / speedRatio / note.speedRatio;
-		}
-
-		private float CalcNoteSpeedRatio(float currentProgress, float noteProgress)
-		{
-			if (noteProgress <= currentProgress)
+			if (distance < 0f)
 			{
-				return currentFrameInfo.speedRatio;
+				// Scrolled past the judge line before its time: hidden until it comes back (progress -1).
+				return untilHit * 0.5f;
 			}
 
-			MusicScoreInfo[] scoreInfos = musicScore?.musicScoreInfoArray;
-			if (scoreInfos == null || scoreInfos.Length == 0)
-			{
-				return currentFrameInfo.speedRatio;
-			}
-
-			float accumulated = 0f;
-			bool hasRange = false;
-			float previousProgress = scoreInfos[0].bar + scoreInfos[0].barProgress;
-			float previousSpeedRatio = scoreInfos[0].speedRatio;
-
-			for (int i = 0; i <= scoreInfos.Length; i++)
-			{
-				float segmentProgress = i < scoreInfos.Length
-					? scoreInfos[i].bar + scoreInfos[i].barProgress
-					: noteProgress;
-				float segmentSpeedRatio = i < scoreInfos.Length ? scoreInfos[i].speedRatio : previousSpeedRatio;
-
-				if (segmentProgress >= currentProgress)
-				{
-					if (hasRange)
-					{
-						if (segmentProgress > noteProgress)
-						{
-							accumulated += (noteProgress - previousProgress) * previousSpeedRatio;
-							break;
-						}
-
-						accumulated += (segmentProgress - previousProgress) * previousSpeedRatio;
-					}
-					else if (i > 0)
-					{
-						if (segmentProgress > noteProgress)
-						{
-							return currentFrameInfo.speedRatio;
-						}
-
-						accumulated += (segmentProgress - currentProgress) * scoreInfos[i - 1].speedRatio;
-					}
-					else
-					{
-						accumulated += segmentProgress - currentProgress;
-					}
-
-					hasRange = true;
-				}
-
-				if (segmentProgress >= noteProgress)
-				{
-					break;
-				}
-
-				previousProgress = segmentProgress;
-				previousSpeedRatio = segmentSpeedRatio;
-			}
-
-			if (!hasRange)
-			{
-				return previousSpeedRatio;
-			}
-
-			float range = noteProgress - currentProgress;
-			return Mathf.Approximately(range, 0f) ? currentFrameInfo.speedRatio : accumulated / range;
+			return noteDisplayTimeOffset * untilHit / distance;
 		}
 
 		private void BindNoteCallbacks(NoteBase[] notes)

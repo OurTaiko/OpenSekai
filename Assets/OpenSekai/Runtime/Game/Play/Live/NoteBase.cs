@@ -458,7 +458,7 @@ namespace Sekai.Live
 			}
 		}
 
-		protected float CalcProgress(MusicScoreInfo currentFrameInfo, float offsetTime)
+		public float CalcProgress(MusicScoreInfo currentFrameInfo, float offsetTime)
 		{
 			if (offsetTime.Equals(0f))
 			{

@@ -261,12 +261,32 @@ namespace Sekai
 			};
 		}
 
-		public static Dictionary<(NoteCategory, NoteType), int> CalculateMaxSimultaneousNotes(MusicScore musicScore, float baseDisplayTime)
+		/// <summary>
+		/// Pool size per note kind: the most notes of that kind on screen at once. A note counts from
+		/// <paramref name="firstVisibleTime"/> until shortly after its hit time.
+		/// </summary>
+		public static Dictionary<(NoteCategory, NoteType), int> CalculateMaxSimultaneousNotes(MusicScore musicScore, Func<NoteBase, float> firstVisibleTime)
 		{
-			var displayTimes = new Dictionary<(NoteCategory, NoteType), List<(float, float)>>();
+			var displayTimes = new Dictionary<(NoteCategory, NoteType), List<(float start, float end)>>();
 			if (musicScore?.NoteArray != null)
 			{
-				CalculateAllNoteDisplayTime(musicScore.NoteArray, musicScore.musicScoreInfoArray, baseDisplayTime, ref displayTimes);
+				foreach (NoteBase note in musicScore.NoteArray)
+				{
+					if (note == null)
+					{
+						continue;
+					}
+
+					var key = (note.Category, note.Type);
+					if (!displayTimes.TryGetValue(key, out var ranges))
+					{
+						ranges = new List<(float, float)>();
+						displayTimes[key] = ranges;
+					}
+
+					float hitTime = note.MusicScoreInfo.time;
+					ranges.Add((Mathf.Min(firstVisibleTime(note), hitTime), hitTime + NoteEndIgnoreFrameTime));
+				}
 			}
 
 			var result = new Dictionary<(NoteCategory, NoteType), int>();
@@ -278,77 +298,31 @@ namespace Sekai
 			return result;
 		}
 
-		private static void CalculateAllNoteDisplayTime(NoteBase[] noteArray, MusicScoreInfo[] musicScoreInfoArray, float baseDisplayTime, ref Dictionary<(NoteCategory, NoteType), List<(float, float)>> allNoteDisplayTime)
+		// Sweep over range boundaries; a range that starts exactly where another ends counts as overlapping.
+		private static int CalculateMaxSimultaneousNotes(List<(float start, float end)> ranges)
 		{
-			if (noteArray == null)
+			var boundaries = new List<(float time, int delta)>(ranges.Count * 2);
+			foreach (var range in ranges)
 			{
-				return;
+				boundaries.Add((range.start, 1));
+				boundaries.Add((range.end, -1));
 			}
 
-			foreach (var note in noteArray)
+			boundaries.Sort((a, b) =>
 			{
-				CalculateChilledNoteDisplayTime(note, musicScoreInfoArray, baseDisplayTime, ref allNoteDisplayTime);
-			}
-		}
+				int compare = a.time.CompareTo(b.time);
+				return compare != 0 ? compare : b.delta.CompareTo(a.delta);
+			});
 
-		private static void CalculateChilledNoteDisplayTime(NoteBase note, MusicScoreInfo[] musicScoreInfoArray, float baseDisplayTime, ref Dictionary<(NoteCategory, NoteType), List<(float, float)>> allNoteDisplayTime)
-		{
-			if (note == null)
+			int current = 0;
+			int max = 0;
+			foreach (var boundary in boundaries)
 			{
-				return;
-			}
-
-			var key = (note.Category, note.Type);
-			if (!allNoteDisplayTime.TryGetValue(key, out var ranges))
-			{
-				ranges = new List<(float, float)>();
-				allNoteDisplayTime[key] = ranges;
-			}
-
-			var displayTime = CalculateNoteDisplayTime(note, musicScoreInfoArray, baseDisplayTime);
-			ranges.Add((note.MusicScoreInfo.time - displayTime, note.MusicScoreInfo.time + NoteEndIgnoreFrameTime));
-		}
-
-		private static float CalculateNoteDisplayTime(NoteBase note, MusicScoreInfo[] musicScoreInfoArray, float baseDisplayTime)
-		{
-			var noteSpeedRatio = Mathf.Max(note?.speedRatio ?? 1f, 0.01f);
-			return SafeCalcDisplayTime(baseDisplayTime, 1f, noteSpeedRatio);
-		}
-
-		private static float SafeCalcDisplayTime(float useTime, float eventSpeedRatio, float noteSpeedRatio)
-		{
-			var speed = eventSpeedRatio * noteSpeedRatio;
-			return Mathf.Approximately(speed, 0f) ? useTime : useTime / speed;
-		}
-
-		private static int CalculateMaxSimultaneousNotes(List<(float, float)> noteTypeDisplayTimes)
-		{
-			var max = 0;
-			if (noteTypeDisplayTimes == null)
-			{
-				return max;
-			}
-
-			for (var i = 0; i < noteTypeDisplayTimes.Count; i++)
-			{
-				var count = 0;
-				for (var j = 0; j < noteTypeDisplayTimes.Count; j++)
-				{
-					if (IsOverlapping(noteTypeDisplayTimes[i], noteTypeDisplayTimes[j]))
-					{
-						count++;
-					}
-				}
-
-				max = Math.Max(max, count);
+				current += boundary.delta;
+				max = Math.Max(max, current);
 			}
 
 			return max;
-		}
-
-		private static bool IsOverlapping((float, float) note1, (float, float) note2)
-		{
-			return note1.Item1 <= note2.Item2 && note2.Item1 <= note1.Item2;
 		}
 
 		public static float CalcLaneTransformX(int lane)

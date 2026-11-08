@@ -60,7 +60,7 @@ namespace Sekai.Live
 				{
 					var note = NoteList[i];
 					var childOffsetTime = CalcTimeOffset?.Invoke(note) ?? offsetTime;
-					if (currentFrameInfo.time > note.MusicScoreInfo.time - childOffsetTime)
+					if (note.State != NoteState.Wait || note.CalcProgress(currentFrameInfo, childOffsetTime) > 0f)
 					{
 						note.Excute(currentFrameInfo, childOffsetTime);
 					}

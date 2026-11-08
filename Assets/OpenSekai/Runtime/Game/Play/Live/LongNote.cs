@@ -255,9 +255,10 @@ namespace Sekai.Live
 				{
 					var note = NoteList[i];
 					var childOffsetTime = CalcTimeOffset?.Invoke(note) ?? offsetTime;
-					if (currentFrameInfo.time <= note.MusicScoreInfo.time - childOffsetTime)
+					// Children are not in on-screen order once hi-speed goes negative, so check each one.
+					if (note.State == NoteState.Wait && note.CalcProgress(currentFrameInfo, childOffsetTime) <= 0f)
 					{
-						break;
+						continue;
 					}
 
 					note.Excute(currentFrameInfo, childOffsetTime);
