@@ -59,7 +59,7 @@ namespace Sekai.Core.Live
 
 			UpdateMusicTime();
 			float fillerSec = BootData?.MusicData?.Music?.fillerSec ?? 0f;
-			liveLogic?.OnUpdate(currentAudioLatencyMusicTimeMs - fillerSec, currentGameTime);
+			liveLogic?.OnUpdate(currentAudioLatencyMusicTimeMs - fillerSec - judgeAdjust, currentGameTime);
 			if (liveLogic?.result == 2 && liveLogic.IsNotesAllFinished)
 			{
 				OnFinished();

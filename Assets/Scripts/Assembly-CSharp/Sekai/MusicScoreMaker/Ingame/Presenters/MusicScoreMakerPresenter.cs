@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
-using CriWare;
 using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.CompilerServices;
 using JetBrains.Annotations;
@@ -169,7 +168,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 				return x != null && x.id == vocalId;
 			}
 
-			internal bool _003CMusicReady_003Eb__1(CriAtomEx.CueInfo x)
+			internal bool _003CMusicReady_003Eb__1(SoundCueInfo x)
 			{
 				// TODO(original): match the original Cri cue name once MasterMusicVocal audio metadata is fully restored.
 				return vocal != null;
@@ -536,7 +535,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 
 			private string _003CbundleName_003E5__3;
 
-			private CriAtomExPlayback? _003Cplayback_003E5__4;
+			private SoundPlayback? _003Cplayback_003E5__4;
 
 			private UniTask<AssetManager.BundleElement>.Awaiter _003C_003Eu__1;
 
@@ -576,7 +575,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 
 			public MusicScoreMakerPresenter _003C_003E4__this;
 
-			private CriAtomExPlayback _003Cplayback_003E5__2;
+			private SoundPlayback _003Cplayback_003E5__2;
 
 			private CancellationTokenSource _003CcancellationTokenSource_003E5__3;
 
@@ -2891,7 +2890,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 			_model.LiveSettings = LiveSettingData.LoadFromStorage();
 			if (_model.LiveSettings != null)
 			{
-				_model.TimingAdjust = _model.LiveSettings.TimingAdjustData * (1f / 60f);
+				_model.TimingAdjust = _model.LiveSettings.AudioOffsetSeconds;
 			}
 			if (_model.CustomMusicScoreEntry != null)
 			{
@@ -2903,7 +2902,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 			if (!string.IsNullOrEmpty(musicSoundBundleName))
 			{
 				SoundManager.Instance.LoadSoundBundle(musicSoundBundleName, isResident: true);
-				CriAtomEx.CueInfo[] cueInfos = SoundManager.Instance.GetCueInfos(musicSoundBundleName);
+				SoundCueInfo[] cueInfos = SoundManager.Instance.GetCueInfos(musicSoundBundleName);
 				long fallbackLength = 0L;
 				for (int i = 0; i < cueInfos.Length; i++)
 				{

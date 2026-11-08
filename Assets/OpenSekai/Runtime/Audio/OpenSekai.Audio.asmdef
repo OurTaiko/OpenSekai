@@ -1,0 +1,22 @@
+{
+    "name": "OpenSekai.Audio",
+    "rootNamespace": "OpenSekai.Audio",
+    "references": [
+        "GUID:cc2da3b9d8ecf0b459095e52cd9b18b4",
+        "GUID:f57538872477c844f9d0f51d80b7cd88",
+        "GUID:351e56f1b6ecd0c4eb4c7308c102641d",
+        "GUID:d189d12a50bf9ed4abdcfd551ec3db7d",
+        "GUID:f4ab9fb158c04424f90da3d2c00d0d17",
+        "GUID:1ca7c03568dc4c4448556b1d3cfc48c0",
+        "GUID:27a0635c06df3e644948222ba406bd7c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

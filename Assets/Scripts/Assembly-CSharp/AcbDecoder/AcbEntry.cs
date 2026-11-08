@@ -43,12 +43,22 @@ namespace AcbDecoder
 
     public sealed class AcbCueWaveform
     {
-        internal AcbCueWaveform(string cueName, int waveId, float volumeScale)
+        internal AcbCueWaveform(string cueName, int waveId, float volumeScale, int randomGroup = -1, int randomChoice = 0)
         {
             CueName = cueName;
             WaveId = waveId;
             VolumeScale = volumeScale;
+            RandomGroup = randomGroup;
+            RandomChoice = randomChoice;
         }
+
+        /// <summary>
+        /// OpenSekai: id of the random/shuffle sequence this waveform is an alternative in, or -1 when it always plays.
+        /// Of the waveforms sharing a group, only those with the chosen <see cref="RandomChoice"/> play.
+        /// </summary>
+        public int RandomGroup { get; }
+
+        public int RandomChoice { get; }
 
         public string CueName { get; }
 

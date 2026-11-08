@@ -35,8 +35,22 @@ namespace Sekai
 		[Key("NoteSpeed")]
 		public float NoteSpeed { get; set; }
 
+		/// <summary>Legacy offset in frames (1/60 s); still edited by the settings UI. Shifts visuals and judgement.</summary>
 		[Key("TimingAdjustData")]
 		public float TimingAdjustData { get; set; }
+
+		/// <summary>Music clock offset in milliseconds, added to <see cref="TimingAdjustData"/>. Shifts visuals and judgement.</summary>
+		[Key("AudioOffsetMs")]
+		public float AudioOffsetMs { get; set; }
+
+		/// <summary>Judgement-only offset in milliseconds. Positive when the player tends to hit late.</summary>
+		[Key("JudgeOffsetMs")]
+		public float JudgeOffsetMs { get; set; }
+
+		/// <summary>Total music clock offset in seconds (legacy frames + <see cref="AudioOffsetMs"/>).</summary>
+		[IgnoreMember]
+		[JsonIgnore]
+		public float AudioOffsetSeconds => TimingAdjustData / 60f + AudioOffsetMs / 1000f;
 
 		[Key("Brightness")]
 		public float Brightness { get; set; }
@@ -186,6 +200,8 @@ namespace Sekai
 			UseVibration = true;
 			NoteSpeed = 6f;
 			TimingAdjustData = 0f;
+			AudioOffsetMs = 0f;
+			JudgeOffsetMs = 0f;
 			Brightness = 1f;
 			LaneTransparent = 1f;
 			CustomMusicScoreMusicInfoDisplayMode = MusicInfoDisplayModeCustomScore;

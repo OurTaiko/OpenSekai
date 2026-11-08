@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading;
-using CriWare;
+using System.Threading.Tasks;
+using OpenSekai.Audio;
 using Sekai.Live;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -13,6 +13,10 @@ using UnityEditor;
 
 namespace Sekai
 {
+	/// <summary>
+	/// Game-facing sound API. Plays ACB cue sheets (decoded by the managed HCA decoder) and external audio files
+	/// through the BASS engine (<see cref="AudioEngine"/>). The public surface matches the former CRI implementation.
+	/// </summary>
 	public class SoundManager
 	{
 		public enum BundleWorkingStatus
@@ -26,6 +30,27 @@ namespace Sekai
 		{
 		}
 
+		private sealed class IngameTrack
+		{
+			public uint RequestId;
+			public string CueName;
+			public CueSheet Sheet;
+			public ExternalAudioEntry External;
+			public Task DecodeTask;
+			public List<SoundVoice> Voices;
+			public double StartSeconds;
+			public bool Loop;
+			public bool StartRequested;
+			public bool Paused;
+			public readonly SongClock Clock = new SongClock();
+		}
+
+		private sealed class SePlayback
+		{
+			public List<SoundVoice> Voices;
+			public bool Ingame;
+		}
+
 		private const string MenuCommonBundleName = "sound/menu/menu_common";
 		private const string MenuCommonCueSheetName = "MenuCommon";
 		private const string MenuCommonAcbFileName = "MenuCommon.acb";
@@ -37,12 +62,7 @@ namespace Sekai
 		private const string LiveTapSeBundleNamePrefix = "live/tap_se";
 		private const string LiveTapSeCustom01BundleName = "live/tap_se/custom01";
 		private const string LiveMusicBundleNameBase = "music/long/{0}";
-		private const string ProjectSekaiAcfFileName = "ProjectSekai.acf";
-		private const string CriwareGameObjectName = "CRIWARE";
-		private const byte CriAcfCompatibleTarget = 6;
-		private const uint ExternalWaveVoicePoolIdentifier = 0x4F534B57;
-		private const int CriAtomOutputSamplingRate = 48000;
-		private const int CriAtomVoicePoolMaxSamplingRate = 96000;
+		private const int SePlaybackPruneThreshold = 64;
 		private static readonly string[] LiveTapCueNames =
 		{
 			"se_live_long",
@@ -65,7 +85,7 @@ namespace Sekai
 		private static readonly SoundManager instance = new SoundManager();
 		private readonly HashSet<string> loadedBundles = new HashSet<string>();
 		private readonly List<string> loadedBundleSearchOrder = new List<string>();
-		private readonly Dictionary<string, CriAtomExAcb> acbByBundleName = new Dictionary<string, CriAtomExAcb>();
+		private readonly Dictionary<string, CueSheet> acbByBundleName = new Dictionary<string, CueSheet>();
 		private readonly Dictionary<string, ExternalAudioEntry> externalAudioByKey = new Dictionary<string, ExternalAudioEntry>(StringComparer.OrdinalIgnoreCase);
 		private readonly Dictionary<string, string> acbFileNameByBundleName = new Dictionary<string, string>
 		{
@@ -76,29 +96,14 @@ namespace Sekai
 		private readonly Dictionary<string, string> convertSeTable = new Dictionary<string, string>();
 		private readonly HashSet<string> warnedMissingBundles = new HashSet<string>();
 		private readonly HashSet<string> warnedMissingCues = new HashSet<string>();
-		private CriAtomExPlayer soundEffectPlayer;
-		private CriAtomExPlayer ingameSoundEffectPlayer;
-		private CriAtomExPlayer ingameBgmPlayer;
-		private CriAtomExWaveVoicePool externalWaveVoicePool;
-		private int externalWaveVoicePoolMaxChannels;
-		private int externalWaveVoicePoolMaxSamplingRate;
-		private string externalIngamePlayerKey;
-		private long externalIngamePlayerSourceVersion;
-		private int externalIngamePlayerChannels;
-		private int externalIngamePlayerSampleRate;
-		private GCHandle externalAudioDataHandle;
-		private CriAtomExPlayback currentIngamePlayback = CreateInvalidPlayback();
+		private readonly Dictionary<uint, SePlayback> sePlaybacks = new Dictionary<uint, SePlayback>();
+		private readonly SoundVolumes volumes = new SoundVolumes();
+		private IngameTrack ingameTrack;
 		private uint currentIngamePlaybackRequestId;
-		private AudioSyncedUnityTimer audioSyncedUnityTimer;
-		private GCHandle acfDataHandle;
-		private float masterVolume = 1f;
-		private float bgmVolume = 1f;
-		private float seVolume = 1f;
+		private uint nextSePlaybackId;
 		private bool initialized;
-		private static bool criRuntimeInitialized;
-		private static GameObject criwareGameObject;
 		private bool defaultSoundBundlesRequested;
-		private bool acfRegisterAttempted;
+		private bool appPaused;
 
 		public static SoundManager Instance => instance;
 
@@ -109,22 +114,26 @@ namespace Sekai
 				return;
 			}
 
-			EnsureAtomInitialized();
-			EnsureProjectSekaiAcfRegistered();
-			GetSoundEffectPlayer();
-			GetIngameSoundEffectPlayer();
+			var engine = AudioEngine.EnsureInstance();
+			engine.ApplyVolumes(volumes);
+			AudioEngine.BeforeOutputFreed -= OnOutputFreed;
+			AudioEngine.BeforeOutputFreed += OnOutputFreed;
 			EnsureDefaultSoundBundlesLoaded();
 			initialized = true;
 		}
 
+		private void OnOutputFreed()
+		{
+			StopAll();
+		}
+
 		public void SetupVolume(float master, float bgm, float se, float voice)
 		{
-			masterVolume = Mathf.Clamp01(master);
-			bgmVolume = Mathf.Clamp01(bgm);
-			seVolume = Mathf.Clamp01(se);
-			soundEffectPlayer?.SetVolume(masterVolume * seVolume);
-			ingameSoundEffectPlayer?.SetVolume(masterVolume * seVolume);
-			ingameBgmPlayer?.SetVolume(masterVolume * bgmVolume);
+			volumes.master = Mathf.Clamp01(master);
+			volumes.bgm = Mathf.Clamp01(bgm);
+			volumes.se = Mathf.Clamp01(se);
+			volumes.voice = Mathf.Clamp01(voice);
+			AudioEngine.Instance?.ApplyVolumes(volumes);
 		}
 
 		public bool IsLoadedSoundBundle(string bundleName)
@@ -159,8 +168,6 @@ namespace Sekai
 				}
 			}
 
-			EnsureAtomInitialized();
-			EnsureProjectSekaiAcfRegistered();
 			List<string> acbFileNames = GetAcbFileNameCandidates(bundleName);
 			if (TryLoadSoundBundleFromBuildData(bundleName, acbFileNames))
 			{
@@ -169,11 +176,11 @@ namespace Sekai
 
 			foreach (string acbFileName in acbFileNames)
 			{
-				CriAtomExAcb acb = null;
+				CueSheet acb = null;
 				if (ShouldPreferAssetBundleAcb(bundleName))
 				{
 					byte[] acbBytes = TryLoadAcbBytesFromAssetBundle(bundleName, acbFileName);
-					acb = LoadAcbData(acbBytes);
+					acb = LoadCueSheet(acbFileName, acbBytes);
 					if (acb == null)
 					{
 						acb = TryLoadAcbFromStreamingAssets(acbFileName);
@@ -185,10 +192,10 @@ namespace Sekai
 					if (acb == null)
 					{
 						byte[] acbBytes = TryLoadAcbBytesFromAssetBundle(bundleName, acbFileName);
-						acb = LoadAcbData(acbBytes);
+						acb = LoadCueSheet(acbFileName, acbBytes);
 					}
 				}
-				if (acb == null || !acb.isAvailable)
+				if (acb == null || !acb.IsAvailable)
 				{
 					continue;
 				}
@@ -213,9 +220,10 @@ namespace Sekai
 			LoadSoundBundle(cueSheetName, true);
 		}
 
+		/// <summary>Registers in-memory audio (any format BASS decodes, e.g. WAV) under <paramref name="key"/>.</summary>
 		public bool RegisterExternalAudioData(string key, byte[] wavData, int channels, int sampleRate, long lengthMs, long sourceVersion)
 		{
-			if (string.IsNullOrEmpty(key) || wavData == null || wavData.Length <= 44 || channels <= 0 || sampleRate <= 0)
+			if (string.IsNullOrEmpty(key) || wavData == null || wavData.Length <= 44)
 			{
 				Debug.LogWarningFormat(
 					"External audio could not be registered. key:{0} bytes:{1} channels:{2} sampleRate:{3}",
@@ -226,13 +234,57 @@ namespace Sekai
 				return false;
 			}
 
+			return RegisterExternalAudio(key, SoundBuffer.FromEncoded(wavData), lengthMs, sourceVersion);
+		}
+
+		/// <summary>
+		/// Registers an audio file (wav/mp3/ogg/opus, aac where supported) under <paramref name="key"/>. BASS decodes the
+		/// encoded file on the fly; it is not converted to PCM up front.
+		/// </summary>
+		public bool RegisterExternalAudioFile(string key, string path, long sourceVersion)
+		{
+			if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(path) || !File.Exists(path))
+			{
+				Debug.LogWarningFormat("External audio file could not be registered. key:{0} path:{1}", key, path);
+				return false;
+			}
+
+			if (TryResolveExternalAudio(key, out ExternalAudioEntry existing) && existing.SourceVersion == sourceVersion && existing.SourcePath == path)
+			{
+				return true;
+			}
+
+			SoundBuffer buffer;
+			try
+			{
+				buffer = SoundBuffer.FromFile(path);
+			}
+			catch (Exception exception)
+			{
+				Debug.LogException(exception);
+				return false;
+			}
+
+			Initialize();
+			double lengthSeconds = buffer.ProbeLength();
+			if (lengthSeconds <= 0)
+			{
+				Debug.LogWarningFormat("External audio file could not be decoded. key:{0} path:{1}", key, path);
+				buffer.Dispose();
+				return false;
+			}
+
+			return RegisterExternalAudio(key, buffer, (long)(lengthSeconds * 1000), sourceVersion, path);
+		}
+
+		private bool RegisterExternalAudio(string key, SoundBuffer buffer, long lengthMs, long sourceVersion, string sourcePath = null)
+		{
 			ReleaseExternalAudioData();
 			ExternalAudioEntry entry = new ExternalAudioEntry
 			{
 				Key = key,
-				WavData = wavData,
-				Channels = channels,
-				SampleRate = sampleRate,
+				Buffer = buffer,
+				SourcePath = sourcePath,
 				LengthMs = Math.Max(0L, lengthMs),
 				SourceVersion = sourceVersion
 			};
@@ -251,18 +303,18 @@ namespace Sekai
 			return TryResolveExternalAudio(cueName, out _) || ResolveCueName(cueName, out _) != null;
 		}
 
-		public CriAtomEx.CueInfo[] GetCueInfos(string bundleName)
+		public SoundCueInfo[] GetCueInfos(string bundleName)
 		{
 			if (string.IsNullOrEmpty(bundleName))
 			{
-				return Array.Empty<CriAtomEx.CueInfo>();
+				return Array.Empty<SoundCueInfo>();
 			}
 
 			if (externalAudioByKey.TryGetValue(bundleName, out ExternalAudioEntry externalAudio))
 			{
 				return new[]
 				{
-					new CriAtomEx.CueInfo
+					new SoundCueInfo
 					{
 						length = externalAudio.LengthMs
 					}
@@ -270,80 +322,60 @@ namespace Sekai
 			}
 
 			LoadSoundBundle(bundleName, true);
-			if (!acbByBundleName.TryGetValue(bundleName, out CriAtomExAcb acb) || acb == null)
+			if (!acbByBundleName.TryGetValue(bundleName, out CueSheet acb) || acb == null)
 			{
-				return Array.Empty<CriAtomEx.CueInfo>();
+				return Array.Empty<SoundCueInfo>();
 			}
 
 			return GetCueInfosWithLength(acb);
 		}
 
-		public bool IsAudioSyncedUnityTimerEnabled => audioSyncedUnityTimer != null;
+		public bool IsAudioSyncedUnityTimerEnabled => ingameTrack != null && ingameTrack.Voices != null && ingameTrack.Voices.Count > 0;
 
+		/// <summary>
+		/// Prepares the in-game music paused at <paramref name="startTime"/> seconds. ACB music is decoded on a worker
+		/// thread; poll <see cref="IsIngamePlaybackReady"/> before <see cref="ResumePreparedPlaybackIngame"/>.
+		/// </summary>
 		public uint PrepareIngameBGM(string cueName, float startTime, Action callback = null, bool loop = false)
 		{
 			uint requestId = AllocateIngamePlaybackRequestId();
-			float startTimeSeconds = Mathf.Max(0f, startTime);
-			long startTimeMs = (long)(startTimeSeconds * 1000f);
+			StopIngame();
+			Initialize();
+
+			IngameTrack track = new IngameTrack
+			{
+				RequestId = requestId,
+				CueName = cueName,
+				StartSeconds = Mathf.Max(0f, startTime),
+				Loop = loop
+			};
 
 			if (TryResolveExternalAudio(cueName, out ExternalAudioEntry externalAudio))
 			{
-				try
-				{
-					bool reusePlayer = CanReuseExternalIngamePlayer(externalAudio);
-					StopIngame(reusePlayer);
-					EnsureExternalWaveVoicePool(externalAudio.Channels, externalAudio.SampleRate);
-					if (!reusePlayer)
-					{
-						ConfigureExternalIngamePlayer(externalAudio);
-					}
-					ingameBgmPlayer.SetVolume(masterVolume * bgmVolume);
-					ingameBgmPlayer.Loop(loop);
-					ingameBgmPlayer.SetStartTime(startTimeMs);
-					currentIngamePlayback = ingameBgmPlayer.Prepare();
-					audioSyncedUnityTimer = new AudioSyncedUnityTimer(currentIngamePlayback);
-					callback?.Invoke();
-					return requestId;
-				}
-				catch (Exception exception)
-				{
-					Debug.LogException(exception);
-				}
+				track.External = externalAudio;
+				ingameTrack = track;
+				CreateIngameVoices(track);
+				callback?.Invoke();
+				return requestId;
 			}
 
 			if (IsCustomExternalAudioKey(cueName))
 			{
-				StopIngame();
-				currentIngamePlayback = CreateInvalidPlayback();
-				audioSyncedUnityTimer = null;
 				LogMissingCue(cueName);
 				callback?.Invoke();
 				return requestId;
 			}
 
-			StopIngame();
-			if (TryResolveIngameCue(cueName, out CriAtomExAcb acb, out string resolvedCueName))
+			if (TryResolveIngameCue(cueName, out CueSheet acb, out string resolvedCueName))
 			{
-				try
-				{
-					ingameBgmPlayer = new CriAtomExPlayer(true);
-					ingameBgmPlayer.SetCue(acb, resolvedCueName);
-					ingameBgmPlayer.SetVolume(masterVolume * bgmVolume);
-					ingameBgmPlayer.Loop(loop);
-					ingameBgmPlayer.SetStartTime(startTimeMs);
-					currentIngamePlayback = ingameBgmPlayer.Prepare();
-					audioSyncedUnityTimer = new AudioSyncedUnityTimer(currentIngamePlayback);
-					callback?.Invoke();
-					return requestId;
-				}
-				catch (Exception exception)
-				{
-					Debug.LogException(exception);
-				}
+				track.Sheet = acb;
+				track.CueName = resolvedCueName;
+				track.DecodeTask = acb.DecodeCueAsync(resolvedCueName);
+				ingameTrack = track;
+				callback?.Invoke();
+				return requestId;
 			}
 
-			currentIngamePlayback = CreateInvalidPlayback();
-			audioSyncedUnityTimer = null;
 			if (!string.IsNullOrEmpty(cueName))
 			{
 				LogMissingCue(cueName);
@@ -352,126 +384,237 @@ namespace Sekai
 			return requestId;
 		}
 
-		public CriAtomExPlayback? GetPlayback(uint requestId)
-		{
-			if (requestId == 0 || requestId != currentIngamePlaybackRequestId || !IsPlaybackValid(currentIngamePlayback))
-			{
-				return null;
-			}
-			return currentIngamePlayback;
-		}
-
 		public bool IsIngamePlaybackReady(uint requestId)
 		{
-			CriAtomExPlayback? playback = GetPlayback(requestId);
-			if (!playback.HasValue)
+			IngameTrack track = ingameTrack;
+			if (requestId == 0 || track == null || track.RequestId != requestId)
 			{
 				return true;
 			}
-			CriAtomExPlayback.Status status = playback.Value.GetStatus();
-			return status == CriAtomExPlayback.Status.Playing || status == CriAtomExPlayback.Status.Removed;
+
+			if (track.Voices != null)
+			{
+				return true;
+			}
+
+			if (track.DecodeTask != null && !track.DecodeTask.IsCompleted)
+			{
+				return false;
+			}
+
+			if (track.DecodeTask != null && track.DecodeTask.IsFaulted)
+			{
+				Debug.LogException(track.DecodeTask.Exception?.GetBaseException());
+			}
+
+			CreateIngameVoices(track);
+			return true;
+		}
+
+		private void CreateIngameVoices(IngameTrack track)
+		{
+			if (track.Voices != null)
+			{
+				return;
+			}
+
+			if (track.External != null)
+			{
+				track.Voices = new List<SoundVoice>();
+				SoundVoice voice = SoundVoice.Create(track.External.Buffer, AudioGroup.Bgm, track.Loop);
+				if (voice != null)
+				{
+					track.Voices.Add(voice);
+				}
+			}
+			else if (track.Sheet != null)
+			{
+				track.Voices = track.Sheet.CreateVoices(track.CueName, AudioGroup.Bgm, 1f, track.Loop, false);
+			}
+			else
+			{
+				track.Voices = new List<SoundVoice>();
+			}
+
+			foreach (SoundVoice voice in track.Voices)
+			{
+				voice.Seek(track.StartSeconds);
+			}
+
+			track.Clock.Seek(track.StartSeconds);
+			if (track.StartRequested)
+			{
+				StartIngameVoices(track, track.StartSeconds);
+			}
 		}
 
 		public void ResumePreparedPlaybackIngame()
 		{
-			if (ingameBgmPlayer != null)
+			IngameTrack track = ingameTrack;
+			if (track != null)
 			{
-				ingameBgmPlayer.Resume(CriAtomEx.ResumeMode.AllPlayback);
+				track.StartRequested = true;
+				if (track.Voices != null)
+				{
+					StartIngameVoices(track, track.StartSeconds);
+				}
 			}
-			ingameSoundEffectPlayer?.Resume(CriAtomEx.ResumeMode.AllPlayback);
+			ResumeIngameSe();
+		}
+
+		private void StartIngameVoices(IngameTrack track, double positionSeconds)
+		{
+			track.Paused = false;
+			foreach (SoundVoice voice in track.Voices)
+			{
+				voice.Play(positionSeconds);
+			}
+
+			// The clock follows what is heard: audio started now reaches the listener after the output latency.
+			double latency = AudioEngine.Instance != null ? AudioEngine.Instance.OutputLatency : 0;
+			track.Clock.Start(positionSeconds - latency);
 		}
 
 		public void ResumeIngame(long musicTimeMs)
 		{
-			if (ingameBgmPlayer != null)
+			IngameTrack track = ingameTrack;
+			if (track != null)
 			{
-				ingameBgmPlayer.SetStartTime(Math.Max(0L, musicTimeMs));
-				ingameBgmPlayer.Resume(CriAtomEx.ResumeMode.AllPlayback);
+				double position = Math.Max(0L, musicTimeMs) / 1000.0;
+				track.StartRequested = true;
+				track.StartSeconds = position;
+				if (track.Voices != null)
+				{
+					StartIngameVoices(track, position);
+				}
 			}
-			ingameSoundEffectPlayer?.Resume(CriAtomEx.ResumeMode.AllPlayback);
+			ResumeIngameSe();
 		}
 
 		public void PauseIngame(long musicTimeMs)
 		{
-			if (ingameBgmPlayer != null)
+			IngameTrack track = ingameTrack;
+			if (track != null)
 			{
-				ingameBgmPlayer.SetStartTime(Math.Max(0L, musicTimeMs));
-				ingameBgmPlayer.Pause();
+				double position = Math.Max(0L, musicTimeMs) / 1000.0;
+				track.Paused = true;
+				track.StartSeconds = position;
+				if (track.Voices != null)
+				{
+					foreach (SoundVoice voice in track.Voices)
+					{
+						voice.Pause();
+						voice.Seek(position);
+					}
+				}
+				track.Clock.Seek(position);
 			}
-			ingameSoundEffectPlayer?.Pause();
+			SetSePaused(ingame: true, paused: true);
 		}
 
 		public void SetAudioSyncedUnityTimer(uint requestId)
 		{
-			if (requestId != 0 && requestId != currentIngamePlaybackRequestId)
+			IngameTrack track = ingameTrack;
+			if (track == null || (requestId != 0 && requestId != track.RequestId))
 			{
 				return;
 			}
-			ResetAudioSyncedUnityTimer();
+
+			SoundVoice primary = GetPrimaryVoice(track);
+			if (primary != null && primary.IsPlaying)
+			{
+				double latency = AudioEngine.Instance != null ? AudioEngine.Instance.OutputLatency : 0;
+				track.Clock.Start(primary.Position - latency);
+			}
 		}
 
+		/// <summary>Song position in milliseconds as heard by the player, sampled once per frame; 0 when nothing plays.</summary>
 		public long GetAudioSyncedUnityTimer()
 		{
-			if (audioSyncedUnityTimer == null)
-			{
-				return 0L;
-			}
-
-			audioSyncedUnityTimer.Execute(Time.time);
-			return audioSyncedUnityTimer.PlaybackTime;
+			return TryGetAudioSyncedUnityTimer(out long playbackTime) ? playbackTime : 0L;
 		}
 
 		public bool TryGetAudioSyncedUnityTimer(out long playbackTime)
 		{
 			playbackTime = 0L;
-			if (audioSyncedUnityTimer == null)
+			IngameTrack track = ingameTrack;
+			if (track == null || track.Voices == null || track.Voices.Count == 0)
 			{
 				return false;
 			}
 
-			audioSyncedUnityTimer.Execute(Time.time);
-			playbackTime = audioSyncedUnityTimer.PlaybackTime;
+			UpdateIngameClock(track);
+			playbackTime = Math.Max(0L, (long)Math.Round(track.Clock.Time * 1000.0));
 			return true;
 		}
 
-		private void ResetAudioSyncedUnityTimer()
+		private static void UpdateIngameClock(IngameTrack track)
 		{
-			audioSyncedUnityTimer = IsPlaybackValid(currentIngamePlayback) ? new AudioSyncedUnityTimer(currentIngamePlayback) : null;
+			if (!track.Clock.Running)
+			{
+				return;
+			}
+
+			double? heard = null;
+			SoundVoice primary = GetPrimaryVoice(track);
+			AudioEngine engine = AudioEngine.Instance;
+			if (primary != null && primary.IsPlaying && engine != null)
+			{
+				double rendered = primary.Position;
+				// Until the output latency has elapsed nothing rendered has been heard yet.
+				if (rendered > engine.OutputLatency + 0.02)
+				{
+					heard = rendered - engine.OutputLatency;
+				}
+			}
+
+			track.Clock.Update(Time.frameCount, heard);
 		}
+
+		private static SoundVoice GetPrimaryVoice(IngameTrack track)
+		{
+			if (track?.Voices == null)
+			{
+				return null;
+			}
+
+			foreach (SoundVoice voice in track.Voices)
+			{
+				if (voice != null)
+				{
+					return voice;
+				}
+			}
+			return null;
+		}
+
+		/// <summary>Last measured clock-vs-audio error in milliseconds (diagnostics).</summary>
+		public double IngameClockErrorMs => ingameTrack != null ? ingameTrack.Clock.LastError * 1000.0 : 0.0;
 
 		public void StopIngame()
 		{
-			StopIngame(false);
-		}
+			IngameTrack track = ingameTrack;
+			ingameTrack = null;
+			if (track?.Voices == null)
+			{
+				return;
+			}
 
-		private void StopIngame(bool keepExternalPlayer)
-		{
-			if (IsPlaybackValid(currentIngamePlayback))
+			foreach (SoundVoice voice in track.Voices)
 			{
-				currentIngamePlayback.Stop();
+				voice.Dispose();
 			}
-			if (!keepExternalPlayer)
-			{
-				ingameBgmPlayer?.Dispose();
-				ingameBgmPlayer = null;
-				externalIngamePlayerKey = null;
-				externalIngamePlayerSourceVersion = 0L;
-				externalIngamePlayerChannels = 0;
-				externalIngamePlayerSampleRate = 0;
-				if (externalAudioDataHandle.IsAllocated)
-				{
-					externalAudioDataHandle.Free();
-				}
-			}
-			currentIngamePlayback = CreateInvalidPlayback();
-			audioSyncedUnityTimer = null;
+			track.Voices = null;
 		}
 
 		public void StopAll()
 		{
 			StopIngame();
-			soundEffectPlayer?.Stop();
-			ingameSoundEffectPlayer?.Stop();
+			foreach (SePlayback playback in sePlaybacks.Values)
+			{
+				DisposeVoices(playback.Voices);
+			}
+			sePlaybacks.Clear();
 		}
 
 		public uint PlaySE(string cueName)
@@ -486,142 +629,188 @@ namespace Sekai
 
 		public uint PlaySE(string cueName, float volume = 1f, float startTime = 0f, int playerIndex = 1)
 		{
-			return PlaySEInternal(cueName, volume, startTime);
+			return PlayCue(cueName, AudioGroup.Se, Mathf.Clamp01(volume), Mathf.Max(0f, startTime), ingame: false);
 		}
 
 		public void PlaySEOneShot(string cueName, int priority = 0)
 		{
-			PlaySEInternal(cueName, 1f, 0f);
+			PlayCue(cueName, AudioGroup.Se, 1f, 0f, ingame: false);
 		}
 
 		public uint PlayIngameSE(string cueName)
 		{
-			return PlayIngameSEInternal(cueName);
+			return PlayCue(cueName, AudioGroup.Se, 1f, 0f, ingame: true);
 		}
 
 		public void PlayIngameSEOneShot(string cueName)
 		{
-			PlayIngameSEOneShotInternal(cueName, 0);
+			PlayCue(cueName, AudioGroup.Se, 1f, 0f, ingame: true);
 		}
 
 		public void PlayIngameVoiceOneShot(string cueName)
 		{
-			PlayIngameSEOneShotInternal(cueName, 0);
+			PlayCue(cueName, AudioGroup.Voice, 1f, 0f, ingame: true);
 		}
 
 		public void StopSE(uint playbackId)
 		{
-			if (playbackId == 0)
+			if (playbackId == 0 || !sePlaybacks.TryGetValue(playbackId, out SePlayback playback))
 			{
 				return;
 			}
-			new CriAtomExPlayback(playbackId).Stop();
+
+			DisposeVoices(playback.Voices);
+			sePlaybacks.Remove(playbackId);
 		}
 
 		public void ResumeIngameSe()
 		{
-			ingameSoundEffectPlayer?.Resume(CriAtomEx.ResumeMode.AllPlayback);
+			SetSePaused(ingame: true, paused: false);
 		}
 
-		private uint PlaySEInternal(string cueName, float volume, float startTime)
+		private uint PlayCue(string cueName, AudioGroup group, float volume, float startTime, bool ingame)
 		{
-			string resolvedCueName = ResolveCueName(cueName, out CriAtomExAcb acb);
+			string resolvedCueName = ResolveCueName(cueName, out CueSheet acb);
 			if (string.IsNullOrEmpty(resolvedCueName) || acb == null)
 			{
 				LogMissingCue(cueName);
 				return 0;
 			}
 
+			Initialize();
+			List<SoundVoice> voices;
 			try
 			{
-				CriAtomExPlayer player = GetSoundEffectPlayer();
-				player.SetCue(acb, resolvedCueName);
-				player.SetVolume(masterVolume * seVolume * Mathf.Clamp01(volume));
-				player.Loop(false);
-				player.SetStartTime((long)(Mathf.Max(0f, startTime) * 1000f));
-				CriAtomExPlayback playback = player.Start();
-				return playback.id;
+				voices = acb.CreateVoices(resolvedCueName, group, volume, false, true);
 			}
 			catch (Exception exception)
 			{
 				Debug.LogException(exception);
 				return 0;
 			}
-		}
 
-		private uint PlayIngameSEInternal(string cueName)
-		{
-			string resolvedCueName = ResolveCueName(cueName, out CriAtomExAcb acb);
-			if (string.IsNullOrEmpty(resolvedCueName) || acb == null)
+			if (voices.Count == 0)
 			{
-				LogMissingCue(cueName);
 				return 0;
 			}
 
-			try
+			bool startPaused = appPaused && !ingame;
+			foreach (SoundVoice voice in voices)
 			{
-				CriAtomExPlayer player = GetIngameSoundEffectPlayer();
-				player.SetCue(acb, resolvedCueName);
-				player.SetVolume(masterVolume * seVolume);
-				player.Loop(false);
-				player.SetStartTime(0L);
-				CriAtomExPlayback playback = player.Start();
-				return playback.id;
+				voice.Seek(startTime);
+				if (!startPaused)
+				{
+					voice.Resume();
+				}
 			}
-			catch (Exception exception)
+
+			if (sePlaybacks.Count >= SePlaybackPruneThreshold)
 			{
-				Debug.LogException(exception);
-				return 0;
+				PruneFinishedSe();
+			}
+
+			nextSePlaybackId++;
+			if (nextSePlaybackId == 0)
+			{
+				nextSePlaybackId = 1;
+			}
+			sePlaybacks[nextSePlaybackId] = new SePlayback { Voices = voices, Ingame = ingame };
+			return nextSePlaybackId;
+		}
+
+		private void SetSePaused(bool ingame, bool paused)
+		{
+			foreach (SePlayback playback in sePlaybacks.Values)
+			{
+				if (playback.Ingame != ingame)
+				{
+					continue;
+				}
+
+				foreach (SoundVoice voice in playback.Voices)
+				{
+					if (!voice.IsAlive)
+					{
+						continue;
+					}
+
+					if (paused)
+					{
+						voice.Pause();
+					}
+					else
+					{
+						voice.Resume();
+					}
+				}
 			}
 		}
 
-		private void PlayIngameSEOneShotInternal(string cueName, int priority)
+		private void PruneFinishedSe()
 		{
-			string resolvedCueName = ResolveCueName(cueName, out CriAtomExAcb acb);
-			if (string.IsNullOrEmpty(resolvedCueName) || acb == null)
+			List<uint> finished = null;
+			foreach (KeyValuePair<uint, SePlayback> pair in sePlaybacks)
 			{
-				LogMissingCue(cueName);
+				bool alive = false;
+				foreach (SoundVoice voice in pair.Value.Voices)
+				{
+					if (voice.IsAlive)
+					{
+						alive = true;
+						break;
+					}
+				}
+
+				if (!alive)
+				{
+					(finished ??= new List<uint>()).Add(pair.Key);
+				}
+			}
+
+			if (finished == null)
+			{
 				return;
 			}
 
-			try
+			foreach (uint id in finished)
 			{
-				CriAtomExPlayer player = GetIngameSoundEffectPlayer();
-				player.SetCue(acb, resolvedCueName);
-				player.SetVoicePriority(priority);
-				player.Start();
-			}
-			catch (Exception exception)
-			{
-				Debug.LogException(exception);
+				DisposeVoices(sePlaybacks[id].Voices);
+				sePlaybacks.Remove(id);
 			}
 		}
 
-		private CriAtomExPlayer GetSoundEffectPlayer()
+		private static void DisposeVoices(List<SoundVoice> voices)
 		{
-			EnsureAtomInitialized();
-			if (soundEffectPlayer == null)
+			if (voices == null)
 			{
-				soundEffectPlayer = new CriAtomExPlayer();
-				soundEffectPlayer.SetSoundRendererType(CriAtomEx.SoundRendererType.Native);
-				soundEffectPlayer.SetVolume(masterVolume * seVolume);
+				return;
 			}
-			return soundEffectPlayer;
+
+			foreach (SoundVoice voice in voices)
+			{
+				voice.Dispose();
+			}
 		}
 
-		private CriAtomExPlayer GetIngameSoundEffectPlayer()
+		private uint AllocateIngamePlaybackRequestId()
 		{
-			EnsureAtomInitialized();
-			if (ingameSoundEffectPlayer == null)
+			currentIngamePlaybackRequestId++;
+			if (currentIngamePlaybackRequestId == 0)
 			{
-				ingameSoundEffectPlayer = new CriAtomExPlayer();
-				ingameSoundEffectPlayer.SetSoundRendererType(CriAtomEx.SoundRendererType.Native);
-				ingameSoundEffectPlayer.SetVolume(masterVolume * seVolume);
+				currentIngamePlaybackRequestId = 1;
 			}
-			return ingameSoundEffectPlayer;
+			return currentIngamePlaybackRequestId;
 		}
 
-		private string ResolveCueName(string cueName, out CriAtomExAcb acb)
+		private static CueSheet LoadCueSheet(string name, byte[] acbBytes)
+		{
+			CueSheet sheet = CueSheet.Load(name, acbBytes);
+			// Decode on a worker right away: SE banks are ready within milliseconds, music by the time it is prepared.
+			sheet?.DecodeAllAsync();
+			return sheet;
+		}
+
+		private string ResolveCueName(string cueName, out CueSheet acb)
 		{
 			acb = null;
 			if (string.IsNullOrEmpty(cueName))
@@ -689,21 +878,21 @@ namespace Sekai
 			return !string.IsNullOrEmpty(cueName) && LiveTapCueNameSet.Contains(cueName);
 		}
 
-		private bool TryResolveCurrentLiveTapSeCue(string cueName, out CriAtomExAcb acb, out string resolvedCueName)
+		private bool TryResolveCurrentLiveTapSeCue(string cueName, out CueSheet acb, out string resolvedCueName)
 		{
 			string bundleName = LiveTapSeBundleNamePrefix + "/" + LiveConfig.NoteSeName;
 			resolvedCueName = ResolveCueNameFromBundle(bundleName, cueName, out acb);
 			return resolvedCueName != null;
 		}
 
-		private string ResolveCueNameFromBundle(string bundleName, string cueName, out CriAtomExAcb acb)
+		private string ResolveCueNameFromBundle(string bundleName, string cueName, out CueSheet acb)
 		{
 			acb = null;
 			if (string.IsNullOrEmpty(bundleName) || string.IsNullOrEmpty(cueName))
 			{
 				return null;
 			}
-			if (!acbByBundleName.TryGetValue(bundleName, out CriAtomExAcb loadedAcb))
+			if (!acbByBundleName.TryGetValue(bundleName, out CueSheet loadedAcb))
 			{
 				return null;
 			}
@@ -715,7 +904,7 @@ namespace Sekai
 			return null;
 		}
 
-		private bool TryResolveIngameCue(string cueName, out CriAtomExAcb acb, out string resolvedCueName)
+		private bool TryResolveIngameCue(string cueName, out CueSheet acb, out string resolvedCueName)
 		{
 			acb = null;
 			resolvedCueName = null;
@@ -758,7 +947,7 @@ namespace Sekai
 				return true;
 			}
 
-			if (acbByBundleName.TryGetValue(cueName, out CriAtomExAcb directAcb) && TryGetFirstCueName(directAcb, out resolvedCueName))
+			if (acbByBundleName.TryGetValue(cueName, out CueSheet directAcb) && TryGetFirstCueName(directAcb, out resolvedCueName))
 			{
 				acb = directAcb;
 				return true;
@@ -802,7 +991,7 @@ namespace Sekai
 			}
 
 			string cueName = normalized.Substring("music/long/".Length);
-			if (string.IsNullOrEmpty(cueName) || !acbByBundleName.TryGetValue(cueName, out CriAtomExAcb acb) || acb == null)
+			if (string.IsNullOrEmpty(cueName) || !acbByBundleName.TryGetValue(cueName, out CueSheet acb) || acb == null)
 			{
 				return false;
 			}
@@ -828,11 +1017,15 @@ namespace Sekai
 				loadedBundles.Remove(key);
 				loadedBundleSearchOrder.Remove(key);
 			}
-			externalAudioByKey.Clear();
-			if (externalAudioDataHandle.IsAllocated)
+			HashSet<SoundBuffer> released = new HashSet<SoundBuffer>();
+			foreach (ExternalAudioEntry entry in externalAudioByKey.Values)
 			{
-				externalAudioDataHandle.Free();
+				if (entry.Buffer != null && released.Add(entry.Buffer))
+				{
+					entry.Buffer.Dispose();
+				}
 			}
+			externalAudioByKey.Clear();
 		}
 
 		private bool TryResolveExternalAudio(string key, out ExternalAudioEntry entry)
@@ -868,7 +1061,7 @@ namespace Sekai
 			return normalized.StartsWith("custom_", StringComparison.OrdinalIgnoreCase);
 		}
 
-		private bool TryResolveCueFromSpecificBundle(string bundleName, string cueName, out CriAtomExAcb acb, out string resolvedCueName)
+		private bool TryResolveCueFromSpecificBundle(string bundleName, string cueName, out CueSheet acb, out string resolvedCueName)
 		{
 			foreach (string candidateCueName in GetCueNameCandidates(cueName))
 			{
@@ -903,174 +1096,19 @@ namespace Sekai
 			}
 		}
 
-		private static bool TryGetFirstCueName(CriAtomExAcb acb, out string cueName)
+		private static bool TryGetFirstCueName(CueSheet acb, out string cueName)
 		{
 			cueName = null;
-			if (acb == null || !acb.isAvailable)
-			{
-				return false;
-			}
-			CriAtomEx.CueInfo[] cueInfos = acb.GetCueInfoList();
-			for (int i = 0; i < cueInfos.Length; i++)
-			{
-				if (!string.IsNullOrEmpty(cueInfos[i].name))
-				{
-					cueName = cueInfos[i].name;
-					return true;
-				}
-			}
-			return false;
+			return acb != null && acb.IsAvailable && acb.TryGetFirstCueName(out cueName);
 		}
 
-		private static CriAtomEx.CueInfo[] GetCueInfosWithLength(CriAtomExAcb acb)
+		private static SoundCueInfo[] GetCueInfosWithLength(CueSheet acb)
 		{
-			if (acb == null || !acb.isAvailable)
+			if (acb == null || !acb.IsAvailable)
 			{
-				return Array.Empty<CriAtomEx.CueInfo>();
+				return Array.Empty<SoundCueInfo>();
 			}
 			return acb.GetCueInfoList();
-		}
-
-		private uint AllocateIngamePlaybackRequestId()
-		{
-			currentIngamePlaybackRequestId++;
-			if (currentIngamePlaybackRequestId == 0)
-			{
-				currentIngamePlaybackRequestId = 1;
-			}
-			return currentIngamePlaybackRequestId;
-		}
-
-		private static CriAtomExPlayback CreateInvalidPlayback()
-		{
-			return new CriAtomExPlayback(CriAtomExPlayback.invalidId);
-		}
-
-		private static bool IsPlaybackValid(CriAtomExPlayback playback)
-		{
-			return playback.id != 0 && playback.id != CriAtomExPlayback.invalidId;
-		}
-
-		private void EnsureExternalWaveVoicePool(int channels, int samplingRate)
-		{
-			EnsureAtomInitialized();
-			int maxChannels = Mathf.Max(2, channels);
-			// OpenSekai compatibility: at CRI serverFrequency 120Hz, a 48000Hz pool
-			// does not allocate enough decoder frame capacity for ordinary 44100Hz WAV.
-			int maxSamplingRate = Mathf.Max(CriAtomVoicePoolMaxSamplingRate, samplingRate);
-			if (externalWaveVoicePool != null
-				&& externalWaveVoicePoolMaxChannels >= maxChannels
-				&& externalWaveVoicePoolMaxSamplingRate >= maxSamplingRate)
-			{
-				return;
-			}
-
-			externalWaveVoicePool?.Dispose();
-			externalWaveVoicePool = new CriAtomExWaveVoicePool(1, maxChannels, maxSamplingRate, false, ExternalWaveVoicePoolIdentifier);
-			externalWaveVoicePoolMaxChannels = maxChannels;
-			externalWaveVoicePoolMaxSamplingRate = maxSamplingRate;
-		}
-
-		private bool CanReuseExternalIngamePlayer(ExternalAudioEntry externalAudio)
-		{
-			return ingameBgmPlayer != null
-				&& externalAudio != null
-				&& externalAudioDataHandle.IsAllocated
-				&& string.Equals(externalIngamePlayerKey, externalAudio.Key, StringComparison.Ordinal)
-				&& externalIngamePlayerSourceVersion == externalAudio.SourceVersion
-				&& externalIngamePlayerChannels == externalAudio.Channels
-				&& externalIngamePlayerSampleRate == externalAudio.SampleRate;
-		}
-
-		private void ConfigureExternalIngamePlayer(ExternalAudioEntry externalAudio)
-		{
-			ingameBgmPlayer?.Dispose();
-			if (externalAudioDataHandle.IsAllocated)
-			{
-				externalAudioDataHandle.Free();
-			}
-			externalAudioDataHandle = GCHandle.Alloc(externalAudio.WavData, GCHandleType.Pinned);
-			ingameBgmPlayer = new CriAtomExPlayer(0, 0, true);
-			ingameBgmPlayer.SetVoicePoolIdentifier(ExternalWaveVoicePoolIdentifier);
-			ingameBgmPlayer.SetFormat(CriAtomEx.Format.WAVE);
-			ingameBgmPlayer.SetNumChannels(externalAudio.Channels);
-			ingameBgmPlayer.SetSamplingRate(externalAudio.SampleRate);
-			ingameBgmPlayer.SetData(externalAudioDataHandle.AddrOfPinnedObject(), externalAudio.WavData.Length);
-			externalIngamePlayerKey = externalAudio.Key;
-			externalIngamePlayerSourceVersion = externalAudio.SourceVersion;
-			externalIngamePlayerChannels = externalAudio.Channels;
-			externalIngamePlayerSampleRate = externalAudio.SampleRate;
-		}
-
-		private static void EnsureAtomInitialized()
-		{
-			if (criRuntimeInitialized && CriAtomPlugin.IsLibraryInitialized())
-			{
-				return;
-			}
-
-			if (CriAtomPlugin.IsLibraryInitialized())
-			{
-				criRuntimeInitialized = true;
-				return;
-			}
-
-			criwareGameObject = new GameObject(CriwareGameObjectName);
-			criwareGameObject.SetActive(false);
-
-			CriWareInitializer initializer = criwareGameObject.AddComponent<CriWareInitializer>();
-			initializer.dontDestroyOnLoad = true;
-			initializer.fileSystemConfig.numberOfLoaders = 64;
-			initializer.atomConfig.standardVoicePoolConfig.memoryVoices = 32;
-			initializer.atomConfig.standardVoicePoolConfig.streamingVoices = 16;
-			initializer.atomConfig.maxVirtualVoices = 64;
-			initializer.atomConfig.outputSamplingRate = CriAtomOutputSamplingRate;
-			initializer.atomConfig.serverFrequency = 120f;
-			initializer.manaConfig.numberOfDecoders = 32;
-			initializer.manaConfig.numberOfMaxEntries = 8;
-
-			CriAtomPlugin.SetMaxSamplingRateForStandardVoicePool(CriAtomVoicePoolMaxSamplingRate, CriAtomVoicePoolMaxSamplingRate);
-
-			criwareGameObject.SetActive(true);
-			criwareGameObject.AddComponent<CriAtom>();
-			criwareGameObject.AddComponent<CriWareErrorHandler>();
-			criRuntimeInitialized = true;
-		}
-
-		private void EnsureProjectSekaiAcfRegistered()
-		{
-			if (acfRegisterAttempted)
-			{
-				return;
-			}
-
-			acfRegisterAttempted = true;
-			foreach (string path in GetStreamingAssetPathCandidates(ProjectSekaiAcfFileName))
-			{
-				try
-				{
-					byte[] acfData = TryLoadStreamingAssetBytes(path);
-					if (acfData == null || acfData.Length == 0)
-					{
-						continue;
-					}
-
-					FixProjectSekaiAcfForOfficialCri(acfData);
-					if (acfDataHandle.IsAllocated)
-					{
-						acfDataHandle.Free();
-					}
-					acfDataHandle = GCHandle.Alloc(acfData, GCHandleType.Pinned);
-					if (CriAtomEx.RegisterAcf(acfDataHandle.AddrOfPinnedObject(), acfData.Length))
-					{
-						return;
-					}
-				}
-				catch (Exception exception)
-				{
-					Debug.LogException(exception);
-				}
-			}
 		}
 
 		private string GetAcbFileName(string bundleName)
@@ -1219,12 +1257,12 @@ namespace Sekai
 				{
 					AddAcbFileNameCandidate(diagnosticCandidates, acbFileCandidates[j]);
 					byte[] acbBytes = TryLoadAcbBytesFromAssetBundle(bundleName, acbFileCandidates[j]);
-					CriAtomExAcb acb = LoadAcbData(acbBytes);
+					CueSheet acb = LoadCueSheet(acbFileCandidates[j], acbBytes);
 					if (acb == null)
 					{
 						acb = TryLoadAcbFromStreamingAssets(acbFileCandidates[j]);
 					}
-					if (acb == null || !acb.isAvailable)
+					if (acb == null || !acb.IsAvailable)
 					{
 						continue;
 					}
@@ -1285,211 +1323,6 @@ namespace Sekai
 			{
 				loadedBundleSearchOrder.Add(bundleName);
 			}
-		}
-
-		private static void FixProjectSekaiAcfForOfficialCri(byte[] acfData)
-		{
-			// OpenSekai compatibility: ProjectSekai.acf is marked with Target=0. The
-			// official CRI Unity plugin expects the Unity target value 6 and otherwise
-			// skips DSP table setup with W2010071401.
-			ReplaceUtfRootByteValue(acfData, "Target", CriAcfCompatibleTarget);
-
-			// OpenSekai compatibility: the original ACF uses a single space as the default
-			// DSP bus setting name. The official CRI Unity plugin tries to auto-attach it
-			// during ACF registration and rejects the name, so clear only the registration
-			// option. Do not rename DspSetting entries: CRI searches those through an
-			// internal sorted table, not by a raw string occurrence.
-			ReplaceNullTerminatedValue(acfData, "DefaultDspBusSettingName", (byte)' ', 0);
-		}
-
-		private static void ReplaceUtfRootByteValue(byte[] data, string fieldName, byte value)
-		{
-			if (data == null || data.Length < 32 || data[0] != (byte)'@' || data[1] != (byte)'U' || data[2] != (byte)'T' || data[3] != (byte)'F')
-			{
-				return;
-			}
-
-			int tableSize = ReadBigEndianInt32(data, 4);
-			int rowsOffset = ReadBigEndianInt16(data, 10);
-			int stringOffset = ReadBigEndianInt32(data, 12);
-			int dataOffset = ReadBigEndianInt32(data, 16);
-			int columnCount = ReadBigEndianInt16(data, 24);
-			int rowSize = ReadBigEndianInt16(data, 26);
-			int rowCount = ReadBigEndianInt32(data, 28);
-			if (tableSize <= 0
-				|| rowsOffset < 0
-				|| stringOffset < rowsOffset
-				|| dataOffset < stringOffset
-				|| columnCount <= 0
-				|| rowSize < 0
-				|| rowCount <= 0
-				|| 8 + tableSize > data.Length)
-			{
-				return;
-			}
-
-			int columnsStart = 32;
-			int rowsStart = 8 + rowsOffset;
-			int stringsStart = 8 + stringOffset;
-			int tableEnd = 8 + tableSize;
-			int rowValueOffset = 0;
-			int offset = columnsStart;
-			for (int i = 0; i < columnCount && offset < tableEnd; i++)
-			{
-				byte storageType = data[offset++];
-				bool hasName = (storageType & 0x10) != 0;
-				bool hasConstValue = (storageType & 0x20) != 0;
-				bool hasRowValue = (storageType & 0x40) != 0;
-
-				int valueSize = GetUtfStorageValueSize(storageType);
-				if (valueSize < 0)
-				{
-					return;
-				}
-
-				string currentFieldName = string.Empty;
-				if (hasName)
-				{
-					if (offset + 4 > tableEnd)
-					{
-						return;
-					}
-					int nameOffset = ReadBigEndianInt32(data, offset);
-					offset += 4;
-					currentFieldName = ReadNullTerminatedAscii(data, stringsStart + nameOffset, tableEnd);
-				}
-
-				int valueOffset = -1;
-				if (hasConstValue)
-				{
-					valueOffset = offset;
-					offset += valueSize;
-				}
-				else if (hasRowValue)
-				{
-					valueOffset = rowsStart + rowValueOffset;
-					rowValueOffset += valueSize;
-				}
-
-				if (string.Equals(currentFieldName, fieldName, StringComparison.Ordinal)
-					&& valueSize == 1
-					&& valueOffset >= rowsStart
-					&& valueOffset < rowsStart + rowSize
-					&& valueOffset < tableEnd)
-				{
-					data[valueOffset] = value;
-					return;
-				}
-			}
-		}
-
-		private static int GetUtfStorageValueSize(byte storageType)
-		{
-			switch (storageType & 0x0F)
-			{
-				case 0x00:
-				case 0x01:
-					return 1;
-				case 0x02:
-				case 0x03:
-					return 2;
-				case 0x04:
-				case 0x05:
-				case 0x08:
-				case 0x0A:
-					return 4;
-				case 0x06:
-				case 0x07:
-				case 0x09:
-					return 8;
-				default:
-					return -1;
-			}
-		}
-
-		private static int ReadBigEndianInt32(byte[] data, int offset)
-		{
-			if (data == null || offset < 0 || offset + 4 > data.Length)
-			{
-				return 0;
-			}
-			return (data[offset] << 24) | (data[offset + 1] << 16) | (data[offset + 2] << 8) | data[offset + 3];
-		}
-
-		private static int ReadBigEndianInt16(byte[] data, int offset)
-		{
-			if (data == null || offset < 0 || offset + 2 > data.Length)
-			{
-				return 0;
-			}
-			return (data[offset] << 8) | data[offset + 1];
-		}
-
-		private static string ReadNullTerminatedAscii(byte[] data, int offset, int endOffset)
-		{
-			if (data == null || offset < 0 || offset >= data.Length)
-			{
-				return string.Empty;
-			}
-
-			int end = Math.Min(Math.Min(endOffset, data.Length), offset);
-			while (end < data.Length && end < endOffset && data[end] != 0)
-			{
-				end++;
-			}
-			return System.Text.Encoding.ASCII.GetString(data, offset, end - offset);
-		}
-
-		private static void ReplaceNullTerminatedValue(byte[] data, string marker, byte oldValue, byte newValue)
-		{
-			byte[] markerBytes = System.Text.Encoding.ASCII.GetBytes(marker);
-			int markerIndex = IndexOf(data, markerBytes, 0);
-			if (markerIndex < 0)
-			{
-				return;
-			}
-
-			int valueIndex = markerIndex + markerBytes.Length;
-			if (valueIndex < data.Length && data[valueIndex] == 0)
-			{
-				valueIndex++;
-			}
-			while (valueIndex + 1 < data.Length)
-			{
-				if (data[valueIndex] == oldValue && data[valueIndex + 1] == 0)
-				{
-					data[valueIndex] = newValue;
-					return;
-				}
-				valueIndex++;
-			}
-		}
-
-		private static int IndexOf(byte[] data, byte[] pattern, int startIndex)
-		{
-			if (data == null || pattern == null || pattern.Length == 0 || startIndex < 0 || startIndex >= data.Length)
-			{
-				return -1;
-			}
-
-			for (int i = startIndex; i <= data.Length - pattern.Length; i++)
-			{
-				bool match = true;
-				for (int j = 0; j < pattern.Length; j++)
-				{
-					if (data[i + j] != pattern[j])
-					{
-						match = false;
-						break;
-					}
-				}
-				if (match)
-				{
-					return i;
-				}
-			}
-
-			return -1;
 		}
 
 		private static byte[] TryLoadStreamingAssetBytes(string path)
@@ -1623,25 +1456,7 @@ namespace Sekai
 		}
 #endif
 
-		private static CriAtomExAcb LoadAcbData(byte[] acbBytes)
-		{
-			if (acbBytes == null || acbBytes.Length == 0)
-			{
-				return null;
-			}
-
-			try
-			{
-				return CriAtomExAcb.LoadAcbData(acbBytes, null, null);
-			}
-			catch (Exception exception)
-			{
-				Debug.LogException(exception);
-				return null;
-			}
-		}
-
-		private static CriAtomExAcb TryLoadAcbFromStreamingAssets(string acbFileName)
+		private static CueSheet TryLoadAcbFromStreamingAssets(string acbFileName)
 		{
 			if (string.IsNullOrEmpty(acbFileName))
 			{
@@ -1657,8 +1472,9 @@ namespace Sekai
 
 				try
 				{
-					CriAtomExAcb acb = CriAtomExAcb.LoadAcbFile(null, candidate, null);
-					if (acb != null && acb.isAvailable)
+					byte[] acbBytes = TryLoadStreamingAssetBytes(candidate);
+					CueSheet acb = LoadCueSheet(acbFileName, acbBytes);
+					if (acb != null && acb.IsAvailable)
 					{
 						return acb;
 					}
@@ -1676,9 +1492,6 @@ namespace Sekai
 		{
 			string[] candidates =
 			{
-				Path.Combine(CriWare.Common.streamingAssetsPath, fileName),
-				Path.Combine(CriWare.Common.streamingAssetsPath, "data", fileName),
-				Path.Combine(CriWare.Common.streamingAssetsPath, "sound/menu/menu_common", fileName),
 				Path.Combine(Application.streamingAssetsPath, fileName),
 				Path.Combine(Application.streamingAssetsPath, "data", fileName),
 				Path.Combine(Application.streamingAssetsPath, "sound/menu/menu_common", fileName)
@@ -1727,99 +1540,39 @@ namespace Sekai
 
 		public void Pause()
 		{
-			if (IsPlaybackValid(currentIngamePlayback))
+			appPaused = true;
+			IngameTrack track = ingameTrack;
+			if (track?.Voices != null)
 			{
-				currentIngamePlayback.Pause();
+				foreach (SoundVoice voice in track.Voices)
+				{
+					voice.Pause();
+				}
+				track.Clock.Pause();
 			}
-			soundEffectPlayer?.Pause();
+			SetSePaused(ingame: false, paused: true);
 		}
 
 		public void Resume()
 		{
-			if (ingameBgmPlayer != null)
+			appPaused = false;
+			IngameTrack track = ingameTrack;
+			if (track?.Voices != null && track.StartRequested && !track.Paused)
 			{
-				ingameBgmPlayer.Resume(CriAtomEx.ResumeMode.PausedPlayback);
+				SoundVoice primary = GetPrimaryVoice(track);
+				double position = primary != null ? primary.Position : track.Clock.Time;
+				StartIngameVoices(track, position);
 			}
-			soundEffectPlayer?.Resume(CriAtomEx.ResumeMode.PausedPlayback);
+			SetSePaused(ingame: false, paused: false);
 		}
 	}
 
 	internal sealed class ExternalAudioEntry
 	{
 		public string Key;
-		public byte[] WavData;
-		public int Channels;
-		public int SampleRate;
+		public SoundBuffer Buffer;
+		public string SourcePath;
 		public long LengthMs;
 		public long SourceVersion;
-	}
-
-	internal sealed class AudioSyncedUnityTimer
-	{
-		private readonly CriAtomExPlayback playback;
-		private long referenceAudioTimeMs = -1L;
-		private float referenceUnityTime;
-		private bool isWaitingForAudioTimeUpdate;
-
-		public long PlaybackTime { get; private set; } = -1L;
-
-		public long DebugAudioSyncedTime { get; private set; } = -1L;
-
-		public AudioSyncedUnityTimer(CriAtomExPlayback playback)
-		{
-			this.playback = playback;
-		}
-
-		public void Execute(float unityTime)
-		{
-			long audioTimeMs = playback.GetTimeSyncedWithAudio();
-			if (audioTimeMs < 0L)
-			{
-				audioTimeMs = playback.GetTime();
-			}
-			DebugAudioSyncedTime = audioTimeMs;
-			if (audioTimeMs <= 99L)
-			{
-				PlaybackTime = audioTimeMs;
-				return;
-			}
-
-			if (referenceAudioTimeMs < 0L)
-			{
-				referenceAudioTimeMs = audioTimeMs;
-				referenceUnityTime = unityTime;
-			}
-
-			if (isWaitingForAudioTimeUpdate)
-			{
-				long previousPlaybackTime = PlaybackTime;
-				referenceAudioTimeMs = audioTimeMs;
-				referenceUnityTime = unityTime;
-				if (audioTimeMs > previousPlaybackTime)
-				{
-					PlaybackTime = audioTimeMs;
-					isWaitingForAudioTimeUpdate = false;
-				}
-				return;
-			}
-
-			long estimatedTimeMs = referenceAudioTimeMs + (long)((unityTime - referenceUnityTime) * 1000f);
-			long delta = estimatedTimeMs - audioTimeMs;
-			if (delta >= 63L)
-			{
-				PlaybackTime = audioTimeMs + 62L;
-				isWaitingForAudioTimeUpdate = true;
-			}
-			else if (-delta >= 63L)
-			{
-				PlaybackTime = audioTimeMs;
-				referenceAudioTimeMs = audioTimeMs;
-				referenceUnityTime = unityTime;
-			}
-			else
-			{
-				PlaybackTime = estimatedTimeMs;
-			}
-		}
 	}
 }

@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using CP;
 using Cysharp.Threading.Tasks;
-using CriWare;
 using Sekai.Live;
 using Sekai.MusicScoreMaker.Common;
 using UnityEngine;
@@ -28,6 +27,9 @@ namespace Sekai.Core.Live
 		protected uint cueId;
 		protected double currentGameTime;
 		protected float timingAdjust;
+
+		/// <summary>Judgement-only offset in seconds (<see cref="LiveSettingData.JudgeOffsetMs"/>).</summary>
+		protected float judgeAdjust;
 		protected float accumulateTimeApartFromPause;
 		protected LiveBundleBuildData liveBundleBuildData;
 
@@ -75,7 +77,8 @@ namespace Sekai.Core.Live
 			ApplicationLocalSettings.VolumeSettings liveVolume = localSettings.LiveVolume ?? localSettings.SetupLiveVolume();
 			SoundManager.Instance.SetupVolume(1f, liveVolume.Bgm, liveVolume.Se, liveVolume.Voice);
 
-			timingAdjust = (Settings?.TimingAdjustData ?? 0f) * 0.016667f;
+			timingAdjust = Settings?.AudioOffsetSeconds ?? 0f;
+			judgeAdjust = (Settings?.JudgeOffsetMs ?? 0f) / 1000f;
 		}
 
 		public bool EnsureBackgroundTextureSizeForCurrentScreen()
@@ -387,8 +390,8 @@ namespace Sekai.Core.Live
 
 		private void UpdateMusicLength(string cueName)
 		{
-			CriAtomEx.CueInfo[] cueInfos = SoundManager.Instance.GetCueInfos(cueName);
-			foreach (CriAtomEx.CueInfo cueInfo in cueInfos)
+			SoundCueInfo[] cueInfos = SoundManager.Instance.GetCueInfos(cueName);
+			foreach (SoundCueInfo cueInfo in cueInfos)
 			{
 				if ((string.IsNullOrEmpty(cueInfo.name) || cueInfo.name == cueName) && cueInfo.length > 0)
 				{

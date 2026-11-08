@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
-using CriWare;
 using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.CompilerServices;
 
@@ -122,7 +121,7 @@ namespace Sekai.Sound
 
 		private const int AudioSyncTimeoutSeconds = 60;
 
-		private CriAtomExPlayback _currentPlayback;
+		private SoundPlayback _currentPlayback;
 
 		private readonly string _assetBundleName;
 
@@ -144,7 +143,7 @@ namespace Sekai.Sound
 			}
 		}
 
-		public CriAtomExPlayback.Status CurrentStatus
+		public SoundPlayback.Status CurrentStatus
 		{
 			get
 			{
