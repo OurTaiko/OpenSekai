@@ -4,19 +4,44 @@ OpenSekai 是一个用于学习和研究目的的 Project Sekai 音乐游戏玩�
 
 ## 开发环境
 
-- Unity: 2022.3.62f2
-- 渲染管线: URP 14
+- Unity: 6000.6.8f1
+- 渲染管线: URP 17（RenderGraph）
 - 主要依赖: TextMesh Pro、UniTask、MessagePack、uPalette、UI Particle、SoftMaskForUGUI、ManagedBass（BASS 音频，git submodule，克隆后需执行 `git submodule update --init`）
 
 ## 目录说明
 
-- `Assets/OpenSekai/Game`：主要游戏逻辑（程序集 `OpenSekai.Game`），`Sekai/` 下按功能分目录：`App`（启动与场景请求）、`Screen`、`UI`、`Live`、`MusicScoreMaker`、`Sound`、`AssetLoading`、`Network`、`Data`、`Domain`、`Rendering` 等。
-- `Assets/OpenSekai/Runtime`：独立运行时模块——`Audio`（BASS 音频引擎，`OpenSekai.Audio`）、`SceneFlow`（`SceneSwitcher` 场景切换）、`AcbDecoder`（ACB/HCA 解码）。
-- `Assets/OpenSekai/Editor`：编辑器工具（`OpenSekai.Editor`），包括本地 AssetBundle 构建流程 `OpenSekaiAssetBundleBuildPipeline.cs`。
-- `Assets/ThirdParty`：第三方源码（ManagedBass 子模块、ZString、StandaloneFileBrowser、UniSafeAreaAdjuster、UiEffect），各自独立程序集。
-- `Assets/Resources`：运行时通过 `Resources` 加载的 Prefab、文本、字体、特效和界面数据。
-- `Assets/Sekai/assetbundle/resources`：原样放置的 AssetBundle 源资源，资源本身应保留 AssetBundle 名称，之后通过构建流程打包。
-- `Assets/StreamingAssets`：打包后的 AssetBundle 与本地运行数据输出位置，主要用于构建后的运行环境。
+目录结构参考 OurTaikoPlay：项目自己的内容都在 `Assets/OpenSekai/` 下，场景和渲染设置放在 `Assets/Scenes`、`Assets/Settings`。
+
+```
+Assets/
+├── OpenSekai/
+│   ├── Runtime/                 # 脚本
+│   │   ├── Audio/               # BASS 音频引擎（OpenSekai.Audio）
+│   │   ├── SceneFlow/           # SceneSwitcher 场景切换（OpenSekai.SceneFlow）
+│   │   ├── AcbDecoder/          # ACB/HCA 解码（OpenSekai.AcbDecoder）
+│   │   └── Game/                # 游戏逻辑（OpenSekai.Game）
+│   │       ├── Core/            #   启动(App)、资源加载、通用工具、CP、兼容 shim
+│   │       ├── Audio/           #   SoundManager、CueSheet
+│   │       ├── Play/            #   live 玩法：CoreScene（Core 场景控制器）、Live、SUS、多人
+│   │       ├── ChartEditor/     #   谱面编辑器 MusicScoreMaker、自制谱管理 CustomMusicScoreManager
+│   │       ├── UI/              #   UI 组件、Screen 层、对话框、调色板、模糊
+│   │       ├── Data/            #   主数据（Master）、用户数据（User）、枚举（Domain）
+│   │       ├── Online/          #   API / 网络层
+│   │       ├── Rendering/       #   URP RenderGraph 渲染 Pass
+│   │       └── Legacy/          #   尚未接通流程的外围功能（Mysekai、商店、称号等）
+│   ├── Editor/                  # 编辑器工具（OpenSekai.Editor），含 AssetBundle 构建流程
+│   ├── Art/                     # 动画、材质、模型、shader、精灵、图集、贴图、图标
+│   ├── Prefabs/                 # 通用 prefab；CustomMusicScoreManager/Resources 为自制谱管理界面
+│   ├── Resources/               # 运行时通过 Resources 加载的 prefab、字体、特效、界面数据
+│   └── AssetBundles/            # AssetBundle 源资源（保留 AssetBundle 名称，由构建流程打包）
+├── Scenes/                      # MusicScoreMaker（首场景）、Core（live）
+├── Settings/                    # URP 管线资源、Renderer、Volume Profile
+├── ThirdParty/                  # 第三方源码（ManagedBass 子模块、ZString、StandaloneFileBrowser 等）
+├── Plugins/                     # 原生库（BASS）与 DOTween
+├── StreamingAssets/             # 打包后的 AssetBundle 与本地运行数据
+├── TextMesh Pro/                # TMP 资源（着色器已更新到 Unity 6 版本）
+└── Resources/DOTweenSettings.asset  # DOTween 固定读取此路径，勿移动
+```
 
 ## 资源说明
 
