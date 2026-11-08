@@ -1203,6 +1203,8 @@ namespace Sekai.Core.Live
 			note.OnDamage = OnDamage;
 			note.OnUpdateResult = OnUpdateResult;
 			note.CalcTimeOffset = CalcTimeOffset;
+			note.ScrollTimeline = scrollTimeline;
+			note.ScrollDisplayTime = noteDisplayTimeOffset;
 
 			if (note.NoteList == null)
 			{

@@ -141,6 +141,11 @@ namespace Sekai
 					vertices[vertexIndex + 2] = new Vector3(start.x, start.y - halfHeight, 0f);
 					vertices[vertexIndex + 3] = new Vector3(end.x, end.y - halfHeight, 0f);
 				}
+				else
+				{
+					// Negative hi-speed can scroll a spawned pair back off screen.
+					ClearVertex(vertexIndex);
+				}
 			}
 
 			ApplyMesh();

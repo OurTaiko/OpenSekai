@@ -84,6 +84,33 @@ namespace Sekai.Live
 			return time < times[0] ? speeds[0] : speeds[FindSegment(time)];
 		}
 
+		/// <summary>The first hi-speed change strictly after <paramref name="time"/>, or positive infinity.</summary>
+		public float NextChangeAfter(float time)
+		{
+			if (time < times[0])
+			{
+				return (float)times[0];
+			}
+
+			int next = FindSegment(time) + 1;
+			return next < times.Length ? (float)times[next] : float.PositiveInfinity;
+		}
+
+		/// <summary>
+		/// Screen progress at time <paramref name="now"/> of a point that reaches the judge line at
+		/// <paramref name="scoreTime"/>: 1 on the judge line, 0 at the spawn line. Values outside [0, 1] are off screen.
+		/// </summary>
+		public float ProgressAt(float now, float scoreTime, float speedRatio, float displayTime)
+		{
+			if (displayTime <= 0f)
+			{
+				return 1f;
+			}
+
+			double distance = (PositionAt(scoreTime) - PositionAt(now)) * speedRatio;
+			return (float)(1d - distance / displayTime);
+		}
+
 		/// <summary>
 		/// Earliest time t ≤ notAfter at which a note at scroll position <paramref name="notePosition"/> with
 		/// per-note speed <paramref name="noteSpeedRatio"/> is on screen, i.e. its distance from the judge

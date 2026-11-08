@@ -24,6 +24,13 @@ namespace Sekai.Live
 		[JsonIgnore]
 		public Func<NoteBase, float> CalcTimeOffset;
 
+		// Set by LiveLogic so line views can place every point of a hold or guide body, not just its ends.
+		[JsonIgnore]
+		public NoteScrollTimeline ScrollTimeline;
+
+		[JsonIgnore]
+		public float ScrollDisplayTime;
+
 		protected NoteState state;
 
 		protected LongNote parentNote;
