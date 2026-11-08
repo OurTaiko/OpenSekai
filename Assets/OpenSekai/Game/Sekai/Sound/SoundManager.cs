@@ -597,7 +597,31 @@ namespace Sekai
 			}
 
 			track.Clock.Update(Time.frameCount, heard);
+#if UNITY_EDITOR
+			LogClockDiagnostics(track, heard);
+#endif
 		}
+
+#if UNITY_EDITOR
+		private static double nextClockLogTime;
+
+		/// <summary>Editor-only: every 5 s, log how far the song clock is from the audio that is actually heard.</summary>
+		private static void LogClockDiagnostics(IngameTrack track, double? heard)
+		{
+			double now = Time.realtimeSinceStartupAsDouble;
+			if (!heard.HasValue || now < nextClockLogTime)
+			{
+				return;
+			}
+
+			nextClockLogTime = now + 5.0;
+			Debug.LogFormat(
+				"[Audio] song clock {0:F3}s, heard {1:F3}s, error {2:+0.0;-0.0}ms",
+				track.Clock.Time,
+				heard.Value,
+				(heard.Value - track.Clock.Time) * 1000.0);
+		}
+#endif
 
 		private static SoundVoice GetPrimaryVoice(IngameTrack track)
 		{
