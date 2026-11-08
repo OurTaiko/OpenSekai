@@ -1,0 +1,3 @@
+[submodule "Assets/ThirdParty/ManagedBass"]
+	path = Assets/ThirdParty/ManagedBass
+	url = https://github.com/TeamMajdata/ManagedBass.git

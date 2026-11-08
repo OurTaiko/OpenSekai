@@ -6,7 +6,7 @@ OpenSekai 是一个用于学习和研究目的的 Project Sekai 音乐游戏玩�
 
 - Unity: 2022.3.62f2
 - 渲染管线: URP 14
-- 主要依赖: TextMesh Pro、UniTask、MessagePack、uPalette、UI Particle、SoftMaskForUGUI
+- 主要依赖: TextMesh Pro、UniTask、MessagePack、uPalette、UI Particle、SoftMaskForUGUI、ManagedBass（BASS 音频，git submodule，克隆后需执行 `git submodule update --init`）
 
 ## 目录说明
 
@@ -18,6 +18,6 @@ OpenSekai 是一个用于学习和研究目的的 Project Sekai 音乐游戏玩�
 
 ## 资源说明
 
-本仓库中的代码以 MIT 协议发布。第三方库、字体、音频、贴图、prefab、shader 参考资源以及任何可能来源于原作或其他权利方的资源，不自动包含在 MIT 授权范围内，请分别遵循其原始许可和权利归属。
+本仓库中的代码以 GPLv3 协议发布（见 `LICENSE`）。项目包含移植自 MajdataPlay 与 OurTaikoPlay（均为 GPLv3）的代码，因此由 MIT 改为 GPLv3；详细来源见 `NOTICE.md`。音频使用的 BASS 库仅限非商业使用。第三方库、字体、音频、贴图、prefab、shader 参考资源以及任何可能来源于原作或其他权利方的资源，不自动包含在本项目授权范围内，请分别遵循其原始许可和权利归属。
 
 本项目与任何原作游戏、发行方或权利方没有官方关联。
