@@ -1,0 +1,19 @@
+{
+    "name": "OpenSekai.Editor",
+    "rootNamespace": "OpenSekai.Editor",
+    "references": [
+        "GUID:0238dc1ec06841dfa94a5e77b9759c7e",
+        "MessagePack.Unity"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

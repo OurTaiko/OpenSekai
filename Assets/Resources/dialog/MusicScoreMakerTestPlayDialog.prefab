@@ -1745,7 +1745,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114009931292380359}
-        m_TargetAssemblyTypeName: Sekai.UIPartsCheckBox, Assembly-CSharp
+        m_TargetAssemblyTypeName: Sekai.UIPartsCheckBox, OpenSekai.Game
         m_MethodName: OnValueChanged
         m_Mode: 6
         m_Arguments:
@@ -2306,7 +2306,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114194081240383615}
-        m_TargetAssemblyTypeName: Sekai.UIPartsCheckBox, Assembly-CSharp
+        m_TargetAssemblyTypeName: Sekai.UIPartsCheckBox, OpenSekai.Game
         m_MethodName: OnValueChanged
         m_Mode: 6
         m_Arguments:

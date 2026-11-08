@@ -6795,7 +6795,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114026196548002408}
-        m_TargetAssemblyTypeName: Sekai.ScreenLayerLoading, Assembly-CSharp
+        m_TargetAssemblyTypeName: Sekai.ScreenLayerLoading, OpenSekai.Game
         m_MethodName: OnClickNews
         m_Mode: 1
         m_Arguments:

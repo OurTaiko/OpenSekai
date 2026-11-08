@@ -603,7 +603,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Sekai.UI.ListView, Assembly-CSharp
+        m_TargetAssemblyTypeName: Sekai.UI.ListView, OpenSekai.Game
         m_MethodName: OnValueChangedListView
         m_Mode: 0
         m_Arguments:
@@ -3245,7 +3245,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114475644985128269}
-        m_TargetAssemblyTypeName: Sekai.UI.CustomInputFieldTextMesh, Assembly-CSharp
+        m_TargetAssemblyTypeName: Sekai.UI.CustomInputFieldTextMesh, OpenSekai.Game
         m_MethodName: OnEndEdit
         m_Mode: 0
         m_Arguments:
@@ -13150,7 +13150,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Sekai.UIPartsCheckBox, Assembly-CSharp
+        m_TargetAssemblyTypeName: Sekai.UIPartsCheckBox, OpenSekai.Game
         m_MethodName: OnValueChanged
         m_Mode: 6
         m_Arguments:
@@ -16584,7 +16584,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Sekai.UI.ListView, Assembly-CSharp
+        m_TargetAssemblyTypeName: Sekai.UI.ListView, OpenSekai.Game
         m_MethodName: 
         m_Mode: 0
         m_Arguments:
@@ -44780,7 +44780,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Sekai.UIPartsCheckBox, Assembly-CSharp
+        m_TargetAssemblyTypeName: Sekai.UIPartsCheckBox, OpenSekai.Game
         m_MethodName: OnValueChanged
         m_Mode: 6
         m_Arguments:

@@ -208,7 +208,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Sekai.UIPartsTabImage, Assembly-CSharp
+        m_TargetAssemblyTypeName: Sekai.UIPartsTabImage, OpenSekai.Game
         m_MethodName: Change
         m_Mode: 0
         m_Arguments:

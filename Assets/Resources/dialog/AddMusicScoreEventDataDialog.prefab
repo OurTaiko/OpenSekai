@@ -3032,7 +3032,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Sekai.UI.ListView, Assembly-CSharp
+        m_TargetAssemblyTypeName: Sekai.UI.ListView, OpenSekai.Game
         m_MethodName:
         m_Mode: 0
         m_Arguments:

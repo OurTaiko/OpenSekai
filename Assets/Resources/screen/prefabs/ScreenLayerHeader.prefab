@@ -9570,7 +9570,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114692131138185966}
-        m_TargetAssemblyTypeName: Sekai.GachaHeaderExtension, Assembly-CSharp
+        m_TargetAssemblyTypeName: Sekai.GachaHeaderExtension, OpenSekai.Game
         m_MethodName: OnClickCurrencyUp
         m_Mode: 1
         m_Arguments:
@@ -10655,7 +10655,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114692131138185966}
-        m_TargetAssemblyTypeName: Sekai.GachaHeaderExtension, Assembly-CSharp
+        m_TargetAssemblyTypeName: Sekai.GachaHeaderExtension, OpenSekai.Game
         m_MethodName: OnClickCeilItemCurrencyUp
         m_Mode: 1
         m_Arguments:
@@ -10961,7 +10961,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114692131138185966}
-        m_TargetAssemblyTypeName: Sekai.GachaHeaderExtension, Assembly-CSharp
+        m_TargetAssemblyTypeName: Sekai.GachaHeaderExtension, OpenSekai.Game
         m_MethodName: OnClickExchange
         m_Mode: 1
         m_Arguments:
@@ -13997,7 +13997,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Sekai.ScreenLayerCardDetail, Assembly-CSharp
+        m_TargetAssemblyTypeName: Sekai.ScreenLayerCardDetail, OpenSekai.Game
         m_MethodName: OnClickInfoButton
         m_Mode: 1
         m_Arguments:

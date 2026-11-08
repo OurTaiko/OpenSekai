@@ -1,0 +1,14 @@
+{
+    "name": "SafeAreaAdjuster.Editor",
+    "rootNamespace": "SafeArea.Editor",
+    "references": ["GUID:d146a3cc6fd14a698e626c5853a8e39b"],
+    "includePlatforms": ["Editor"],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

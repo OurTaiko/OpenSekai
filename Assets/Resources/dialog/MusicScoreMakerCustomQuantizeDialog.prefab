@@ -2476,7 +2476,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114194081240383615}
-        m_TargetAssemblyTypeName: Sekai.UI.CustomInputFieldTextMesh, Assembly-CSharp
+        m_TargetAssemblyTypeName: Sekai.UI.CustomInputFieldTextMesh, OpenSekai.Game
         m_MethodName: OnEndEdit
         m_Mode: 0
         m_Arguments:
