@@ -83,21 +83,13 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 
 		private readonly List<(long start, long end)> _noteDensityOverflowWorkRanges = new List<(long start, long end)>(32);
 
-		private readonly List<(float segStartTime, float segEndTime, long startTicks, long endTicks, float displayTime)> _longNoteMeshWorkSegments = new List<(float segStartTime, float segEndTime, long startTicks, long endTicks, float displayTime)>(256);
+		private readonly List<MeshSegment> _longNoteMeshWorkSegments = new List<MeshSegment>(256);
 
 		private readonly List<(long startTicks, long endTicks, int maxMesh, MeshOverflowSpeedType speedType)> _longNoteMeshOverflowResults = new List<(long startTicks, long endTicks, int maxMesh, MeshOverflowSpeedType speedType)>(32);
 
-		private readonly List<(float segStartTime, float segEndTime, long startTicks, long endTicks, float displayTime)> _guideMeshWorkSegments = new List<(float segStartTime, float segEndTime, long startTicks, long endTicks, float displayTime)>(256);
+		private readonly List<MeshSegment> _guideMeshWorkSegments = new List<MeshSegment>(256);
 
 		private readonly List<(long startTicks, long endTicks, int maxMesh, MeshOverflowSpeedType speedType)> _guideMeshOverflowResults = new List<(long startTicks, long endTicks, int maxMesh, MeshOverflowSpeedType speedType)>(32);
-
-		private const int DefaultLongNoteMeshSplitCount = 100;
-
-		private static readonly Lazy<int> _longNoteMeshSplitCount = new Lazy<int>(() => DefaultLongNoteMeshSplitCount);
-
-		private const int DefaultLongNoteMeshOverflowThreshold = 2000;
-
-		private static readonly Lazy<int> _longNoteMeshOverflowThreshold = new Lazy<int>(() => DefaultLongNoteMeshOverflowThreshold);
 
 		private const float LongNoteMeshDisplayTimeFastest = 0.35f;
 
@@ -219,21 +211,10 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 		[CanBeNull]
 		public string FullComboDataHash { get; set; }
 
-		private static int LongNoteMeshSplitCount
-		{
-			get
-			{
-				return _longNoteMeshSplitCount.Value;
-			}
-		}
+		// Same sampling density and pool size the live line views use for custom charts.
+		private static int LongNoteMeshSplitCount => NoteLineView.GetSplitMeshCount(true);
 
-		private static int LongNoteMeshOverflowThreshold
-		{
-			get
-			{
-				return _longNoteMeshOverflowThreshold.Value;
-			}
-		}
+		private static int LongNoteMeshOverflowThreshold => NoteLineView.GetPoolCount(true);
 
 		[JsonIgnore]
 		public QuantizeSettings QuantizeSettings { get; private set; }
@@ -1128,9 +1109,10 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 			}
 			MusicScoreInfo[] musicScoreInfoArray = MusicScoreMakerUtility.ConvertMusicScoreInfo(MusicScoreEventDataList);
 			Dictionary<int, MusicScoreNoteBase> noteById = GetNoteIdCacheOrRebuild();
+			NoteScrollTimeline scrollTimeline = NoteScrollTimeline.Create(musicScoreInfoArray);
 			_longNoteMeshOverflowResults.Clear();
-			DetectLongNoteMeshOverflow(musicScoreInfoArray, noteById, LongNoteMeshDisplayTimeFastest, scoreLengthSec, MeshOverflowSpeedType.Fastest, _longNoteMeshOverflowResults);
-			DetectLongNoteMeshOverflow(musicScoreInfoArray, noteById, LongNoteMeshDisplayTimeSlowest, scoreLengthSec, MeshOverflowSpeedType.Slowest, _longNoteMeshOverflowResults);
+			DetectLongNoteMeshOverflow(musicScoreInfoArray, scrollTimeline, noteById, LongNoteMeshDisplayTimeFastest, scoreLengthSec, MeshOverflowSpeedType.Fastest, _longNoteMeshOverflowResults);
+			DetectLongNoteMeshOverflow(musicScoreInfoArray, scrollTimeline, noteById, LongNoteMeshDisplayTimeSlowest, scoreLengthSec, MeshOverflowSpeedType.Slowest, _longNoteMeshOverflowResults);
 			MergeMeshOverflowResults(_longNoteMeshOverflowResults);
 			foreach ((long startTicks, long endTicks, int maxMesh, MeshOverflowSpeedType speedType) in _longNoteMeshOverflowResults)
 			{
@@ -1138,10 +1120,10 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 			}
 		}
 
-		private void DetectLongNoteMeshOverflow(MusicScoreInfo[] musicScoreInfoArray, Dictionary<int, MusicScoreNoteBase> noteById, float displayTime, float scoreLengthSec, MeshOverflowSpeedType speedType, List<(long startTicks, long endTicks, int maxMesh, MeshOverflowSpeedType speedType)> results)
+		private void DetectLongNoteMeshOverflow(MusicScoreInfo[] musicScoreInfoArray, NoteScrollTimeline scrollTimeline, Dictionary<int, MusicScoreNoteBase> noteById, float displayTime, float scoreLengthSec, MeshOverflowSpeedType speedType, List<(long startTicks, long endTicks, int maxMesh, MeshOverflowSpeedType speedType)> results)
 		{
-			CollectLongNoteSegments(musicScoreInfoArray, displayTime, scoreLengthSec, noteById);
-			DetectMeshOverflowFromSegments(_longNoteMeshWorkSegments, scoreLengthSec, speedType, results);
+			CollectLongNoteSegments(musicScoreInfoArray, scrollTimeline, displayTime, noteById);
+			DetectMeshOverflowFromSegments(_longNoteMeshWorkSegments, scrollTimeline, displayTime, scoreLengthSec, speedType, results);
 		}
 
 		private void AddLongNoteMeshOverflowPlacement(long startTicks, long endTicks, int maxMeshCount, MeshOverflowSpeedType speedType)
@@ -1158,10 +1140,10 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 			});
 		}
 
-		private void CollectLongNoteSegments(MusicScoreInfo[] musicScoreInfoArray, float baseDisplayTime, float scoreLengthSec, Dictionary<int, MusicScoreNoteBase> noteById)
+		private void CollectLongNoteSegments(MusicScoreInfo[] musicScoreInfoArray, NoteScrollTimeline scrollTimeline, float displayTime, Dictionary<int, MusicScoreNoteBase> noteById)
 		{
 			_longNoteMeshWorkSegments.Clear();
-			CollectMeshSegments(musicScoreInfoArray, baseDisplayTime, scoreLengthSec, noteById, _longNoteMeshWorkSegments, false);
+			CollectMeshSegments(musicScoreInfoArray, scrollTimeline, displayTime, noteById, _longNoteMeshWorkSegments, false);
 		}
 
 		public void RecalculateGuideMeshOverflowPlacements(float scoreLengthSec)
@@ -1173,9 +1155,10 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 			}
 			MusicScoreInfo[] musicScoreInfoArray = MusicScoreMakerUtility.ConvertMusicScoreInfo(MusicScoreEventDataList);
 			Dictionary<int, MusicScoreNoteBase> noteById = GetNoteIdCacheOrRebuild();
+			NoteScrollTimeline scrollTimeline = NoteScrollTimeline.Create(musicScoreInfoArray);
 			_guideMeshOverflowResults.Clear();
-			DetectGuideMeshOverflow(musicScoreInfoArray, noteById, LongNoteMeshDisplayTimeFastest, scoreLengthSec, MeshOverflowSpeedType.Fastest, _guideMeshOverflowResults);
-			DetectGuideMeshOverflow(musicScoreInfoArray, noteById, LongNoteMeshDisplayTimeSlowest, scoreLengthSec, MeshOverflowSpeedType.Slowest, _guideMeshOverflowResults);
+			DetectGuideMeshOverflow(musicScoreInfoArray, scrollTimeline, noteById, LongNoteMeshDisplayTimeFastest, scoreLengthSec, MeshOverflowSpeedType.Fastest, _guideMeshOverflowResults);
+			DetectGuideMeshOverflow(musicScoreInfoArray, scrollTimeline, noteById, LongNoteMeshDisplayTimeSlowest, scoreLengthSec, MeshOverflowSpeedType.Slowest, _guideMeshOverflowResults);
 			MergeMeshOverflowResults(_guideMeshOverflowResults);
 			foreach ((long startTicks, long endTicks, int maxMesh, MeshOverflowSpeedType speedType) in _guideMeshOverflowResults)
 			{
@@ -1183,10 +1166,10 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 			}
 		}
 
-		private void DetectGuideMeshOverflow(MusicScoreInfo[] musicScoreInfoArray, Dictionary<int, MusicScoreNoteBase> noteById, float displayTime, float scoreLengthSec, MeshOverflowSpeedType speedType, List<(long startTicks, long endTicks, int maxMesh, MeshOverflowSpeedType speedType)> results)
+		private void DetectGuideMeshOverflow(MusicScoreInfo[] musicScoreInfoArray, NoteScrollTimeline scrollTimeline, Dictionary<int, MusicScoreNoteBase> noteById, float displayTime, float scoreLengthSec, MeshOverflowSpeedType speedType, List<(long startTicks, long endTicks, int maxMesh, MeshOverflowSpeedType speedType)> results)
 		{
-			CollectGuideSegments(musicScoreInfoArray, displayTime, scoreLengthSec, noteById);
-			DetectMeshOverflowFromSegments(_guideMeshWorkSegments, scoreLengthSec, speedType, results);
+			CollectGuideSegments(musicScoreInfoArray, scrollTimeline, displayTime, noteById);
+			DetectMeshOverflowFromSegments(_guideMeshWorkSegments, scrollTimeline, displayTime, scoreLengthSec, speedType, results);
 		}
 
 		private void AddGuideMeshOverflowPlacement(long startTicks, long endTicks, int maxMeshCount, MeshOverflowSpeedType speedType)
@@ -1203,45 +1186,10 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 			});
 		}
 
-		private void CollectGuideSegments(MusicScoreInfo[] musicScoreInfoArray, float baseDisplayTime, float scoreLengthSec, Dictionary<int, MusicScoreNoteBase> noteById)
+		private void CollectGuideSegments(MusicScoreInfo[] musicScoreInfoArray, NoteScrollTimeline scrollTimeline, float displayTime, Dictionary<int, MusicScoreNoteBase> noteById)
 		{
 			_guideMeshWorkSegments.Clear();
-			CollectMeshSegments(musicScoreInfoArray, baseDisplayTime, scoreLengthSec, noteById, _guideMeshWorkSegments, true);
-		}
-
-		private static float GetMinHighSpeedRatioInRange(MusicScoreInfo[] musicScoreInfoArray, float startTime, float endTime)
-		{
-			float minSpeed = 1f;
-			if (musicScoreInfoArray == null || musicScoreInfoArray.Length == 0)
-			{
-				return minSpeed;
-			}
-			float activeSpeed = musicScoreInfoArray[0].speedRatio;
-			for (int i = 0; i < musicScoreInfoArray.Length; i++)
-			{
-				if (musicScoreInfoArray[i].time <= startTime)
-				{
-					activeSpeed = musicScoreInfoArray[i].speedRatio;
-				}
-				else
-				{
-					break;
-				}
-			}
-			minSpeed = Math.Min(activeSpeed, 1f);
-			for (int i = 0; i < musicScoreInfoArray.Length; i++)
-			{
-				MusicScoreInfo info = musicScoreInfoArray[i];
-				if (info.time > endTime)
-				{
-					break;
-				}
-				if (info.time >= startTime && minSpeed >= info.speedRatio)
-				{
-					minSpeed = info.speedRatio;
-				}
-			}
-			return minSpeed;
+			CollectMeshSegments(musicScoreInfoArray, scrollTimeline, displayTime, noteById, _guideMeshWorkSegments, true);
 		}
 
 		private void AddLaneOverlapPlacementsForTick(long tick)
@@ -1412,15 +1360,26 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 			return 80;
 		}
 
+		/// <summary>One hold or guide body between consecutive connected notes, as the line views draw it.</summary>
+		private struct MeshSegment
+		{
+			public float StartTime;
+			public float EndTime;
+			public float StartSpeedRatio;
+			public float EndSpeedRatio;
+			public float FirstVisibleTime;
+			public long StartTicks;
+			public long EndTicks;
+		}
+
 		private void CollectMeshSegments(
 			MusicScoreInfo[] musicScoreInfoArray,
-			float baseDisplayTime,
-			float scoreLengthSec,
+			NoteScrollTimeline scrollTimeline,
+			float displayTime,
 			Dictionary<int, MusicScoreNoteBase> noteById,
-			List<(float segStartTime, float segEndTime, long startTicks, long endTicks, float displayTime)> results,
+			List<MeshSegment> results,
 			bool collectGuide)
 		{
-			_ = scoreLengthSec;
 			foreach (MusicScoreNoteBase note in NoteList)
 			{
 				if (note == null || !note.IsConnectedFirst)
@@ -1441,16 +1400,19 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 					}
 					float startTime = MusicScoreMakerUtility.GetTimeFromTicks(current.ticks, musicScoreInfoArray);
 					float endTime = MusicScoreMakerUtility.GetTimeFromTicks(next.ticks, musicScoreInfoArray);
-					float currentSpeed = current.speedRatio > 0f ? current.speedRatio : 1f;
-					float nextSpeed = next.speedRatio > 0f ? next.speedRatio : 1f;
-					float minSpeed = GetMinHighSpeedRatioInRange(musicScoreInfoArray, startTime - baseDisplayTime, endTime);
-					if (minSpeed <= 0f)
+					if (endTime > startTime)
 					{
-						minSpeed = 1f;
+						results.Add(new MeshSegment
+						{
+							StartTime = startTime,
+							EndTime = endTime,
+							StartSpeedRatio = current.speedRatio,
+							EndSpeedRatio = next.speedRatio,
+							FirstVisibleTime = NoteBodySampler.FirstVisibleTime(scrollTimeline, displayTime, startTime, endTime, current.speedRatio, next.speedRatio),
+							StartTicks = current.ticks,
+							EndTicks = next.ticks
+						});
 					}
-					float highSpeedAdjustedDisplayTime = baseDisplayTime / minSpeed;
-					float displayTime = Math.Max(highSpeedAdjustedDisplayTime / currentSpeed, highSpeedAdjustedDisplayTime / nextSpeed);
-					results.Add((startTime, endTime, current.ticks, next.ticks, displayTime));
 					current = next;
 				}
 			}
@@ -1461,8 +1423,15 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 			return category == NoteCategory.Guide || category == NoteCategory.GuideEnd || category == NoteCategory.GuideHidden;
 		}
 
+		/// <summary>
+		/// Steps through the chart a frame at a time and counts the trapezoids the line view would draw, using
+		/// the same sampler, so hi-speed changes, zero and negative hi-speed are counted exactly as played.
+		/// Ranges where the count exceeds the line view's pool are reported.
+		/// </summary>
 		private static void DetectMeshOverflowFromSegments(
-			List<(float segStartTime, float segEndTime, long startTicks, long endTicks, float displayTime)> segments,
+			List<MeshSegment> segments,
+			NoteScrollTimeline scrollTimeline,
+			float displayTime,
 			float scoreLengthSec,
 			MeshOverflowSpeedType speedType,
 			List<(long startTicks, long endTicks, int maxMesh, MeshOverflowSpeedType speedType)> results)
@@ -1471,26 +1440,24 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 			{
 				return;
 			}
-			segments.Sort((a, b) => a.segStartTime.CompareTo(b.segStartTime));
-			float scanStartTime = float.MaxValue;
+			segments.Sort((a, b) => a.FirstVisibleTime.CompareTo(b.FirstVisibleTime));
+			float scanStartTime = Math.Max(segments[0].FirstVisibleTime, 0f);
 			float scanEndTime = float.MinValue;
-			foreach ((float segStartTime, float segEndTime, long _, long _, float displayTime) in segments)
+			long lastEndTicks = 0L;
+			foreach (MeshSegment segment in segments)
 			{
-				if (segEndTime < segStartTime)
-				{
-					continue;
-				}
-				float safeDisplayTime = displayTime > 0f ? displayTime : MeshOverflowScanStepSec;
-				scanStartTime = Math.Min(scanStartTime, segStartTime - safeDisplayTime);
-				scanEndTime = Math.Max(scanEndTime, segEndTime);
+				scanEndTime = Math.Max(scanEndTime, segment.EndTime);
+				lastEndTicks = Math.Max(lastEndTicks, segment.EndTicks);
 			}
-			scanStartTime = Math.Max(scanStartTime, 0f);
 			scanEndTime = Math.Min(scanEndTime, scoreLengthSec);
 			if (scanStartTime >= scanEndTime)
 			{
 				return;
 			}
-			int firstActiveSegmentIndex = 0;
+			int splitCount = LongNoteMeshSplitCount;
+			int threshold = LongNoteMeshOverflowThreshold;
+			var activeSegments = new List<int>(32);
+			int nextSegmentIndex = 0;
 			bool isOverflowing = false;
 			long overflowStartTicks = 0L;
 			long overflowEndTicks = 0L;
@@ -1499,50 +1466,43 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 			for (int sampleIndex = 0; sampleIndex < sampleCount; sampleIndex++)
 			{
 				float time = Math.Min(scanStartTime + sampleIndex * MeshOverflowScanStepSec, scanEndTime);
-				while (firstActiveSegmentIndex < segments.Count && segments[firstActiveSegmentIndex].segEndTime < time)
+				while (nextSegmentIndex < segments.Count && segments[nextSegmentIndex].FirstVisibleTime <= time)
 				{
-					firstActiveSegmentIndex++;
+					activeSegments.Add(nextSegmentIndex++);
 				}
 				int estimatedMesh = 0;
-				long firstVisibleStartTicks = 0L;
-				long lastVisibleStartTicks = 0L;
-				bool hasVisibleSegment = false;
-				for (int segmentIndex = firstActiveSegmentIndex; segmentIndex < segments.Count; segmentIndex++)
+				long firstVisibleStartTicks = long.MaxValue;
+				long lastVisibleStartTicks = long.MinValue;
+				int keep = 0;
+				for (int i = 0; i < activeSegments.Count; i++)
 				{
-					(float segStartTime, float segEndTime, long startTicks, long _, float displayTime) = segments[segmentIndex];
-					float safeDisplayTime = displayTime > 0f ? displayTime : MeshOverflowScanStepSec;
-					if (segStartTime - safeDisplayTime > time)
-					{
-						break;
-					}
-					if (segEndTime < time)
+					MeshSegment segment = segments[activeSegments[i]];
+					if (segment.EndTime < time)
 					{
 						continue;
 					}
-					float headVisibleRatio = Clamp01((time - segStartTime + safeDisplayTime) / safeDisplayTime);
-					float tailVisibleRatio = Clamp01((time - segEndTime + safeDisplayTime) / safeDisplayTime);
-					float visibleRatio = headVisibleRatio - tailVisibleRatio;
-					if (visibleRatio <= 0f)
+					activeSegments[keep++] = activeSegments[i];
+					int mesh = NoteBodySampler.CollectVisiblePieces(scrollTimeline, displayTime, time, segment.StartTime, segment.EndTime,
+						segment.StartSpeedRatio, segment.EndSpeedRatio, splitCount, null);
+					if (mesh <= 0)
 					{
 						continue;
 					}
-					estimatedMesh += (int)Math.Ceiling(visibleRatio * LongNoteMeshSplitCount);
-					if (!hasVisibleSegment)
-					{
-						firstVisibleStartTicks = startTicks;
-						hasVisibleSegment = true;
-					}
-					lastVisibleStartTicks = startTicks;
+					estimatedMesh += mesh;
+					firstVisibleStartTicks = Math.Min(firstVisibleStartTicks, segment.StartTicks);
+					lastVisibleStartTicks = Math.Max(lastVisibleStartTicks, segment.StartTicks);
 				}
-				if (estimatedMesh > LongNoteMeshOverflowThreshold)
+				activeSegments.RemoveRange(keep, activeSegments.Count - keep);
+				bool hasVisibleSegment = estimatedMesh > 0;
+				if (estimatedMesh > threshold)
 				{
 					if (!isOverflowing)
 					{
-						overflowStartTicks = hasVisibleSegment ? firstVisibleStartTicks : 0L;
+						overflowStartTicks = firstVisibleStartTicks;
 						maxMeshInRange = 0;
 						isOverflowing = true;
 					}
-					overflowEndTicks = hasVisibleSegment ? lastVisibleStartTicks : overflowStartTicks;
+					overflowEndTicks = Math.Max(overflowEndTicks, lastVisibleStartTicks);
 					maxMeshInRange = Math.Max(maxMeshInRange, estimatedMesh);
 				}
 				else if (isOverflowing)
@@ -1555,21 +1515,13 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 					results.Add((overflowStartTicks, endTicks, maxMeshInRange, speedType));
 					isOverflowing = false;
 					maxMeshInRange = 0;
+					overflowEndTicks = 0L;
 				}
 			}
 			if (isOverflowing)
 			{
-				results.Add((overflowStartTicks, segments[segments.Count - 1].endTicks, maxMeshInRange, speedType));
+				results.Add((overflowStartTicks, lastEndTicks, maxMeshInRange, speedType));
 			}
-		}
-
-		private static float Clamp01(float value)
-		{
-			if (value <= 0f || float.IsNaN(value))
-			{
-				return 0f;
-			}
-			return value >= 1f ? 1f : value;
 		}
 
 		private static void MergeMeshOverflowResults(List<(long startTicks, long endTicks, int maxMesh, MeshOverflowSpeedType speedType)> results)

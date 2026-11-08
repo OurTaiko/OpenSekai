@@ -126,9 +126,15 @@ namespace Sekai.Live
 
 			// 0 ≤ (notePosition - S) * k ≤ displayTime, solved for S.
 			double reach = displayTime / (double)noteSpeedRatio;
-			double low = Math.Min(notePosition, notePosition - reach);
-			double high = Math.Max(notePosition, notePosition - reach);
+			return FirstTimeInPositionRange(Math.Min(notePosition, notePosition - reach), Math.Max(notePosition, notePosition - reach), notAfter);
+		}
 
+		/// <summary>
+		/// Earliest time t ≤ notAfter with low ≤ S(t) ≤ high, or notAfter when there is none.
+		/// Negative infinity when S is already in range before the first hi-speed change.
+		/// </summary>
+		public float FirstTimeInPositionRange(double low, double high, float notAfter)
+		{
 			for (int i = -1; i < times.Length; i++)
 			{
 				double start = i < 0 ? double.NegativeInfinity : times[i];

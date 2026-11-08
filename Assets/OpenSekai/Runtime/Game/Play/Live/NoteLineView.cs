@@ -32,6 +32,8 @@ namespace Sekai
 		private const int TCount = 3;
 		private const int DefaultSplitMeshCount = 100;
 		private const int DefaultPoolMultiplier = 10;
+		// Custom charts get a larger pool; the chart editor's overflow check blocks charts above it.
+		private const int CustomMusicScorePoolMultiplier = 20;
 		private const int TrapezoidVertexCount = 8;
 		private const int TrapezoidIndexCount = 18;
 		private const int DefaultListCapacity = 64;
@@ -62,24 +64,33 @@ namespace Sekai
 		private Setting[] meshSettingBuffer;
 		private int meshCount;
 		private Trapezoid[] trapezoidVertexInfo;
+		private readonly List<NoteBodyPiece> bodyPieces = new List<NoteBodyPiece>(8);
 		private LiveBundleBuildData bundleBuildData;
 
 		public Material Material { get; private set; }
 
-		private static int GetSplitMeshCount(bool isCustomMusicScore)
+		public static int GetSplitMeshCount(bool isCustomMusicScore)
 		{
 			return DefaultSplitMeshCount;
 		}
 
 		private static int GetPoolMultiplier(bool isCustomMusicScore)
 		{
-			return DefaultPoolMultiplier;
+			return isCustomMusicScore ? CustomMusicScorePoolMultiplier : DefaultPoolMultiplier;
+		}
+
+		/// <summary>
+		/// Trapezoids one line view can draw per frame; the chart editor checks custom charts against this.
+		/// </summary>
+		public static int GetPoolCount(bool isCustomMusicScore)
+		{
+			return Mathf.Max(1, GetSplitMeshCount(isCustomMusicScore)) * GetPoolMultiplier(isCustomMusicScore);
 		}
 
 		public void Setup(LiveBundleBuildData bundleBuildData, string textureName, float alpha, bool isCustomMusicScore = false)
 		{
 			SplitMeshCount = Mathf.Max(1, GetSplitMeshCount(isCustomMusicScore));
-			PoolCount = Mathf.Max(1, SplitMeshCount * GetPoolMultiplier(isCustomMusicScore));
+			PoolCount = Mathf.Max(1, GetPoolCount(isCustomMusicScore));
 			this.bundleBuildData = bundleBuildData;
 
 			filter = gameObject.AddComponent<MeshFilter>();
@@ -348,11 +359,9 @@ namespace Sekai
 		}
 
 		/// <summary>
-		/// Draws the body between two consecutive notes of a hold or guide. Every point of the body reaches
-		/// the judge line at its own score time, so its screen position comes from the scroll timeline: with a
-		/// hi-speed change inside the segment the body bends, and with negative hi-speed it can fold back or
-		/// leave the screen and return, giving several separate visible runs. The timeline is linear between
-		/// hi-speed changes, so each such piece is clipped to the screen exactly and then sampled.
+		/// Draws the body between two consecutive notes of a hold or guide from the stretches
+		/// <see cref="NoteBodySampler"/> finds on screen: it bends at hi-speed changes, folds back under
+		/// negative hi-speed and is drawn as separate runs where part of it is off screen.
 		/// </summary>
 		private void DrawSegment(float time, INote baseNote, INote startNote, INote endNote, ref int meshCount)
 		{
@@ -364,15 +373,9 @@ namespace Sekai
 			NoteScrollTimeline timeline = startNoteBase.ScrollTimeline;
 			float startTime = startNote.MusicScoreInfo.time;
 			float endTime = endNote.MusicScoreInfo.time;
-			float duration = endTime - startTime;
-			if (timeline == null || duration <= 0f)
-			{
-				return;
-			}
-
-			// The part that already reached the judge line has been consumed.
-			float pieceStart = Mathf.Max(startTime, time);
-			if (pieceStart >= endTime)
+			bodyPieces.Clear();
+			if (NoteBodySampler.CollectVisiblePieces(timeline, startNoteBase.ScrollDisplayTime, time, startTime, endTime,
+				startNoteBase.speedRatio, endNoteBase.speedRatio, SplitMeshCount, bodyPieces) == 0)
 			{
 				return;
 			}
@@ -384,7 +387,7 @@ namespace Sekai
 				Now = time,
 				StartNote = startNote,
 				StartTime = startTime,
-				Duration = duration,
+				EndTime = endTime,
 				StartSpeedRatio = startNoteBase.speedRatio,
 				EndSpeedRatio = endNoteBase.speedRatio,
 				StartCenterLane = (startNote.DefaultLeftLane + startNote.DefaultRightLane) * 0.5f,
@@ -397,56 +400,32 @@ namespace Sekai
 			segment.ViewLastIndex = Mathf.Max(1, (viewNotes?.Count ?? 2) - 1);
 
 			int sampleCount = 0;
-			while (pieceStart < endTime)
+			foreach (NoteBodyPiece piece in bodyPieces)
 			{
-				float pieceEnd = Mathf.Min(timeline.NextChangeAfter(pieceStart), endTime);
-				float startProgress = segment.ProgressAt(pieceStart);
-				float endProgress = segment.ProgressAt(pieceEnd);
-
-				if (!TryClipToScreen(startProgress, endProgress, out float enter, out float exit))
+				if (!piece.ConnectsToPrevious)
 				{
 					FlushRun(ref sampleCount, ref meshCount, time, baseNote);
 				}
-				else
+
+				for (int step = sampleCount == 0 ? 0 : 1; step <= piece.Steps; step++)
 				{
-					if (enter > 0f)
+					if (sampleCount == meshSettingBuffer.Length)
 					{
-						// Re-entering the screen inside this piece: not connected to the previous run.
+						// Buffer full: draw what we have and continue from its last sample.
+						Setting last = meshSettingBuffer[sampleCount - 1];
 						FlushRun(ref sampleCount, ref meshCount, time, baseNote);
+						meshSettingBuffer[0] = last;
+						sampleCount = 1;
 					}
 
-					float runStart = Mathf.Lerp(pieceStart, pieceEnd, enter);
-					float runEnd = Mathf.Lerp(pieceStart, pieceEnd, exit);
-					float progressSpan = Mathf.Abs(Mathf.Lerp(startProgress, endProgress, exit) - Mathf.Lerp(startProgress, endProgress, enter));
-					int steps = Mathf.Max(1, Mathf.CeilToInt(progressSpan * SplitMeshCount));
-					for (int step = sampleCount == 0 ? 0 : 1; step <= steps; step++)
-					{
-						if (sampleCount == meshSettingBuffer.Length)
-						{
-							// Buffer full: draw what we have and continue from its last sample.
-							Setting last = meshSettingBuffer[sampleCount - 1];
-							FlushRun(ref sampleCount, ref meshCount, time, baseNote);
-							meshSettingBuffer[0] = last;
-							sampleCount = 1;
-						}
-
-						float sampleTime = Mathf.Lerp(runStart, runEnd, (float)step / steps);
-						meshSettingBuffer[sampleCount++] = segment.CreateSetting(sampleTime);
-					}
-
-					if (exit < 1f)
-					{
-						// Leaves the screen inside this piece.
-						FlushRun(ref sampleCount, ref meshCount, time, baseNote);
-					}
+					float sampleTime = Mathf.Lerp(piece.StartTime, piece.EndTime, (float)step / piece.Steps);
+					meshSettingBuffer[sampleCount++] = segment.CreateSetting(sampleTime);
 				}
 
 				if (meshCount >= PoolCount)
 				{
 					return;
 				}
-
-				pieceStart = pieceEnd;
 			}
 
 			FlushRun(ref sampleCount, ref meshCount, time, baseNote);
@@ -461,25 +440,6 @@ namespace Sekai
 			sampleCount = 0;
 		}
 
-		// Part of a straight piece (progress going linearly from start to end) that is on screen, as fractions
-		// of the piece. False when none of it is.
-		private static bool TryClipToScreen(float startProgress, float endProgress, out float enter, out float exit)
-		{
-			float delta = endProgress - startProgress;
-			if (Mathf.Abs(delta) < 1e-6f)
-			{
-				enter = 0f;
-				exit = 1f;
-				return startProgress >= 0f && startProgress <= 1f;
-			}
-
-			float atSpawnLine = -startProgress / delta;
-			float atJudgeLine = (1f - startProgress) / delta;
-			enter = Mathf.Max(Mathf.Min(atSpawnLine, atJudgeLine), 0f);
-			exit = Mathf.Min(Mathf.Max(atSpawnLine, atJudgeLine), 1f);
-			return enter < exit;
-		}
-
 		private struct SegmentContext
 		{
 			public NoteScrollTimeline Timeline;
@@ -487,7 +447,7 @@ namespace Sekai
 			public float Now;
 			public INote StartNote;
 			public float StartTime;
-			public float Duration;
+			public float EndTime;
 			public float StartSpeedRatio;
 			public float EndSpeedRatio;
 			public float StartCenterLane;
@@ -497,17 +457,12 @@ namespace Sekai
 			public int ViewIndex;
 			public int ViewLastIndex;
 
-			public float ProgressAt(float scoreTime)
-			{
-				float speedRatio = Mathf.Lerp(StartSpeedRatio, EndSpeedRatio, (scoreTime - StartTime) / Duration);
-				return Timeline.ProgressAt(Now, scoreTime, speedRatio, DisplayTime);
-			}
-
 			public Setting CreateSetting(float scoreTime)
 			{
-				float lineProgress = Mathf.Clamp01((scoreTime - StartTime) / Duration);
+				float lineProgress = Mathf.Clamp01((scoreTime - StartTime) / (EndTime - StartTime));
 				float centerProgress = LiveConfig.GetNoteLineCenterProgress(lineProgress, StartNote);
-				float viewProgress = Mathf.Min(LiveConfig.GetNoteViewProgress(ProgressAt(scoreTime)), 1f);
+				float progress = NoteBodySampler.ProgressAt(Timeline, DisplayTime, Now, scoreTime, StartTime, EndTime, StartSpeedRatio, EndSpeedRatio);
+				float viewProgress = Mathf.Min(LiveConfig.GetNoteViewProgress(progress), 1f);
 				float centerLane = Mathf.Lerp(StartCenterLane, EndCenterLane, centerProgress);
 				float width = Mathf.Lerp(StartWidth, EndWidth, centerProgress);
 				Vector2 lanePosition = GetLanePosition(centerLane);
