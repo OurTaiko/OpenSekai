@@ -12,9 +12,5 @@ namespace Sekai.Rendering
 		public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
 		{
 		}
-
-		public override void SetupRenderPasses(ScriptableRenderer renderer, in RenderingData renderingData)
-		{
-		}
 	}
 }

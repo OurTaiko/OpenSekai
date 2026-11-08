@@ -166,7 +166,8 @@ namespace CriWare {
 				.Select(obj => (Component)obj)
 				.ToList();
 
-			int suspectInstanceId = suspect.GetInstanceID();
+			// Compare by object reference (Unity's == compares by instance/entity id) to avoid the obsolete GetInstanceID API.
+			UnityEngine.Object suspectInstanceId = suspect;
 			foreach (var component in foundComponents) {
 				var serializeObject = new SerializedObject(component);
 				if (serializeObject == null) {
@@ -180,7 +181,7 @@ namespace CriWare {
 			return foundReferences;
 		}
 
-		private static void FindSerializePropertyRecursive(SerializedProperty iterator, int suspect, Component component) {
+		private static void FindSerializePropertyRecursive(SerializedProperty iterator, UnityEngine.Object suspect, Component component) {
 			while (iterator.NextVisible(true)) {
 				if (iterator.isArray && iterator.type != "string") {
 					FindSerializePropertyRecursive(iterator, suspect, component);
@@ -194,18 +195,19 @@ namespace CriWare {
 			}
 		}
 
-		private static bool CompareGuid(SerializedProperty property, int suspect) {
+		private static bool CompareGuid(SerializedProperty property, UnityEngine.Object suspect) {
 			if (property.propertyType != SerializedPropertyType.ObjectReference) {
 				return false;
 			}
 
 			bool checkSubClass = property.objectReferenceValue is GameObject || property.objectReferenceValue is ScriptableObject;
-			if (checkSubClass && property.objectReferenceValue.GetInstanceID() == suspect) {
+			if (checkSubClass && property.objectReferenceValue == suspect) {
 				return true;
 			} else if (property.objectReferenceValue is Component) {
-				return (property.objectReferenceValue as Component)?.gameObject.GetInstanceID() == suspect;
+				var referencedComponent = property.objectReferenceValue as Component;
+				return referencedComponent != null && referencedComponent.gameObject == suspect;
 			}
-			return property.objectReferenceValue?.GetInstanceID() == suspect;
+			return property.objectReferenceValue != null && property.objectReferenceValue == suspect;
 		}
 	}
 

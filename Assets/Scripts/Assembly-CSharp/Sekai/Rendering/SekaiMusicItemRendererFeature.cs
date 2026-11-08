@@ -8,7 +8,7 @@ namespace Sekai.Rendering
 		{
 			if (SekaiMusicItemSettings.ExistTransparentMusicItem())
 			{
-				EnqueuePasses(Passes, renderer);
+				base.AddRenderPasses(renderer, ref renderingData);
 			}
 		}
 	}

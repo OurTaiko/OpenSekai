@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
@@ -60,9 +61,17 @@ namespace Sekai.Rendering
 
 		public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
 		{
-			if (SekaiUIEffectSettings.Blur.IsActive && IsFinalCamera(renderingData.cameraData.camera))
+			if (renderer == null || m_DrawUIPass == null)
 			{
-				renderer.EnqueuePass(m_SetupPass);
+				return;
+			}
+
+			// URP 17 removed SetupRenderPasses / cameraColorTargetHandle: passes are configured here and
+			// resolve the camera targets themselves while recording the RenderGraph.
+			var camera = renderingData.cameraData.camera;
+			if (SekaiUIEffectSettings.Blur.IsActive && IsFinalCamera(camera))
+			{
+				SetupUICameraPass(renderingData.cameraData.cameraTargetDescriptor, camera);
 				renderer.EnqueuePass(m_CopyScreenToCapturePass);
 				renderer.EnqueuePass(m_DrawBlurUIPass);
 				renderer.EnqueuePass(m_BlurPass);
@@ -70,24 +79,8 @@ namespace Sekai.Rendering
 				return;
 			}
 
+			SetupDefaultCameraPass(camera);
 			renderer.EnqueuePass(m_DrawUIPass);
-		}
-
-		public override void SetupRenderPasses(ScriptableRenderer renderer, in RenderingData renderingData)
-		{
-			if (renderer == null || m_DrawUIPass == null)
-			{
-				return;
-			}
-
-			if (SekaiUIEffectSettings.Blur.IsActive && IsFinalCamera(renderingData.cameraData.camera))
-			{
-				SetupUICameraPass(renderer, in renderingData);
-			}
-			else
-			{
-				SetupDefaultCameraPass(renderer, in renderingData);
-			}
 		}
 
 		protected override void Dispose(bool disposing)
@@ -97,19 +90,16 @@ namespace Sekai.Rendering
 			m_UIBuffer?.Dispose();
 		}
 
-		private void SetupUICameraPass(ScriptableRenderer renderer, in RenderingData renderingData)
+		private void SetupUICameraPass(RenderTextureDescriptor cameraTargetDescriptor, Camera camera)
 		{
-			var colorTarget = renderer.cameraColorTargetHandle;
-			var depthTarget = renderer.cameraDepthTargetHandle;
-			var colorDescriptor = GetDescriptor(colorTarget, renderingData.cameraData.cameraTargetDescriptor);
-			var depthDescriptor = GetDescriptor(depthTarget, renderingData.cameraData.cameraTargetDescriptor);
-			var cameraLayerMask = GetCameraLayerMask(renderingData.cameraData.camera);
+			var colorDescriptor = GetColorDescriptor(cameraTargetDescriptor);
+			var depthDescriptor = GetDepthDescriptor(cameraTargetDescriptor);
+			var cameraLayerMask = GetCameraLayerMask(camera);
 
-			m_SetupPass.renderPassEvent = RenderPassEvent.BeforeRendering;
 			m_SetupPass.Setup(m_UIBuffer, colorDescriptor, depthDescriptor);
 
 			m_CopyScreenToCapturePass.renderPassEvent = (RenderPassEvent)1;
-			m_CopyScreenToCapturePass.Setup(colorTarget, SekaiUIBuffer.CaptureColorTexHandle);
+			m_CopyScreenToCapturePass.Setup(SekaiUIBuffer.CaptureColorTexHandle);
 
 			m_DrawBlurUIPass.renderPassEvent = (RenderPassEvent)m_PassSettings.Event_DrawBlurUI;
 			m_DrawBlurUIPass.Setup(
@@ -129,33 +119,49 @@ namespace Sekai.Rendering
 				cameraLayerMask & m_BlurSettings.UILayerMask,
 				StencilState.defaultValue,
 				0,
-				colorTarget,
-				depthTarget,
+				null,
+				null,
 				true,
 				m_BlurSettings.RenderQueueRange);
 		}
 
-		private void SetupDefaultCameraPass(ScriptableRenderer renderer, in RenderingData renderingData)
+		private void SetupDefaultCameraPass(Camera camera)
 		{
 			m_DrawUIPass.renderPassEvent = (RenderPassEvent)m_AreaCameraSettings.Event_DrawUI;
 			m_DrawUIPass.Setup(
-				GetCameraLayerMask(renderingData.cameraData.camera),
+				GetCameraLayerMask(camera),
 				StencilState.defaultValue,
 				0,
-				renderer.cameraColorTargetHandle,
-				renderer.cameraDepthTargetHandle,
+				null,
+				null,
 				true,
 				m_BlurSettings.RenderQueueRange);
+		}
+
+		private static RenderTextureDescriptor GetColorDescriptor(RenderTextureDescriptor cameraTargetDescriptor)
+		{
+			var desc = cameraTargetDescriptor;
+			desc.depthStencilFormat = GraphicsFormat.None;
+			desc.depthBufferBits = 0;
+			return desc;
+		}
+
+		private static RenderTextureDescriptor GetDepthDescriptor(RenderTextureDescriptor cameraTargetDescriptor)
+		{
+			var desc = cameraTargetDescriptor;
+			var depthFormat = desc.depthStencilFormat != GraphicsFormat.None
+				? desc.depthStencilFormat
+				: CoreUtils.GetDefaultDepthStencilFormat();
+			desc.graphicsFormat = GraphicsFormat.None;
+			desc.depthStencilFormat = depthFormat;
+			desc.msaaSamples = 1;
+			desc.bindMS = false;
+			return desc;
 		}
 
 		private static LayerMask GetCameraLayerMask(Camera camera)
 		{
 			return camera != null ? camera.cullingMask : ~0;
-		}
-
-		private static RenderTextureDescriptor GetDescriptor(RTHandle handle, RenderTextureDescriptor fallback)
-		{
-			return handle != null && handle.rt != null ? handle.rt.descriptor : fallback;
 		}
 
 		private static bool IsFinalCamera(Camera camera)

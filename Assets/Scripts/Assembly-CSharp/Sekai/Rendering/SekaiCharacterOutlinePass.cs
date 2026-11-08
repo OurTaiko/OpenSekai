@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.Universal;
 
 namespace Sekai.Rendering
@@ -30,9 +31,11 @@ namespace Sekai.Rendering
 			m_Settings = settings;
 		}
 
-		public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
+		public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
 		{
-			UpdateOutline(renderingData.cameraData.camera);
+			// Only CPU-side global shader values are updated (same as the old Execute, which used Shader.SetGlobal*).
+			// Recording happens right before this camera's graph executes, so the values are in place for its draws.
+			UpdateOutline(frameData.Get<UniversalCameraData>().camera);
 		}
 
 		private void UpdateOutline(Camera camera)

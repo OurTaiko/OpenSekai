@@ -6,7 +6,7 @@ namespace Sekai.Rendering
 	{
 		public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
 		{
-			EnqueuePasses(Passes, renderer);
+			base.AddRenderPasses(renderer, ref renderingData);
 		}
 	}
 }

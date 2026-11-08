@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.RenderGraphModule;
+using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
 
 namespace Sekai.Rendering
@@ -36,32 +38,33 @@ namespace Sekai.Rendering
 			m_Destination = dest;
 		}
 
-		public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
+		public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
 		{
 			if (m_Source == null || m_Destination == null || SekaiUIBuffer.BlurTempHandle == null || m_UIEffectMaterial == null)
 			{
 				return;
 			}
 
-			var cmd = CommandBufferPool.Get();
-			using (new ProfilingScope(cmd, m_ProfilingSampler))
-			{
-				ExecuteBlur(cmd, ref renderingData);
-			}
+			var cameraData = frameData.Get<UniversalCameraData>();
+			var descriptor = cameraData.cameraTargetDescriptor;
 
-			context.ExecuteCommandBuffer(cmd);
-			CommandBufferPool.Release(cmd);
-		}
-
-		private void ExecuteBlur(CommandBuffer cmd, ref RenderingData renderingData)
-		{
-			cmd.SetGlobalFloat(SamplingDistance, SekaiUIEffectSettings.Blur.BlurSamplingDistance);
-			var descriptor = renderingData.cameraData.cameraTargetDescriptor;
-			cmd.SetGlobalVector(
+			// These used to be set with cmd.SetGlobal*; they are only read by the blur material,
+			// so they are set on the material directly (RenderGraph executes right after recording).
+			m_UIEffectMaterial.SetFloat(SamplingDistance, SekaiUIEffectSettings.Blur.BlurSamplingDistance);
+			m_UIEffectMaterial.SetVector(
 				BlurResolutionParams,
 				new Vector4(1f / descriptor.width, 1f / descriptor.height, 0f, 0f));
-			Blitter.BlitCameraTexture(cmd, m_Source, SekaiUIBuffer.BlurTempHandle, m_UIEffectMaterial, 0);
-			Blitter.BlitCameraTexture(cmd, SekaiUIBuffer.BlurTempHandle, m_Destination, m_UIEffectMaterial, 1);
+
+			var source = renderGraph.ImportTexture(m_Source);
+			var temp = renderGraph.ImportTexture(SekaiUIBuffer.BlurTempHandle);
+			var destination = renderGraph.ImportTexture(m_Destination);
+
+			renderGraph.AddBlitPass(
+				new RenderGraphUtils.BlitMaterialParameters(source, temp, m_UIEffectMaterial, 0),
+				m_ProfilingSampler.name + " (Pass 0)");
+			renderGraph.AddBlitPass(
+				new RenderGraphUtils.BlitMaterialParameters(temp, destination, m_UIEffectMaterial, 1),
+				m_ProfilingSampler.name + " (Pass 1)");
 		}
 
 		public void Cleanup()

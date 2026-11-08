@@ -42,6 +42,9 @@ namespace Sekai.Rendering
 			var scale = SekaiUIEffectSettings.Blur.CaptureResolutionScale;
 			desc.width = Mathf.Max(1, Mathf.RoundToInt(desc.width * scale));
 			desc.height = Mathf.Max(1, Mathf.RoundToInt(desc.height * scale));
+			// Must match the capture color target (single sampled) to be bound together in a RenderGraph pass.
+			desc.msaaSamples = 1;
+			desc.bindMS = false;
 			return desc;
 		}
 
@@ -68,7 +71,7 @@ namespace Sekai.Rendering
 
 		private void AllocRTHandle(ref RTHandle handle, RenderTextureDescriptor desc, string idName)
 		{
-			RenderingUtils.ReAllocateIfNeeded(ref handle, desc, FilterMode.Bilinear, TextureWrapMode.Clamp, name: idName);
+			RenderingUtils.ReAllocateHandleIfNeeded(ref handle, desc, FilterMode.Bilinear, TextureWrapMode.Clamp, name: idName);
 		}
 
 		public void Dispose()

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.Universal;
 
 namespace Sekai.Rendering
@@ -56,13 +57,16 @@ namespace Sekai.Rendering
 			}
 		}
 
-		public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
+		private class PassData
 		{
+			public RendererListHandle RendererList;
+			public Vector4 DrawObjectPassData;
+			public Vector4 ScaleBiasRt;
 		}
 
-		public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
+		public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
 		{
-			// Original SekaiRenderer owns the SRPDefaultUnlit draw stage. In this URP 14
+			// Original SekaiRenderer owns the SRPDefaultUnlit draw stage. In this URP
 			// port the built-in UniversalRenderer already draws that tag, so replaying
 			// Default here makes transparent UI accumulate alpha twice.
 			if (m_SkipExecution)
@@ -70,38 +74,42 @@ namespace Sekai.Rendering
 				return;
 			}
 
-			var cmd = CommandBufferPool.Get();
-			using (new ProfilingScope(cmd, m_ProfilingSampler))
+			var resourceData = frameData.Get<UniversalResourceData>();
+			var renderingData = frameData.Get<UniversalRenderingData>();
+			var cameraData = frameData.Get<UniversalCameraData>();
+			var lightData = frameData.Get<UniversalLightData>();
+
+			using (var builder = renderGraph.AddRasterRenderPass<PassData>(m_ProfilingSampler.name, out var passData, m_ProfilingSampler))
 			{
-				cmd.SetGlobalVector(s_DrawObjectPassDataPropID, new Vector4(0f, 0f, 0f, m_IsOpaque ? 1f : 0f));
-
-				var yFlip = renderingData.cameraData.IsCameraProjectionMatrixFlipped();
-				var flipSign = yFlip ? -1f : 1f;
-				var scaleBias = flipSign < 0f
-					? new Vector4(flipSign, 1f, -1f, 1f)
-					: new Vector4(flipSign, 0f, 1f, 1f);
-				cmd.SetGlobalVector(s_ScaleBiasRtPropID, scaleBias);
-
-				context.ExecuteCommandBuffer(cmd);
-				cmd.Clear();
-
 				var sortingCriteria = m_IsOpaque
-					? renderingData.cameraData.defaultOpaqueSortFlags
+					? cameraData.defaultOpaqueSortFlags
 					: SortingCriteria.CommonTransparent;
-				var drawingSettings = CreateDrawingSettings(m_ShaderTagIdList, ref renderingData, sortingCriteria);
+				var drawingSettings = RenderingUtils.CreateDrawingSettings(m_ShaderTagIdList, renderingData, cameraData, lightData, sortingCriteria);
 				var filteringSettings = m_FilteringSettings;
 
 #if UNITY_EDITOR
-				if (renderingData.cameraData.isPreviewCamera)
+				if (cameraData.isPreviewCamera)
 				{
 					filteringSettings.layerMask = -1;
 				}
 #endif
 
-				context.DrawRenderers(renderingData.cullResults, ref drawingSettings, ref filteringSettings, ref m_RenderStateBlock);
-			}
+				passData.RendererList = SekaiRenderGraphUtils.CreateRendererList(
+					renderGraph, renderingData.cullResults, drawingSettings, filteringSettings, m_RenderStateBlock);
+				passData.DrawObjectPassData = new Vector4(0f, 0f, 0f, m_IsOpaque ? 1f : 0f);
+				passData.ScaleBiasRt = SekaiRenderGraphUtils.GetScaleBiasRt(cameraData, resourceData);
 
-			CommandBufferPool.Release(cmd);
+				builder.UseRendererList(passData.RendererList);
+				builder.SetRenderAttachment(resourceData.activeColorTexture, 0, AccessFlags.Write);
+				builder.SetRenderAttachmentDepth(resourceData.activeDepthTexture, AccessFlags.ReadWrite);
+				builder.AllowGlobalStateModification(true);
+				builder.SetRenderFunc(static (PassData data, RasterGraphContext context) =>
+				{
+					context.cmd.SetGlobalVector(s_DrawObjectPassDataPropID, data.DrawObjectPassData);
+					context.cmd.SetGlobalVector(s_ScaleBiasRtPropID, data.ScaleBiasRt);
+					context.cmd.DrawRendererList(data.RendererList);
+				});
+			}
 		}
 	}
 }
