@@ -20,7 +20,7 @@ namespace Sekai
 
 		public void Check()
 		{
-			if (Input.GetKeyDown(KeyCode.Escape))
+			if (NativeInput.BackKeyDown)
 			{
 				ExecuteBackKey();
 			}
@@ -33,7 +33,7 @@ namespace Sekai
 			{
 				var pointer = new PointerEventData(EventSystem.current)
 				{
-					position = Input.mousePosition
+					position = NativeInput.PointerPosition
 				};
 				EventSystem.current.RaycastAll(pointer, results);
 			}

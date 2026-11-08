@@ -2,6 +2,7 @@ using OpenSekai.Audio;
 using OpenSekai.SceneFlow;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 
 namespace Sekai
 {
@@ -47,6 +48,7 @@ namespace Sekai
 			AssetBundleManager.Instance.Initialize();
 			SoundManager.Instance.Initialize();
 			SoundUtility.SetupGlobalSeSettings(GlobalSeSettings.Normal);
+			NativeInput.Initialize();
 			EnsureEventSystem();
 			Debug.Log("[Boot] OpenSekai services initialized");
 		}
@@ -61,7 +63,7 @@ namespace Sekai
 			GameObject prefab = Resources.Load<GameObject>(EventSystemPrefabPath);
 			GameObject eventSystemObject = prefab != null
 				? Object.Instantiate(prefab)
-				: new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
+				: new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
 			eventSystemObject.name = prefab != null ? prefab.name : "EventSystem";
 			Object.DontDestroyOnLoad(eventSystemObject);
 		}

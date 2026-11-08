@@ -458,7 +458,7 @@ namespace Sekai
 
 		private void ExecuteBackKeyProcess()
 		{
-			if (currentState != DialogState.Show || !Input.GetKeyDown(KeyCode.Escape))
+			if (currentState != DialogState.Show || !NativeInput.BackKeyDown)
 			{
 				return;
 			}

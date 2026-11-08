@@ -223,11 +223,10 @@ namespace Sekai.MusicScoreMaker.Ingame.Input
 
 		private void DetectPinch()
 		{
-			if (UnityEngine.Input.touchSupported && UnityEngine.Input.touchCount > 1 && UnityEngine.Input.touchCount == 2)
+			var touches = NativeInput.ActiveTouches;
+			if (NativeInput.TouchSupported && touches.Count == 2)
 			{
-				Touch touch0 = UnityEngine.Input.GetTouch(0);
-				Touch touch1 = UnityEngine.Input.GetTouch(1);
-				float distance = Vector2.Distance(touch0.position, touch1.position);
+				float distance = Vector2.Distance(touches[0].screenPosition, touches[1].screenPosition);
 				if (!_isPinching)
 				{
 					_isPinching = true;

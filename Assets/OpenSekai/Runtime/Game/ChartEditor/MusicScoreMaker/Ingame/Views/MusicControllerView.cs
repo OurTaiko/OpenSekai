@@ -34,7 +34,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 		// OpenSekai: allow Space to trigger the same play/pause path as the UI button.
 		private void Update()
 		{
-			if (!UnityEngine.Input.GetKeyDown(KeyCode.Space) || !CanHandlePlayPauseShortcut())
+			if (!NativeInput.GetKeyDown(UnityEngine.InputSystem.Key.Space) || !CanHandlePlayPauseShortcut())
 			{
 				return;
 			}

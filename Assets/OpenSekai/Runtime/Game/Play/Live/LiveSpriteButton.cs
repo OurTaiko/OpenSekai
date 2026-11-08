@@ -1,6 +1,8 @@
 using System;
 using DG.Tweening;
 using UnityEngine;
+using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
+using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 namespace Sekai
 {
@@ -76,14 +78,14 @@ namespace Sekai
 			{
 				return;
 			}
-			if (Input.GetMouseButtonDown(0) && touchId == DisableId && Contains(Input.mousePosition))
+			if (NativeInput.GetMouseButtonDown(0) && touchId == DisableId && Contains(NativeInput.PointerPosition))
 			{
 				ScaleDown();
 				touchId = 0;
 			}
-			else if (Input.GetMouseButtonUp(0) && touchId == 0)
+			else if (NativeInput.GetMouseButtonUp(0) && touchId == 0)
 			{
-				if (Contains(Input.mousePosition))
+				if (Contains(NativeInput.PointerPosition))
 				{
 					OnClick();
 					ScaleUp();
@@ -102,23 +104,23 @@ namespace Sekai
 			{
 				return;
 			}
-			Touch[] touches = Input.touches;
-			for (int i = 0; i < touches.Length; i++)
+			var touches = NativeInput.ActiveTouches;
+			for (int i = 0; i < touches.Count; i++)
 			{
 				Touch touch = touches[i];
-				Vector2 position = touch.position;
+				Vector2 position = touch.screenPosition;
 				if (touch.phase == TouchPhase.Began)
 				{
 					if (touchId == DisableId && Contains(position))
 					{
 						ScaleDown();
-						touchId = touch.fingerId;
+						touchId = touch.finger.index;
 						return;
 					}
 				}
 				else if (touch.phase == TouchPhase.Ended)
 				{
-					if (touchId == touch.fingerId)
+					if (touchId == touch.finger.index)
 					{
 						if (Contains(position))
 						{
@@ -155,7 +157,7 @@ namespace Sekai
 		private void LateUpdate()
 		{
 			UpdateTouches();
-			if (Input.touchCount == 0)
+			if (NativeInput.TouchCount == 0)
 			{
 				UpdateMouse();
 			}

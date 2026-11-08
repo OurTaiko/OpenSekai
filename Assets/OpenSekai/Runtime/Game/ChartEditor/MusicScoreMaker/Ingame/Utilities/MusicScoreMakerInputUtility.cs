@@ -1,18 +1,19 @@
 namespace Sekai.MusicScoreMaker.Ingame.Utilities
 {
-	using UnityEngine;
+	using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 	public static class MusicScoreMakerInputUtility
 	{
 		public static bool IsInputStarted()
 		{
-			if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+			if (NativeInput.GetMouseButtonDown(0) || NativeInput.GetMouseButtonDown(1))
 			{
 				return true;
 			}
-			for (int i = 0; i < Input.touchCount; i++)
+			var touches = NativeInput.ActiveTouches;
+			for (int i = 0; i < touches.Count; i++)
 			{
-				if (Input.GetTouch(i).phase == TouchPhase.Began)
+				if (touches[i].phase == TouchPhase.Began)
 				{
 					return true;
 				}
@@ -22,17 +23,18 @@ namespace Sekai.MusicScoreMaker.Ingame.Utilities
 
 		public static bool IsInputEnded()
 		{
-			if (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1))
+			if (NativeInput.GetMouseButtonUp(0) || NativeInput.GetMouseButtonUp(1))
 			{
 				return true;
 			}
-			if (Input.touchCount == 0)
+			var touches = NativeInput.ActiveTouches;
+			if (touches.Count == 0)
 			{
 				return true;
 			}
-			for (int i = 0; i < Input.touchCount; i++)
+			for (int i = 0; i < touches.Count; i++)
 			{
-				TouchPhase phase = Input.GetTouch(i).phase;
+				TouchPhase phase = touches[i].phase;
 				if (phase == TouchPhase.Ended || phase == TouchPhase.Canceled)
 				{
 					return true;
@@ -43,18 +45,19 @@ namespace Sekai.MusicScoreMaker.Ingame.Utilities
 
 		public static bool IsMultipleInputStarted()
 		{
-			if ((Input.GetMouseButtonDown(0) && Input.GetMouseButton(1))
-				|| (Input.GetMouseButtonDown(1) && Input.GetMouseButton(0)))
+			if ((NativeInput.GetMouseButtonDown(0) && NativeInput.GetMouseButton(1))
+				|| (NativeInput.GetMouseButtonDown(1) && NativeInput.GetMouseButton(0)))
 			{
 				return true;
 			}
-			if (!Input.touchSupported || Input.touchCount < 2)
+			var touches = NativeInput.ActiveTouches;
+			if (!NativeInput.TouchSupported || touches.Count < 2)
 			{
 				return false;
 			}
-			for (int i = 0; i < Input.touchCount; i++)
+			for (int i = 0; i < touches.Count; i++)
 			{
-				if (Input.GetTouch(i).phase == TouchPhase.Began)
+				if (touches[i].phase == TouchPhase.Began)
 				{
 					return true;
 				}
@@ -64,11 +67,11 @@ namespace Sekai.MusicScoreMaker.Ingame.Utilities
 
 		public static bool IsMultipleInputActive()
 		{
-			if (Input.GetMouseButton(0) && Input.GetMouseButton(1))
+			if (NativeInput.GetMouseButton(0) && NativeInput.GetMouseButton(1))
 			{
 				return true;
 			}
-			return Input.touchSupported && Input.touchCount > 1;
+			return NativeInput.TouchSupported && NativeInput.TouchCount > 1;
 		}
 	}
 }

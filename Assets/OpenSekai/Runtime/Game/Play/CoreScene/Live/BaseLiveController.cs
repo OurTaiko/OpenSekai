@@ -244,7 +244,7 @@ namespace Sekai.Core.Live
 			currentGameTime = Time.realtimeSinceStartupAsDouble;
 			base.OnUpdate();
 
-			if (Input.GetKeyDown(KeyCode.Escape))
+			if (NativeInput.BackKeyDown)
 			{
 				OnBackKey();
 			}

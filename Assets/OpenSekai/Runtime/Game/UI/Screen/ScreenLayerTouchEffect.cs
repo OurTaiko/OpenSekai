@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Sekai.Extensions;
 using Sekai.UI;
 using UnityEngine;
+using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 namespace Sekai
 {
@@ -46,7 +47,7 @@ namespace Sekai
 				return;
 			}
 
-			var touchCount = Input.touchCount;
+			var touchCount = NativeInput.TouchCount;
 			if (touchCount > 0)
 			{
 				UpdateTouches(touchCount);
@@ -85,12 +86,13 @@ namespace Sekai
 
 		private void UpdateTouches(int touchCount)
 		{
+			var touches = NativeInput.ActiveTouches;
 			var count = Mathf.Min(touchCount, touchEffects.Length);
 			for (var i = 0; i < count; i++)
 			{
-				var touch = Input.GetTouch(i);
-				var fingerId = touch.fingerId;
-				var screenPos = new Vector3(touch.position.x, touch.position.y, 0f);
+				var touch = touches[i];
+				var fingerId = touch.finger.index;
+				var screenPos = new Vector3(touch.screenPosition.x, touch.screenPosition.y, 0f);
 				if (touch.phase == TouchPhase.Began)
 				{
 					PlayTapEffect(fingerId, screenPos);
@@ -124,10 +126,9 @@ namespace Sekai
 		private void UpdateMouseFallback()
 		{
 			const int mouseFingerId = 0;
-			var screenPos = Input.mousePosition;
-			screenPos.z = 0f;
+			Vector3 screenPos = NativeInput.PointerPosition;
 
-			if (Input.GetMouseButtonDown(0))
+			if (NativeInput.GetMouseButtonDown(0))
 			{
 				mousePressed = true;
 				lastMousePosition = screenPos;
@@ -140,7 +141,7 @@ namespace Sekai
 				return;
 			}
 
-			if (Input.GetMouseButton(0))
+			if (NativeInput.GetMouseButton(0))
 			{
 				if (touchEffectMap == null || !touchEffectMap.ContainsKey(mouseFingerId))
 				{

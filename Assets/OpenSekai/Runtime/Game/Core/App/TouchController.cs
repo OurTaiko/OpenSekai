@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
+using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 namespace Sekai
 {
@@ -22,21 +24,22 @@ namespace Sekai
 
 		private void CheckTouch()
 		{
-			if (Input.touchCount >= 1)
+			var touches = NativeInput.ActiveTouches;
+			if (touches.Count >= 1)
 			{
-				Touch touch = Input.GetTouch(0);
+				Touch touch = touches[0];
 				if (touch.phase == TouchPhase.Began)
 				{
-					OnTouch?.Invoke(touch.position);
-					CheckHit(touch.position);
+					OnTouch?.Invoke(touch.screenPosition);
+					CheckHit(touch.screenPosition);
 				}
 
 				return;
 			}
 
-			if (Input.GetMouseButtonDown(0))
+			if (NativeInput.GetMouseButtonDown(0))
 			{
-				Vector2 position = Input.mousePosition;
+				Vector2 position = NativeInput.PointerPosition;
 				OnTouch?.Invoke(position);
 				CheckHit(position);
 			}

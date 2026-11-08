@@ -179,7 +179,6 @@ namespace Sekai.Core.Live
 
 		public void RefreshInput()
 		{
-			Input.ResetInputAxes();
 			foreach (var device in InputSystem.devices)
 			{
 				InputSystem.ResetDevice(device);
