@@ -137,6 +137,16 @@ namespace Sekai.Core.Live
 			LiveViewExt.OnUpdate(liveViews, currentAudioLatencyMusicTimeMs);
 		}
 
+		protected override void OnApplicationPause(bool pauseStatus)
+		{
+			base.OnApplicationPause(pauseStatus);
+			// Going to the background mid-song opens the pause menu instead of letting the chart run on.
+			if (pauseStatus)
+			{
+				OnPause();
+			}
+		}
+
 		protected override void OnPause()
 		{
 			if ((state == LiveControllerState.Playing || state == LiveControllerState.ResumeCountDown) && result == 0)

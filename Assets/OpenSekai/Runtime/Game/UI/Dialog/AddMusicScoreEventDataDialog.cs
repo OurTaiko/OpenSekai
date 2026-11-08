@@ -192,7 +192,8 @@ namespace Sekai
 
 		private static string FormatHighSpeedForInput(float value)
 		{
-			return value.ToString("0.0", CultureInfo.InvariantCulture);
+			// Up to three decimals so editing an existing x1.25 event doesn't silently round it to x1.3.
+			return value.ToString("0.0##", CultureInfo.InvariantCulture);
 		}
 
 		private void OnBpmInputEndEdit(string value)

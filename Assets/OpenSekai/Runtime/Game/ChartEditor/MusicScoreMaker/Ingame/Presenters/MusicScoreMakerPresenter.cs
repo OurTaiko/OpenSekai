@@ -7471,8 +7471,16 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 
 		private void ShowClearNotesAndSpeedEventsDialog(ShowClearNotesAndSpeedEventsDialogEvent e)
 		{
-			// TODO(original): restore confirmation dialog.
-			ClearNotesAndSpeedEvents(new ClearNotesAndSpeedEventsEvent());
+			ScreenManager.Instance?.Show2ButtonDialog<Common2ButtonDialog>(
+				DialogType.Common2ButtonDialog,
+				null,
+				"WORD_DECIDE",
+				"WORD_CANCEL",
+				() => ClearNotesAndSpeedEvents(new ClearNotesAndSpeedEventsEvent()),
+				null,
+				DisplayLayerType.Layer_Dialog,
+				DialogSize.Manual,
+				allowCloseExternal: true)?.SetMessageBodyText("是否确认重置谱面？将会清空所有音符\n可使用撤销恢复");
 		}
 
 		private void SaveAndPostMusicScore(SaveAndPostMusicScoreEvent e)

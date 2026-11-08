@@ -30,3 +30,35 @@ It was relicensed from MIT to GPLv3 because it incorporates code from the GPLv3 
 - **BASS is free for non-commercial use only.** Commercial use requires a licence from un4seen.
   See `Assets/Plugins/Un4seen.Bass/bass.txt` and the other `*.txt` files there.
 - BASS_AAC is additionally covered by `bass_aac-gpl.txt`.
+
+## Ojsk Community
+- Source: https://github.com/kamcdev/OpenSekai_Community (Ojsk Community contributors)
+- License: MIT (full text below)
+- Reference revision: `0cd2e626` (`community/master`)
+- Used for: opening the pause menu when the app goes to the background during a live (`52b30a8`),
+  the confirmation dialog before clearing the chart in the editor (`d191614`), and showing
+  hi-speed values with more than one decimal (`dfabfcf`).
+
+```
+MIT License
+
+Copyright (c) 2026 Ojsk Community contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```

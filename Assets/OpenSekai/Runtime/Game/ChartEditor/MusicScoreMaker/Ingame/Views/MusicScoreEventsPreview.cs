@@ -314,7 +314,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 
 		private static string FormatHighSpeedText(float value)
 		{
-			return "x" + value.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture);
+			return "x" + value.ToString("0.0##", System.Globalization.CultureInfo.InvariantCulture);
 		}
 
 		private static string ExtractTimeSignatureText(object changeValue)
