@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using AcbDecoder;
 using OpenSekai.Audio;
@@ -24,6 +25,34 @@ namespace Sekai
 		private readonly object sync = new object();
 		private Task decodeAllTask;
 		private bool disposed;
+
+		// Set when Play mode ends or the player quits, so background decodes stop instead of running into the
+		// domain reload (which aborts their thread).
+		private static volatile bool shuttingDown;
+
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+		private static void ResetShutdownFlag()
+		{
+			shuttingDown = false;
+			Application.quitting -= OnApplicationQuitting;
+			Application.quitting += OnApplicationQuitting;
+		}
+
+		private static void OnApplicationQuitting()
+		{
+			shuttingDown = true;
+		}
+
+		private bool StopDecoding
+		{
+			get
+			{
+				lock (sync)
+				{
+					return disposed || shuttingDown;
+				}
+			}
+		}
 
 		private CueSheet(string name, AcbFile acb)
 		{
@@ -120,6 +149,11 @@ namespace Sekai
 		{
 			foreach (var cueName in acb.CueWaveforms.Keys)
 			{
+				if (StopDecoding)
+				{
+					return;
+				}
+
 				DecodeCue(cueName);
 			}
 		}
@@ -189,9 +223,14 @@ namespace Sekai
 
 			foreach (var waveform in waveforms)
 			{
+				if (StopDecoding)
+				{
+					return;
+				}
+
 				lock (sync)
 				{
-					if (disposed || buffers.ContainsKey(waveform.WaveId))
+					if (buffers.ContainsKey(waveform.WaveId))
 					{
 						continue;
 					}
@@ -207,6 +246,11 @@ namespace Sekai
 				{
 					var audio = acb.Decode(entry);
 					buffer = SoundBuffer.FromPcm(audio.Samples, audio.SampleRate, audio.Channels, audio.LoopStartSample, audio.LoopEndSample);
+				}
+				catch (ThreadAbortException)
+				{
+					// Unity aborts worker threads when Play mode ends or scripts reload; the decode is simply dropped.
+					return;
 				}
 				catch (Exception exception)
 				{
