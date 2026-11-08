@@ -403,7 +403,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 8b1cd09142ef147638d81699a18ccbda, type: 2}
   m_LightingSettings: {fileID: 850595691, guid: 90655207545729c47bb9f04fbb3bc534, type: 2}
 --- !u!196 &19
 NavMeshSettings:
@@ -576,7 +576,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
   m_UseReflectionProbes: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: -348333445
   m_SortingOrder: 100
@@ -1378,73 +1378,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1864886637773526378, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
-      propertyPath: m_text
-      value: "\u200B"
-      objectReference: {fileID: 0}
-    - target: {fileID: 1978628732054506267, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
-      propertyPath: m_text
-      value: "\u200B"
-      objectReference: {fileID: 0}
-    - target: {fileID: 2248380034407476260, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
-      propertyPath: m_text
-      value: "\u200B"
-      objectReference: {fileID: 0}
-    - target: {fileID: 2256841121412030994, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
-      propertyPath: m_text
-      value: "\u200B"
-      objectReference: {fileID: 0}
-    - target: {fileID: 2470213443509981994, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
-      propertyPath: m_text
-      value: "\u200B"
-      objectReference: {fileID: 0}
-    - target: {fileID: 3344132357240681783, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
-      propertyPath: m_text
-      value: "\u200B"
-      objectReference: {fileID: 0}
-    - target: {fileID: 4026152216678672561, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
-      propertyPath: m_text
-      value: "\u200B"
-      objectReference: {fileID: 0}
-    - target: {fileID: 4381466034357282506, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
-      propertyPath: m_text
-      value: "\u200B"
-      objectReference: {fileID: 0}
-    - target: {fileID: 5554047964615828448, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
-      propertyPath: m_text
-      value: "\u200B"
-      objectReference: {fileID: 0}
-    - target: {fileID: 5954813325648592091, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
-      propertyPath: m_text
-      value: "\u200B"
-      objectReference: {fileID: 0}
     - target: {fileID: 6260026444548187471, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
       propertyPath: m_Name
       value: ScreenLayerMusicScoreMakerTop
-      objectReference: {fileID: 0}
-    - target: {fileID: 6271923298075765777, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
-      propertyPath: m_text
-      value: "\u200B"
-      objectReference: {fileID: 0}
-    - target: {fileID: 6557064464555923726, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
-      propertyPath: m_text
-      value: "\u200B"
-      objectReference: {fileID: 0}
-    - target: {fileID: 7148801704174840054, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
-      propertyPath: m_text
-      value: "\u200B"
-      objectReference: {fileID: 0}
-    - target: {fileID: 7499433246952319921, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
-      propertyPath: m_text
-      value: "\u200B"
-      objectReference: {fileID: 0}
-    - target: {fileID: 8764115464717522441, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
-      propertyPath: m_text
-      value: "\u200B"
-      objectReference: {fileID: 0}
-    - target: {fileID: 8764227752716294648, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
-      propertyPath: m_text
-      value: "\u200B"
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
