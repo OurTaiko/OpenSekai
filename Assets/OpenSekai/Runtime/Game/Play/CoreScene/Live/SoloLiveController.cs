@@ -7,6 +7,21 @@ namespace Sekai.Core.Live
 {
 	public class SoloLiveController : BaseLiveController
 	{
+		[Header("Scene views (authored in Core.unity)")]
+		[SerializeField]
+		private LiveViewBase frontView;
+
+		[SerializeField]
+		private LiveViewBase background2DView;
+
+		[SerializeField]
+		private LiveViewBase background3DView;
+
+		[Header("Prefabs instantiated on demand")]
+		[SerializeField]
+		[Tooltip("Pause/confirm dialogs; instantiated when a dialog opens and destroyed when it closes.")]
+		private GameObject liveOutUIPrefab;
+
 		private bool isTestPlayFinishedCalled;
 		private Coroutine finishCoroutine;
 		private Coroutine resumeCoroutine;
@@ -14,25 +29,72 @@ namespace Sekai.Core.Live
 		private LiveViewBase[] liveViews;
 		private LiveLogic liveLogic;
 
-		protected override void OnAwake()
+		public bool IsBooted { get; private set; }
+
+		/// <summary>Starts the live described by <paramref name="bootData"/>. Called by <see cref="EntryPoint"/>.</summary>
+		public void Boot(LiveBootDataBase bootData)
 		{
-			base.OnAwake();
-			BootData = UserDataManager.Instance.FreeLiveBootData;
-			if (BootData == null)
+			if (IsBooted)
 			{
-				Debug.LogWarning("FreeLiveBootData is null. Test play cannot start.");
+				Debug.LogWarning("SoloLiveController is already running.", this);
 				return;
 			}
 
+			BootData = bootData;
+			if (BootData == null)
+			{
+				Debug.LogWarning("No live boot data. Test play cannot start.", this);
+				return;
+			}
+
+			IsBooted = true;
 			currentMusicTimeMs = System.Math.Max(0L, BootData.MusicData?.StartMusicTimeMs ?? 0L);
 			Setup();
 			LoadSound();
-			liveViews = LiveViewFactory.Create(BootData, transform);
+			liveViews = SelectViews(BootData);
 			LiveViewExt.Setup(liveViews, this);
 			RetryProcess();
-			liveOutUIController?.Initialize(BootData.LivePlayMode, BaseCamera);
+			liveOutUIController?.Initialize(BootData.LivePlayMode, BaseCamera, liveOutUIPrefab);
 			LiveViewExt.OnLoad(liveViews);
 			StartCoroutine(LiveStart(6f));
+		}
+
+		/// <summary>Enables the scene views this live uses and disables the others.</summary>
+		private LiveViewBase[] SelectViews(LiveBootDataBase bootData)
+		{
+			bool use3DBackground = bootData.MusicCategory == MusicCategory.mv;
+			LiveViewBase background = use3DBackground ? background3DView : background2DView;
+			SetViewActive(background2DView, !use3DBackground);
+			SetViewActive(background3DView, use3DBackground);
+			SetViewActive(frontView, true);
+
+			if (bootData.LivePlayMode != LivePlayMode.Free)
+			{
+				Debug.LogWarning($"Live play mode {bootData.LivePlayMode} has no dedicated front view in Core; using the solo view.", this);
+			}
+
+			var views = new System.Collections.Generic.List<LiveViewBase>(2);
+			if (frontView != null)
+			{
+				views.Add(frontView);
+			}
+			else
+			{
+				Debug.LogError("SoloLiveController: frontView is not assigned in Core.unity.", this);
+			}
+			if (background != null)
+			{
+				views.Add(background);
+			}
+			return views.ToArray();
+		}
+
+		private static void SetViewActive(LiveViewBase view, bool active)
+		{
+			if (view != null && view.gameObject.activeSelf != active)
+			{
+				view.gameObject.SetActive(active);
+			}
 		}
 
 		protected override void OnMusicStart()
@@ -334,6 +396,11 @@ namespace Sekai.Core.Live
 
 		protected override void OnExit()
 		{
+			if (!IsBooted)
+			{
+				return;
+			}
+
 			LiveViewExt.Finish3D(liveViews);
 			LiveViewExt.OnUnload(liveViews);
 			MenuScreenType? returnScreenType = (BootData as FreeLiveBootData)?.ReturnScreenType;

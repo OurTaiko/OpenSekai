@@ -77,12 +77,35 @@ namespace OpenSekai.SceneFlow
 
 		public bool IsInputBlocked => IsSwitching || IsCovered;
 
+		// Session hand-off between scenes (OurTaikoPlay keeps SelectedSong/AutoPlay here). Kept type-agnostic because
+		// this assembly cannot see game types; the target scene takes the arguments it expects.
+		private static object sceneArgs;
+
+		/// <summary>Stores the arguments the next scene reads with <see cref="TakeSceneArgs{T}"/>.</summary>
+		public static void SetSceneArgs(object args)
+		{
+			sceneArgs = args;
+		}
+
+		/// <summary>Returns and clears the pending scene arguments, or null when none of type <typeparamref name="T"/> are set.</summary>
+		public static T TakeSceneArgs<T>() where T : class
+		{
+			if (sceneArgs is not T args)
+			{
+				return null;
+			}
+
+			sceneArgs = null;
+			return args;
+		}
+
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
 		private static void ResetStatics()
 		{
 			Instance = null;
 			CurrentScene = LastScene = string.Empty;
 			OnSceneChanged = null;
+			sceneArgs = null;
 		}
 
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

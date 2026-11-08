@@ -6,8 +6,6 @@ namespace Sekai
 {
 	public class LiveOutUIController
 	{
-		private const string LiveOutUIPrefabPath = "Live/UI/LiveOutUI";
-		private const string LiveOutUIPrefabFallbackPath = "live/ui/LiveOutUI";
 		private const string LiveOutUIRootName = "LiveOutUI";
 		private const string ButtonKeyCancel = "Cancel";
 		private const string ButtonKeyRetry = "Retry";
@@ -19,10 +17,10 @@ namespace Sekai
 		private Camera baseCamera;
 		private DialogBase activeDialog;
 
-		public void Initialize(LivePlayMode livePlayMode, Camera baseCamera)
+		/// <param name="uiPrefab">LiveOutUI prefab, assigned on the live controller in Core.unity.</param>
+		public void Initialize(LivePlayMode livePlayMode, Camera baseCamera, GameObject uiPrefab)
 		{
-			uiPrefab = Resources.Load<GameObject>(LiveOutUIPrefabPath)
-				?? Resources.Load<GameObject>(LiveOutUIPrefabFallbackPath);
+			this.uiPrefab = uiPrefab;
 			uiRootObject = null;
 			screenManager = null;
 			activeDialog = null;
@@ -173,12 +171,7 @@ namespace Sekai
 		{
 			if (uiPrefab == null)
 			{
-				uiPrefab = Resources.Load<GameObject>(LiveOutUIPrefabPath)
-					?? Resources.Load<GameObject>(LiveOutUIPrefabFallbackPath);
-			}
-			if (uiPrefab == null)
-			{
-				Debug.LogErrorFormat("LiveOutUI prefab not found: {0}", LiveOutUIPrefabPath);
+				Debug.LogError("LiveOutUI prefab is not assigned on the live controller in Core.unity.");
 				return;
 			}
 

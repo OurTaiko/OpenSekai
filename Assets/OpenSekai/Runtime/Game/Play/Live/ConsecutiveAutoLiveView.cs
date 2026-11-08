@@ -31,7 +31,7 @@ namespace Sekai
 		public void Setup(Action onClickButton, Action onClickDialogResume, Action onClickDialogCancel, Camera baseCamera)
 		{
 			Hide();
-			liveOutUIController.Initialize(LivePlayMode.Free, baseCamera);
+			liveOutUIController.Initialize(LivePlayMode.Free, baseCamera, null); // this view never opens dialogs itself
 			SetupButton(onClickButton);
 		}
 

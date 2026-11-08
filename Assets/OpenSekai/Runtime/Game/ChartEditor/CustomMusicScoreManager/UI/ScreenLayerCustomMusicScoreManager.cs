@@ -1337,8 +1337,7 @@ namespace Sekai.CustomMusicScoreManager
 				return;
 			}
 
-			UserDataManager.Instance.FreeLiveBootData = bootData;
-			Sekai.Core.EntryPoint.PlayMode = Sekai.Core.PlayMode.SoloLive;
+			Sekai.Core.CoreSceneArgs.Prepare(Sekai.Core.PlayMode.SoloLive, bootData);
 			LiveTransitioner.SafeForceFinish(null);
 			ScreenManager.Instance?.PushUIScreen(MenuScreenType.LiveLoading, false);
 			SetStatus(isAuto ? "正在开始自动游玩..." : "正在开始游玩...");
@@ -1349,7 +1348,8 @@ namespace Sekai.CustomMusicScoreManager
 			return data?.NoteList != null && data.NoteList.Exists(note => note != null);
 		}
 
-		private FreeLiveBootData CreateDirectPlayBootData(CustomMusicScoreEntry entry, MusicScoreMakerData scoreData, bool isAuto)
+		/// <summary>Builds the boot data for playing a custom chart from the manager (also used by direct Core runs).</summary>
+		public static FreeLiveBootData CreateDirectPlayBootData(CustomMusicScoreEntry entry, MusicScoreMakerData scoreData, bool isAuto)
 		{
 			if (entry == null || scoreData == null)
 			{

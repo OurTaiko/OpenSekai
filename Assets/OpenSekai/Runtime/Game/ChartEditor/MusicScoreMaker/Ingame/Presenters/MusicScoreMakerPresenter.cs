@@ -6956,7 +6956,6 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 				MasterMusicDifficulty difficulty = ResolveTestPlayDifficulty(masterMusicAll, musicId);
 				SetFreeLiveBootData(musicId, vocalId, deckId, focusTicks, difficulty, musicCategory, isAutoPlay);
 				SetScreenLayerMusicScoreMakerBootArg(isFromFullComboCheck, focusTicks == 0L);
-				Sekai.Core.EntryPoint.PlayMode = Sekai.Core.PlayMode.SoloLive;
 				LiveTransitioner.SafeForceFinish(null);
 				_view?.DeactivatePreviewForTransition();
 				ScreenManager.Instance?.PushUIScreen(MenuScreenType.LiveLoading, false);
@@ -7063,7 +7062,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 				bootData.CustomMusicScoreCollaborationLabel = entry.Manifest.collaborationLabel;
 			}
 
-			UserDataManager.Instance.FreeLiveBootData = bootData;
+			Sekai.Core.CoreSceneArgs.Prepare(Sekai.Core.PlayMode.SoloLive, bootData);
 		}
 
 		private LiveEventData CreateTestPlayLiveEventData(int deckId, bool isAutoPlay)
