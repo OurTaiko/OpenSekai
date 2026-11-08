@@ -28,6 +28,8 @@ namespace Sekai.Rendering
 		{
 			public LayerMask BlurLayerMask;
 			public LayerMask UILayerMask;
+			// RenderQueueRange is not Unity-serializable, so this stays code-only.
+			[NonSerialized]
 			public RenderQueueRange RenderQueueRange = RenderQueueRange.transparent;
 		}
 

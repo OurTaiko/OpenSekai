@@ -3,6 +3,7 @@ using System.Collections;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Assemblies;
 
 namespace CP
 {
@@ -53,7 +54,13 @@ namespace CP
 				return null;
 			}
 
-			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+			var direct = Type.GetType(className);
+			if (direct != null)
+			{
+				return direct;
+			}
+
+			foreach (var assembly in CurrentAssemblies.GetLoadedAssemblies())
 			{
 				var type = assembly.GetType(className);
 				if (type != null)

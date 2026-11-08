@@ -3076,17 +3076,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 
 		private static Type FindType(string typeName)
 		{
-			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-			for (int i = 0; i < assemblies.Length; i++)
-			{
-				Type type = assemblies[i].GetType(typeName);
-				if (type != null)
-				{
-					return type;
-				}
-			}
-
-			return null;
+			return CP.SystemUtility.GetTypeByClassName(typeName);
 		}
 
 		private static object InvokeMember(object target, string memberName, params object[] args)

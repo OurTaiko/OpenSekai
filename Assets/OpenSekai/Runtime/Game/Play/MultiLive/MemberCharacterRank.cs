@@ -1,7 +1,9 @@
+using System;
 using MessagePack;
 
 namespace Sekai.MultiLive
 {
+	[Serializable]
 	[MessagePackObject(false)]
 	public struct MemberCharacterRank
 	{

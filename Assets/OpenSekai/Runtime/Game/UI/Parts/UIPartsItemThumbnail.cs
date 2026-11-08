@@ -28,6 +28,7 @@ namespace Sekai
 
 		private SeType mysekaiHashTagSEType;
 
+		[NonSerialized]
 		public MasterResourceBox resourceBox;
 
 		public Mask FrameMask

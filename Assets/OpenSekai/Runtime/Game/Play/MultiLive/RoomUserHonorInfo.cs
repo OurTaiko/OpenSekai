@@ -1,8 +1,10 @@
+using System;
 using System.Runtime.CompilerServices;
 using MessagePack;
 
 namespace Sekai.MultiLive
 {
+	[Serializable]
 	[MessagePackObject(false)]
 	public class RoomUserHonorInfo
 	{

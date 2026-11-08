@@ -197,9 +197,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 
 		private static List<MasterMusicAll> LoadMusicListFromMasterDataManager()
 		{
-			Type managerType = AppDomain.CurrentDomain.GetAssemblies()
-				.Select(assembly => assembly.GetType("Sekai.MasterDataManager"))
-				.FirstOrDefault(type => type != null);
+			Type managerType = CP.SystemUtility.GetTypeByClassName("Sekai.MasterDataManager");
 			if (managerType == null)
 			{
 				return new List<MasterMusicAll>();

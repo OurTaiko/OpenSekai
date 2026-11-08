@@ -174,22 +174,7 @@ namespace Sekai.MusicScoreMaker.Outgame
 
 		private static Type FindType(string fullName)
 		{
-			Type type = Type.GetType(fullName);
-			if (type != null)
-			{
-				return type;
-			}
-
-			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-			{
-				type = assembly.GetType(fullName);
-				if (type != null)
-				{
-					return type;
-				}
-			}
-
-			return null;
+			return CP.SystemUtility.GetTypeByClassName(fullName);
 		}
 	}
 }
