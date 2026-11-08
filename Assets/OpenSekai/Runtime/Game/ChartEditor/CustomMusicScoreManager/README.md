@@ -20,6 +20,10 @@ holds the difficulty colours. Its sprites come from the official atlases (`Art/S
 `logo_score_maker_wh`, `icon_score_create_*`, `jacket_placeholder_disc`) plus generated round shapes in
 `Art/Textures/CustomMusicScoreManager` (the canvases use 1 pixel per unit, so sliced sprites are 1 PPU).
 
+The settings button opens the shared option dialog (`UI/Option/OptionDialog`, `DialogType.OptionDialog`), a copy of the
+official オプション dialog. Every change is saved and applied at once. Settings that are stored but not used yet are
+listed in the repository's `AGENTS.md`.
+
 Scene flow (all through `SceneSwitcher`):
 
 - Edit: `MusicScoreMakerSceneArgs.Prepare(...)`, then the `MusicScoreMaker` scene.

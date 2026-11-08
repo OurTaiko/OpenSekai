@@ -19,6 +19,8 @@ namespace Sekai
 		[SerializeField]
 		private GameObject lineObj;
 
+		private static readonly Color SelectedTextColor = new Color32(0x45, 0x45, 0x66, 0xFF);
+
 		private bool isOn;
 
 		private CustomToggle toggle;
@@ -100,7 +102,8 @@ namespace Sekai
 			}
 			if (text != null)
 			{
-				text.color = Color.white;
+				// The selected tab reads dark on its white tab, as in the original option dialog.
+				text.color = SelectedTextColor;
 			}
 			ShowLine();
 		}
@@ -114,7 +117,7 @@ namespace Sekai
 			}
 			if (text != null)
 			{
-				text.color = new Color(1f, 1f, 1f, 0.65f);
+				text.color = Color.white;
 			}
 			HideLine();
 		}

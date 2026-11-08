@@ -34,16 +34,6 @@ namespace Sekai.CustomMusicScoreManager
 
 		private const float ManifestFieldRightScrollPadding = 24f;
 
-		private const int NoteSkinTypeCount = 2;
-
-		private const int NoteSeTypeCount = 2;
-
-		private const int NoteEffectTypeCount = 2;
-
-		private const float MinVisualAlphaPercent = 10f;
-
-		private const float MaxVisualAlphaPercent = 100f;
-
 		private static readonly string[] DifficultyTypes =
 		{
 			"easy",
@@ -163,46 +153,6 @@ namespace Sekai.CustomMusicScoreManager
 		[SerializeField]
 		private Button _videoSelectButton;
 		[SerializeField]
-		private RectTransform _settingsOverlay;
-		[SerializeField]
-		private TMP_InputField _settingLiveBgmInput;
-		[SerializeField]
-		private TMP_InputField _settingLiveSeInput;
-		[SerializeField]
-		private TMP_InputField _settingNoteSpeedInput;
-		[SerializeField]
-		private TMP_InputField _settingTimingAdjustInput;
-		[SerializeField]
-		private TMP_InputField _settingNoteShowRateInput;
-		[SerializeField]
-		private TMP_InputField _settingNoteLineAlphaInput;
-		[SerializeField]
-		private TMP_InputField _settingGuideLineAlphaInput;
-		[SerializeField]
-		private TextMeshProUGUI _settingNoteSkinLabel;
-		private int _settingNoteSkinIndex;
-		[SerializeField]
-		private TextMeshProUGUI _settingNoteSeLabel;
-		private int _settingNoteSeIndex;
-		[SerializeField]
-		private TextMeshProUGUI _settingNoteEffectLabel;
-		private int _settingNoteEffectIndex;
-		[SerializeField]
-		private TextMeshProUGUI _settingSimultaneousLineLabel;
-		private bool _settingSimultaneousLineEnabled;
-		[SerializeField]
-		private TextMeshProUGUI _settingMusicInfoDisplayModeLabel;
-		private int _settingMusicInfoDisplayMode;
-		[SerializeField]
-		private TextMeshProUGUI _settingLiveBackgroundModeLabel;
-		private int _settingLiveBackgroundMode;
-		[SerializeField]
-		private TextMeshProUGUI _settingFastLateFlickLabel;
-		private bool _settingFastLateFlickEnabled;
-		[SerializeField]
-		private TextMeshProUGUI _settingFullscreenLabel;
-		private bool _settingFullscreenEnabled;
-		[SerializeField]
 		private TMP_InputField _titleInput;
 		[SerializeField]
 		private TMP_InputField _scoreTitleInput;
@@ -252,28 +202,6 @@ namespace Sekai.CustomMusicScoreManager
 		[SerializeField]
 		private Button _importButton;
 		[SerializeField]
-		private Button _settingsCancelButton;
-		[SerializeField]
-		private Button _settingsSaveButton;
-		[SerializeField]
-		private Button _settingNoteSkinButton;
-		[SerializeField]
-		private Button _settingNoteSeButton;
-		[SerializeField]
-		private Button _settingNoteEffectButton;
-		[SerializeField]
-		private Button _settingSimultaneousLineButton;
-		[SerializeField]
-		private Button _settingMusicInfoDisplayModeButton;
-		[SerializeField]
-		private Button _settingLiveBackgroundModeButton;
-		[SerializeField]
-		private Button _settingFastLateFlickButton;
-		[SerializeField]
-		private Button _settingFullscreenButton;
-		[SerializeField]
-		private GameObject _settingFullscreenRow;
-		[SerializeField]
 		private CustomMusicScoreEntryCell _entryCellTemplate;
 		private IReadOnlyList<CustomMusicScoreManagerItem> _allItems = Array.Empty<CustomMusicScoreManagerItem>();
 		private IReadOnlyList<CustomMusicScoreManagerItem> _items = Array.Empty<CustomMusicScoreManagerItem>();
@@ -287,7 +215,6 @@ namespace Sekai.CustomMusicScoreManager
 			base.Awake();
 			SetupOriginalFontAssets();
 			_titleText.text = $"Open Sekai {Application.version}";
-			_settingFullscreenRow.SetActive(ShouldShowDesktopFullscreenSetting());
 			BindEvents();
 			UpdateSelection(null);
 		}
@@ -330,16 +257,6 @@ namespace Sekai.CustomMusicScoreManager
 			_difficultyButton.onClick.AddListener(CycleDifficulty);
 			_saveManifestButton.onClick.AddListener(SaveSelectedManifest);
 
-			_settingNoteSkinButton.onClick.AddListener(CycleSettingNoteSkin);
-			_settingNoteSeButton.onClick.AddListener(CycleSettingNoteSe);
-			_settingNoteEffectButton.onClick.AddListener(CycleSettingNoteEffect);
-			_settingSimultaneousLineButton.onClick.AddListener(CycleSettingSimultaneousLine);
-			_settingMusicInfoDisplayModeButton.onClick.AddListener(CycleSettingMusicInfoDisplayMode);
-			_settingLiveBackgroundModeButton.onClick.AddListener(CycleSettingLiveBackgroundMode);
-			_settingFastLateFlickButton.onClick.AddListener(CycleSettingFastLateFlick);
-			_settingFullscreenButton.onClick.AddListener(CycleSettingFullscreen);
-			_settingsCancelButton.onClick.AddListener(CloseSettings);
-			_settingsSaveButton.onClick.AddListener(SaveSettings);
 
 			if (_detailToggleButton != null)
 			{
@@ -446,257 +363,8 @@ namespace Sekai.CustomMusicScoreManager
 
 		private void OpenSettings()
 		{
-			ApplicationLocalSettings localSettings = ApplicationLocalSettings.LoadFromStorage();
-			ApplicationLocalSettings.VolumeSettings liveVolume = localSettings.LiveVolume ?? localSettings.SetupLiveVolume();
-			LiveSettingData liveSettingData = LiveSettingData.LoadFromStorage();
-
-			_settingLiveBgmInput.SetTextWithoutNotify(FormatSettingValue(liveVolume.Bgm));
-			_settingLiveSeInput.SetTextWithoutNotify(FormatSettingValue(liveVolume.Se));
-			_settingNoteSpeedInput.SetTextWithoutNotify(FormatSettingValue(liveSettingData.NoteSpeed));
-			_settingTimingAdjustInput.SetTextWithoutNotify(FormatSettingValue(liveSettingData.TimingAdjustData));
-			_settingNoteShowRateInput.SetTextWithoutNotify(FormatSettingValue(liveSettingData._noteShowRate * 100f));
-			_settingNoteLineAlphaInput.SetTextWithoutNotify(FormatSettingValue(liveSettingData.GetNoteAlpha() * 100f));
-			_settingGuideLineAlphaInput.SetTextWithoutNotify(FormatSettingValue(liveSettingData.GetGuideAlpha() * 100f));
-			SetSettingNoteSkinIndex(liveSettingData.NoteSkinIndex);
-			SetSettingNoteSeIndex(liveSettingData.NoteSeIndex);
-			SetSettingNoteEffectIndex(liveSettingData.NoteEffect);
-			SetSettingSimultaneousLine(liveSettingData.UseSimultaneousPushingLine);
-			SetSettingMusicInfoDisplayMode(liveSettingData.CustomMusicScoreMusicInfoDisplayMode ?? LiveSettingData.MusicInfoDisplayModeCustomScore);
-			SetSettingLiveBackgroundMode(liveSettingData.CustomMusicScoreLiveBackgroundMode ?? LiveSettingData.CustomMusicScoreBackgroundMode2DMV);
-			SetSettingFastLateFlick(liveSettingData.IsFastLateFlick);
-			SetSettingFullscreen(localSettings.FullscreenEnabled ?? Screen.fullScreen);
-			_settingsOverlay.gameObject.SetActive(true);
-			_settingsOverlay.SetAsLastSibling();
-		}
-
-		private void CloseSettings()
-		{
-			if (_settingsOverlay != null)
-			{
-				_settingsOverlay.gameObject.SetActive(false);
-			}
-		}
-
-		private void SaveSettings()
-		{
-			ApplicationLocalSettings localSettings = ApplicationLocalSettings.LoadFromStorage();
-			ApplicationLocalSettings.VolumeSettings liveVolume = localSettings.LiveVolume ?? localSettings.SetupLiveVolume();
-			LiveSettingData liveSettingData = LiveSettingData.LoadFromStorage();
-
-			liveVolume.Bgm = ParseClampedSetting(_settingLiveBgmInput.text, 0f, 1f, liveVolume.Bgm);
-			liveVolume.Se = ParseClampedSetting(_settingLiveSeInput.text, 0f, 1f, liveVolume.Se);
-			liveSettingData.NoteSpeed = ParseClampedSetting(_settingNoteSpeedInput.text, LiveConfig.MinNoteSpeed, LiveConfig.MaxNoteSpeed, liveSettingData.NoteSpeed);
-			liveSettingData.TimingAdjustData = ParseClampedSetting(
-				_settingTimingAdjustInput.text,
-				LiveConfig.MinNoteTiming,
-				LiveConfig.MaxNoteTiming,
-				liveSettingData.TimingAdjustData);
-			liveSettingData.SetNoteShowRate(ParseClampedSetting(
-				_settingNoteShowRateInput.text,
-				LiveConfig.MinNoteShowRate,
-				LiveConfig.MaxNoteShowRate,
-				liveSettingData._noteShowRate * 100f));
-			liveSettingData.NoteAlpha = ParseClampedSetting(
-				_settingNoteLineAlphaInput.text,
-				MinVisualAlphaPercent,
-				MaxVisualAlphaPercent,
-				liveSettingData.GetNoteAlpha() * 100f) / 100f;
-			liveSettingData.GuideAlpha = ParseClampedSetting(
-				_settingGuideLineAlphaInput.text,
-				MinVisualAlphaPercent,
-				MaxVisualAlphaPercent,
-				liveSettingData.GetGuideAlpha() * 100f) / 100f;
-			liveSettingData.NoteSkinIndex = _settingNoteSkinIndex;
-			liveSettingData.NoteSeIndex = _settingNoteSeIndex;
-			liveSettingData.NoteEffect = _settingNoteEffectIndex;
-			liveSettingData.UseSimultaneousPushingLine = _settingSimultaneousLineEnabled;
-			liveSettingData.CustomMusicScoreMusicInfoDisplayMode = _settingMusicInfoDisplayMode;
-			liveSettingData.CustomMusicScoreLiveBackgroundMode = _settingLiveBackgroundMode;
-			liveSettingData.IsFastLateFlick = _settingFastLateFlickEnabled;
-			if (ShouldShowDesktopFullscreenSetting())
-			{
-				localSettings.FullscreenEnabled = _settingFullscreenEnabled;
-			}
-
-			ApplicationLocalSettings.SaveToStorage(localSettings);
-			LiveSettingData.SaveToStorage(liveSettingData);
-			if (ShouldShowDesktopFullscreenSetting())
-			{
-				ScreenConfig.SetStandaloneFullscreen(_settingFullscreenEnabled);
-			}
-			SoundManager.Instance.SetupVolume(1f, liveVolume.Bgm, liveVolume.Se, liveVolume.Voice);
-			LiveConfig.LongNoteAlpha = liveSettingData.GetNoteAlpha();
-			LiveConfig.GuideAlpha = liveSettingData.GetGuideAlpha();
-			LiveConfig.SetNoteSkinAssetBundleName(liveSettingData.NoteSkinIndex);
-			LiveConfig.SetNoteSeName(liveSettingData.NoteSeIndex);
-			LiveConfig.SetNoteEffectName(liveSettingData.NoteEffect);
-
-			_settingLiveBgmInput.SetTextWithoutNotify(FormatSettingValue(liveVolume.Bgm));
-			_settingLiveSeInput.SetTextWithoutNotify(FormatSettingValue(liveVolume.Se));
-			_settingNoteSpeedInput.SetTextWithoutNotify(FormatSettingValue(liveSettingData.NoteSpeed));
-			_settingTimingAdjustInput.SetTextWithoutNotify(FormatSettingValue(liveSettingData.TimingAdjustData));
-			_settingNoteShowRateInput.SetTextWithoutNotify(FormatSettingValue(liveSettingData._noteShowRate * 100f));
-			_settingNoteLineAlphaInput.SetTextWithoutNotify(FormatSettingValue(liveSettingData.GetNoteAlpha() * 100f));
-			_settingGuideLineAlphaInput.SetTextWithoutNotify(FormatSettingValue(liveSettingData.GetGuideAlpha() * 100f));
-			SetSettingNoteSkinIndex(liveSettingData.NoteSkinIndex);
-			SetSettingNoteSeIndex(liveSettingData.NoteSeIndex);
-			SetSettingNoteEffectIndex(liveSettingData.NoteEffect);
-			SetSettingSimultaneousLine(liveSettingData.UseSimultaneousPushingLine);
-			SetSettingMusicInfoDisplayMode(liveSettingData.CustomMusicScoreMusicInfoDisplayMode ?? LiveSettingData.MusicInfoDisplayModeCustomScore);
-			SetSettingLiveBackgroundMode(liveSettingData.CustomMusicScoreLiveBackgroundMode ?? LiveSettingData.CustomMusicScoreBackgroundMode2DMV);
-			SetSettingFastLateFlick(liveSettingData.IsFastLateFlick);
-			SetSettingFullscreen(localSettings.FullscreenEnabled ?? Screen.fullScreen);
-			CloseSettings();
-			SetStatus("设置已保存。");
-		}
-
-		private static float ParseClampedSetting(string text, float min, float max, float fallback)
-		{
-			if (!float.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out float value))
-			{
-				value = fallback;
-			}
-			return Mathf.Clamp(value, min, max);
-		}
-
-		private static string FormatSettingValue(float value)
-		{
-			return value.ToString("0.###", CultureInfo.InvariantCulture);
-		}
-
-		private void CycleSettingNoteSkin()
-		{
-			SetSettingNoteSkinIndex((_settingNoteSkinIndex + 1) % NoteSkinTypeCount);
-		}
-
-		private void SetSettingNoteSkinIndex(int index)
-		{
-			_settingNoteSkinIndex = Mathf.Clamp(index, 0, NoteSkinTypeCount - 1);
-			if (_settingNoteSkinLabel != null)
-			{
-				_settingNoteSkinLabel.text = string.Format("custom{0:00}", _settingNoteSkinIndex + 1);
-			}
-		}
-
-		private void CycleSettingNoteSe()
-		{
-			SetSettingNoteSeIndex((_settingNoteSeIndex + 1) % NoteSeTypeCount);
-		}
-
-		private void SetSettingNoteSeIndex(int index)
-		{
-			_settingNoteSeIndex = Mathf.Clamp(index, 0, NoteSeTypeCount - 1);
-			if (_settingNoteSeLabel != null)
-			{
-				_settingNoteSeLabel.text = LiveConfig.GetNoteSeViewName(_settingNoteSeIndex);
-			}
-		}
-
-		private void CycleSettingNoteEffect()
-		{
-			SetSettingNoteEffectIndex((_settingNoteEffectIndex + 1) % NoteEffectTypeCount);
-		}
-
-		private void SetSettingNoteEffectIndex(int index)
-		{
-			_settingNoteEffectIndex = Mathf.Clamp(index, 0, NoteEffectTypeCount - 1);
-			if (_settingNoteEffectLabel != null)
-			{
-				_settingNoteEffectLabel.text = string.Format("TYPE {0}", _settingNoteEffectIndex + 1);
-			}
-		}
-
-		private void CycleSettingSimultaneousLine()
-		{
-			SetSettingSimultaneousLine(!_settingSimultaneousLineEnabled);
-		}
-
-		private void SetSettingSimultaneousLine(bool enabled)
-		{
-			_settingSimultaneousLineEnabled = enabled;
-			if (_settingSimultaneousLineLabel != null)
-			{
-				_settingSimultaneousLineLabel.text = enabled ? "开启" : "关闭";
-			}
-		}
-
-		private void CycleSettingMusicInfoDisplayMode()
-		{
-			int nextMode = _settingMusicInfoDisplayMode == LiveSettingData.MusicInfoDisplayModeCustomScore
-				? LiveSettingData.MusicInfoDisplayModeNormal
-				: LiveSettingData.MusicInfoDisplayModeCustomScore;
-			SetSettingMusicInfoDisplayMode(nextMode);
-		}
-
-		private void SetSettingMusicInfoDisplayMode(int mode)
-		{
-			_settingMusicInfoDisplayMode = mode == LiveSettingData.MusicInfoDisplayModeNormal
-				? LiveSettingData.MusicInfoDisplayModeNormal
-				: LiveSettingData.MusicInfoDisplayModeCustomScore;
-			if (_settingMusicInfoDisplayModeLabel != null)
-			{
-				_settingMusicInfoDisplayModeLabel.text = _settingMusicInfoDisplayMode == LiveSettingData.MusicInfoDisplayModeCustomScore
-					? "自制谱模式"
-					: "正常模式";
-			}
-		}
-
-		private void CycleSettingLiveBackgroundMode()
-		{
-			int nextMode = _settingLiveBackgroundMode == LiveSettingData.CustomMusicScoreBackgroundMode2DMV
-				? LiveSettingData.CustomMusicScoreBackgroundModeJacket
-				: LiveSettingData.CustomMusicScoreBackgroundMode2DMV;
-			SetSettingLiveBackgroundMode(nextMode);
-		}
-
-		private void SetSettingLiveBackgroundMode(int mode)
-		{
-			_settingLiveBackgroundMode = mode == LiveSettingData.CustomMusicScoreBackgroundModeJacket
-				? LiveSettingData.CustomMusicScoreBackgroundModeJacket
-				: LiveSettingData.CustomMusicScoreBackgroundMode2DMV;
-			if (_settingLiveBackgroundModeLabel != null)
-			{
-				_settingLiveBackgroundModeLabel.text = _settingLiveBackgroundMode == LiveSettingData.CustomMusicScoreBackgroundMode2DMV
-					? "2DMV"
-					: "封面";
-			}
-		}
-
-		private void CycleSettingFastLateFlick()
-		{
-			SetSettingFastLateFlick(!_settingFastLateFlickEnabled);
-		}
-
-		private void SetSettingFastLateFlick(bool enabled)
-		{
-			_settingFastLateFlickEnabled = enabled;
-			if (_settingFastLateFlickLabel != null)
-			{
-				_settingFastLateFlickLabel.text = enabled ? "开启" : "关闭";
-			}
-		}
-
-		private void CycleSettingFullscreen()
-		{
-			SetSettingFullscreen(!_settingFullscreenEnabled);
-		}
-
-		private void SetSettingFullscreen(bool enabled)
-		{
-			_settingFullscreenEnabled = enabled;
-			if (_settingFullscreenLabel != null)
-			{
-				_settingFullscreenLabel.text = enabled ? "开启" : "关闭";
-			}
-		}
-
-		private static bool ShouldShowDesktopFullscreenSetting()
-		{
-#if UNITY_STANDALONE || UNITY_EDITOR
-			return true;
-#else
-			return false;
-#endif
+			// The official option dialog (UI/Option/OptionDialog): ライブ / 音量 / システム / Additionals.
+			ScreenManager.Instance?.ShowDialog<OptionDialog>(DialogType.OptionDialog);
 		}
 
 		private void UpdateManifestFieldLayout()

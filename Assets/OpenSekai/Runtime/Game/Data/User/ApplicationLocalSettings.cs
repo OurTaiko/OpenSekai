@@ -18,9 +18,28 @@ namespace Sekai
 			public float Voice = 1f;
 		}
 
+		/// <summary>
+		/// The official option dialog's システム tab. OpenSekai stores these but nothing reads them yet
+		/// (placeholders; see AGENTS.md).
+		/// </summary>
+		public class SystemOptionSettings
+		{
+			/// <summary>デフォルト楽曲: 0 = セカイver., 1 = バーチャル・シンガーver.</summary>
+			public int DefaultVocalType;
+			/// <summary>画面固定.</summary>
+			public bool LockScreenOrientation = true;
+			/// <summary>ライブ前設定確認.</summary>
+			public bool ConfirmSettingsBeforeLive;
+			/// <summary>オンライン表示.</summary>
+			public bool ShowOnlineStatus = true;
+			/// <summary>ライブボーナス全回復通知.</summary>
+			public bool NotifyLiveBonusFullRecovery = true;
+		}
+
 		public VolumeSettings SystemVolume = new VolumeSettings();
 		public VolumeSettings LiveVolume;
 		public bool? FullscreenEnabled;
+		public SystemOptionSettings SystemOptions = new SystemOptionSettings();
 
 		public static ApplicationLocalSettings LoadFromStorage()
 		{
@@ -76,6 +95,7 @@ namespace Sekai
 		{
 			SystemVolume ??= new VolumeSettings();
 			LiveVolume ??= new VolumeSettings();
+			SystemOptions ??= new SystemOptionSettings();
 		}
 	}
 }
