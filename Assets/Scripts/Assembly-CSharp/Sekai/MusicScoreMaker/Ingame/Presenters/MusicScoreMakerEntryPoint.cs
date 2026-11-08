@@ -61,19 +61,8 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 
 			ScreenManager.Instance.CreateEmptyBaseCamera();
 
-			SceneManager sceneManager = SceneManager.Instance;
-			bool isEnteredFromTransitionBlank =
-				sceneManager.CurrentScene == SceneManager.Scene.TransitionBlank ||
-				sceneManager.PrevScene == SceneManager.Scene.TransitionBlank;
-			if (isEnteredFromTransitionBlank)
-			{
-				ScreenManager.Instance.SetScreenCoverDirect(Color.black);
-				ScreenManager.Instance.FadeIn(0f, 0.3f, null);
-			}
-			else
-			{
-				ScreenManager.Instance.FadeIn(0f, 0f, null);
-			}
+			// Scene transitions are covered by the global SceneSwitcher, which opens once this scene is ready.
+			ScreenManager.Instance.FadeIn(0f, 0f, null);
 
 			ScreenManager.Instance.AddScreen(MenuScreenType.Header);
 			ScreenManager.Instance.AddScreen(MenuScreenType.TouchEffect);

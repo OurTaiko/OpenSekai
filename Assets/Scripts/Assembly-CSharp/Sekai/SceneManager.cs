@@ -1,13 +1,19 @@
+using Cysharp.Threading.Tasks;
+using OpenSekai.SceneFlow;
 using UnityEngine;
 using UnitySceneManager = UnityEngine.SceneManagement.SceneManager;
 
 namespace Sekai
 {
+	/// <summary>
+	/// Game-level scene requests. Transitions run through <see cref="SceneSwitcher"/>: the cover closes, the current
+	/// scene exits, memory is released, and the next scene loads asynchronously (this replaces the TransitionBlank scene).
+	/// </summary>
 	public class SceneManager : MonoBehaviour
 	{
 		public enum Scene
 		{
-			None = 0,
+			None = -1,
 			Title = 0,
 			OutGame = 1,
 			VRMode = 2,
@@ -19,6 +25,9 @@ namespace Sekai
 			Mysekai = 8,
 			MusicScoreMaker = 9
 		}
+
+		private const string MusicScoreMakerSceneName = "MusicScoreMaker";
+		private const string CoreSceneName = "Core";
 
 		private static SceneManager instance;
 
@@ -57,92 +66,54 @@ namespace Sekai
 		public Scene PrevScene { get; private set; } = Scene.None;
 		public Scene NextScene { get; private set; } = Scene.None;
 
+		/// <summary>True while a requested scene switch is running.</summary>
+		public bool IsSwitching => SceneSwitcher.Instance != null && SceneSwitcher.Instance.IsSwitching;
+
 		public void RequestScene(Scene scene)
 		{
-			NextScene = scene;
-			Scene loadScene = ResolveLoadScene(scene);
+			string sceneName = GetSceneName(scene);
+			if (string.IsNullOrEmpty(sceneName))
+			{
+				Debug.LogWarningFormat("[Scene] No Unity scene is mapped to {0}", scene);
+				return;
+			}
 
-			if (scene == Scene.MusicScoreMaker)
+			SceneSwitcher switcher = SceneSwitcher.EnsureInstance();
+			if (switcher.IsSwitching)
+			{
+				Debug.LogWarningFormat("[Scene] Ignored request for {0}: a scene switch is already running", scene);
+				return;
+			}
+
+			NextScene = scene;
+			var options = new SceneSwitcher.SwitchOptions
+			{
+				// The live white-out already hides the screen while loading into Core.
+				ShowCover = !LiveTransitioner.Exists,
+				WhileCovered = () =>
+				{
+					ExitCurrentScene(scene);
+					return UniTask.CompletedTask;
+				}
+			};
+			switcher.SwitchScene(sceneName, options);
+		}
+
+		private void ExitCurrentScene(Scene nextScene)
+		{
+			if (nextScene != Scene.Core)
 			{
 				SoundManager.Instance.StopIngame();
 			}
 
-			string sceneName = GetSceneName(loadScene);
-			if (!string.IsNullOrEmpty(sceneName))
+			if (ScreenManager.ExistsInstance && ScreenManager.Instance != null)
 			{
-				if (ScreenManager.ExistsInstance && ScreenManager.Instance != null)
-				{
-					ScreenManager.Instance.ExitScene();
-				}
-
-				OnExitScene?.Invoke();
-				UnitySceneManager.LoadScene(sceneName);
-				PrevScene = CurrentScene;
-				CurrentScene = loadScene;
-			}
-		}
-
-		private Scene ResolveLoadScene(Scene requestedScene)
-		{
-			if (string.IsNullOrEmpty(GetSceneName(requestedScene)))
-			{
-				return requestedScene;
+				ScreenManager.Instance.ExitScene();
 			}
 
-			if (CurrentScene == Scene.TransitionBlank)
-			{
-				return requestedScene;
-			}
-
-			if (IsTransitionBlankSource(CurrentScene)
-				&& (requestedScene == Scene.OutGame || requestedScene == Scene.MusicScoreMaker))
-			{
-				return Scene.TransitionBlank;
-			}
-
-			if (CurrentScene == Scene.OutGame && IsOutGameTransitionDestination(requestedScene))
-			{
-				return Scene.TransitionBlank;
-			}
-
-			if (CurrentScene == Scene.Mysekai
-				&& (requestedScene == Scene.Title || requestedScene == Scene.OutGame || requestedScene == Scene.Mysekai))
-			{
-				return Scene.TransitionBlank;
-			}
-
-			return requestedScene;
-		}
-
-		private static bool IsTransitionBlankSource(Scene scene)
-		{
-			switch (scene)
-			{
-				case Scene.VRMode:
-				case Scene.Core:
-				case Scene.VirtualLiveLobby:
-				case Scene.SuperVirtualLiveLobby:
-				case Scene.MusicScoreMaker:
-					return true;
-				default:
-					return false;
-			}
-		}
-
-		private static bool IsOutGameTransitionDestination(Scene scene)
-		{
-			switch (scene)
-			{
-				case Scene.VRMode:
-				case Scene.Core:
-				case Scene.VirtualLiveLobby:
-				case Scene.SuperVirtualLiveLobby:
-				case Scene.Mysekai:
-				case Scene.MusicScoreMaker:
-					return true;
-				default:
-					return false;
-			}
+			OnExitScene?.Invoke();
+			PrevScene = CurrentScene;
+			CurrentScene = nextScene;
 		}
 
 		private static string GetSceneName(Scene scene)
@@ -150,11 +121,12 @@ namespace Sekai
 			switch (scene)
 			{
 				case Scene.Core:
-					return "Core";
-				case Scene.TransitionBlank:
-					return "TransitionBlank";
+					return CoreSceneName;
+				// OpenSekai's out-game (title, menus) lives in the MusicScoreMaker scene.
+				case Scene.Title:
+				case Scene.OutGame:
 				case Scene.MusicScoreMaker:
-					return "MusicScoreMaker";
+					return MusicScoreMakerSceneName;
 				default:
 					return string.Empty;
 			}
