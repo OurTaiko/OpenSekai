@@ -42,6 +42,31 @@ namespace Sekai
 					tab.IsOn = toggleGroup != null && toggleGroup.SelectedIndex == i;
 				}
 			}
+			UpdateSeparators();
+		}
+
+		// Each tab's line is its right edge. As in the original, a separator shows only between two unselected tabs.
+		private void UpdateSeparators()
+		{
+			for (int i = 0; i < tabList.Count; i++)
+			{
+				UIPartsDialogTab tab = tabList[i];
+				if (tab == null)
+				{
+					continue;
+				}
+
+				UIPartsDialogTab next = i + 1 < tabList.Count ? tabList[i + 1] : null;
+				bool visible = !tab.IsOn && next != null && next.gameObject.activeSelf && !next.IsOn;
+				if (visible)
+				{
+					tab.ShowLine();
+				}
+				else
+				{
+					tab.HideLine();
+				}
+			}
 		}
 
 		private void SetupTab()

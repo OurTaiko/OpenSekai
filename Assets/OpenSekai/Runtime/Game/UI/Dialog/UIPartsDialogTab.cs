@@ -23,6 +23,10 @@ namespace Sekai
 
 		private bool isOn;
 
+		private Color backgroundColor = Color.white;
+
+		private bool hasBackgroundColor;
+
 		private CustomToggle toggle;
 
 		private Action onValueChanged;
@@ -69,6 +73,17 @@ namespace Sekai
 		protected void Awake()
 		{
 			toggle = GetComponent<CustomToggle>();
+			CacheBackgroundColor();
+		}
+
+		private void CacheBackgroundColor()
+		{
+			if (!hasBackgroundColor && backgroundImage != null)
+			{
+				backgroundColor = backgroundImage.color;
+				backgroundColor.a = 1f;
+				hasBackgroundColor = true;
+			}
 		}
 
 		protected void OnEnable()
@@ -96,30 +111,33 @@ namespace Sekai
 		private void On()
 		{
 			isOn = true;
+			CacheBackgroundColor();
+			// As in the original option dialog: only the selected tab is filled (in the dialog's own colour) and reads dark.
 			if (backgroundImage != null)
 			{
-				backgroundImage.color = Color.white;
+				backgroundImage.color = backgroundColor;
 			}
 			if (text != null)
 			{
-				// The selected tab reads dark on its white tab, as in the original option dialog.
 				text.color = SelectedTextColor;
 			}
-			ShowLine();
 		}
 
 		private void Off()
 		{
 			isOn = false;
+			CacheBackgroundColor();
+			// Unselected tabs are just white labels on the tab band.
 			if (backgroundImage != null)
 			{
-				backgroundImage.color = new Color(1f, 1f, 1f, 0.65f);
+				Color clear = backgroundColor;
+				clear.a = 0f;
+				backgroundImage.color = clear;
 			}
 			if (text != null)
 			{
 				text.color = Color.white;
 			}
-			HideLine();
 		}
 
 		public void Setup(Action onValueChanged)

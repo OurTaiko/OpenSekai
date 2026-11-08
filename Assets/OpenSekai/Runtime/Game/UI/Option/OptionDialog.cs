@@ -14,6 +14,15 @@ namespace Sekai
 	public sealed class OptionDialog : Common1ButtonDialog
 	{
 		private const float MinNoteAlphaPercent = 10f;
+
+		// The original dialog is 1033 units tall (measured on a 4:3 screen) and leaves at least this much screen above
+		// and below it on shorter screens.
+		private const float FullDialogHeight = 1033f;
+		private const float MinScreenMargin = 40f;
+		private const float MinContentHeight = 300f;
+
+		// Tab band (72) + gap under the tabs (64) + footer (144).
+		private const float DialogChromeHeight = 280f;
 		private const float SeTestLongDuration = 0.6f;
 		private static readonly string[] SeTestCues =
 		{
@@ -22,6 +31,10 @@ namespace Sekai
 			LiveSoundDefine.SE_LIVE_LONG,
 			LiveSoundDefine.SE_LIVE_TRACE,
 		};
+
+		[Header("Layout")]
+		[SerializeField]
+		private LayoutElement contentRoot;
 
 		[Header("Tabs")]
 		[SerializeField]
@@ -167,9 +180,27 @@ namespace Sekai
 		{
 			// The footer button is 閉じる: it only closes, because every change is already saved.
 			Initialize(null, null, null, dialogSize, allowCloseExternal);
+			FitContentHeight(this, contentRoot, DialogChromeHeight);
 			SetupTabs();
 			Load();
 			BindEvents();
+		}
+
+		/// <summary>
+		/// Sizes a dialog's scrolling content so the whole dialog is as tall as the original's
+		/// (<see cref="FullDialogHeight"/>) when the screen allows, and keeps <see cref="MinScreenMargin"/> otherwise.
+		/// </summary>
+		public static void FitContentHeight(Component dialog, LayoutElement content, float chromeHeight)
+		{
+			Canvas canvas = content != null ? dialog.GetComponentInParent<Canvas>() : null;
+			if (canvas == null)
+			{
+				return;
+			}
+
+			float screenHeight = ((RectTransform)canvas.rootCanvas.transform).rect.height;
+			float dialogHeight = Mathf.Min(FullDialogHeight, screenHeight - MinScreenMargin * 2f);
+			content.preferredHeight = Mathf.Max(MinContentHeight, dialogHeight - chromeHeight);
 		}
 
 		private void SetupTabs()

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Sekai
 {
@@ -10,6 +11,12 @@ namespace Sekai
 	/// </summary>
 	public sealed class LiveNoteSettingDialog : Common2ButtonDialog
 	{
+		// No tab band here: gap above the content (64) + footer (144).
+		private const float DialogChromeHeight = 208f;
+
+		[SerializeField]
+		private LayoutElement contentRoot;
+
 		[SerializeField]
 		private OptionStepper noteSpeed;
 
@@ -24,6 +31,7 @@ namespace Sekai
 		public override void Initialize(DialogSize dialogSize = DialogSize.Manual, bool allowCloseExternal = true)
 		{
 			Initialize(null, null, null, Decide, null, dialogSize, allowCloseExternal);
+			OptionDialog.FitContentHeight(this, contentRoot, DialogChromeHeight);
 		}
 
 		public void Setup(float speed, float start, float timing, Action<float, float, float> decide)
