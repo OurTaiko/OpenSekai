@@ -31,10 +31,10 @@ Assets/
 │   │       └── Legacy/          #   尚未接通流程的外围功能（Mysekai、商店、称号等）
 │   ├── Editor/                  # 编辑器工具（OpenSekai.Editor），含 AssetBundle 构建流程
 │   ├── Art/                     # 动画、材质、模型、shader、精灵、图集、贴图、图标
-│   ├── Prefabs/                 # 通用 prefab；Live/ 为 Core 场景里摆放的 live 视图和暂停界面；CustomMusicScoreManager/Resources 为自制谱管理界面
+│   ├── Prefabs/                 # 场景里摆放的界面 prefab：CustomMusicScoreManager/（自制谱管理）、MusicScoreMaker/（谱面编辑器）、Live/（live 视图和暂停界面）
 │   ├── Resources/               # 运行时通过 Resources 加载的 prefab、字体、特效、界面数据
 │   └── AssetBundles/            # AssetBundle 源资源（保留 AssetBundle 名称，由构建流程打包）
-├── Scenes/                      # MusicScoreMaker（首场景）、Core（live，视图直接摆在场景里；在编辑器里直接运行会自动游玩上次的自制谱）
+├── Scenes/                      # CustomMusicScoreManager（首场景）、MusicScoreMaker（谱面编辑器）、Core（live）；界面都直接摆在场景里
 ├── Settings/                    # URP 管线资源、Renderer、Volume Profile
 ├── ThirdParty/                  # 第三方源码（ManagedBass 子模块、ZString、StandaloneFileBrowser 等）
 ├── Plugins/                     # 原生库（BASS）与 DOTween

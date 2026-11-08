@@ -95,86 +95,222 @@ namespace Sekai.CustomMusicScoreManager
 		private static bool _fontAssetSetup;
 
 		private readonly List<RowView> _rows = new List<RowView>();
+		[SerializeField]
 		private RectTransform _listContent;
+		[SerializeField]
 		private RectTransform _actionButtonsContent;
+		[SerializeField]
 		private ScrollRect _manifestFormScroll;
+		[SerializeField]
 		private RectTransform _manifestFormScrollRect;
+		[SerializeField]
 		private RectTransform _manifestFieldGrid;
+		[SerializeField]
 		private GridLayoutGroup _manifestFieldLayout;
+		[SerializeField]
 		private HorizontalLayoutGroup _actionButtonsLayout;
+		[SerializeField]
 		private TextMeshProUGUI _emptyText;
+		[SerializeField]
 		private TextMeshProUGUI _statusText;
+		[SerializeField]
 		private RectTransform _detailPanel;
+		[SerializeField]
 		private TextMeshProUGUI _detailTitle;
+		[SerializeField]
 		private TextMeshProUGUI _detailMeta;
+		[SerializeField]
 		private TextMeshProUGUI _detailStatus;
+		[SerializeField]
 		private RectTransform _bestResultPanel;
+		[SerializeField]
 		private TextMeshProUGUI _bestResultLeftText;
+		[SerializeField]
 		private TextMeshProUGUI _bestResultRightText;
+		[SerializeField]
 		private Image _jacketImage;
+		[SerializeField]
 		private Button _editButton;
+		[SerializeField]
 		private Button _playButton;
+		[SerializeField]
 		private Button _autoButton;
+		[SerializeField]
 		private Button _duplicateButton;
+		[SerializeField]
 		private Button _deleteButton;
+		[SerializeField]
 		private Button _exportButton;
+		[SerializeField]
 		private Button _saveManifestButton;
+		[SerializeField]
 		private Button _audioSelectButton;
+		[SerializeField]
 		private Button _jacketSelectButton;
+		[SerializeField]
 		private Button _scoreSelectButton;
+		[SerializeField]
 		private Button _videoSelectButton;
+		[SerializeField]
 		private RectTransform _settingsOverlay;
+		[SerializeField]
 		private TMP_InputField _settingLiveBgmInput;
+		[SerializeField]
 		private TMP_InputField _settingLiveSeInput;
+		[SerializeField]
 		private TMP_InputField _settingNoteSpeedInput;
+		[SerializeField]
 		private TMP_InputField _settingTimingAdjustInput;
+		[SerializeField]
 		private TMP_InputField _settingNoteShowRateInput;
+		[SerializeField]
 		private TMP_InputField _settingNoteLineAlphaInput;
+		[SerializeField]
 		private TMP_InputField _settingGuideLineAlphaInput;
+		[SerializeField]
 		private TextMeshProUGUI _settingNoteSkinLabel;
 		private int _settingNoteSkinIndex;
+		[SerializeField]
 		private TextMeshProUGUI _settingNoteSeLabel;
 		private int _settingNoteSeIndex;
+		[SerializeField]
 		private TextMeshProUGUI _settingNoteEffectLabel;
 		private int _settingNoteEffectIndex;
+		[SerializeField]
 		private TextMeshProUGUI _settingSimultaneousLineLabel;
 		private bool _settingSimultaneousLineEnabled;
+		[SerializeField]
 		private TextMeshProUGUI _settingMusicInfoDisplayModeLabel;
 		private int _settingMusicInfoDisplayMode;
+		[SerializeField]
 		private TextMeshProUGUI _settingLiveBackgroundModeLabel;
 		private int _settingLiveBackgroundMode;
+		[SerializeField]
 		private TextMeshProUGUI _settingFastLateFlickLabel;
 		private bool _settingFastLateFlickEnabled;
+		[SerializeField]
 		private TextMeshProUGUI _settingFullscreenLabel;
 		private bool _settingFullscreenEnabled;
+		[SerializeField]
 		private TMP_InputField _titleInput;
+		[SerializeField]
 		private TMP_InputField _scoreTitleInput;
+		[SerializeField]
 		private TMP_InputField _userInput;
+		[SerializeField]
 		private TMP_InputField _composerInput;
+		[SerializeField]
 		private TMP_InputField _lyricistInput;
+		[SerializeField]
 		private TMP_InputField _arrangerInput;
+		[SerializeField]
 		private TMP_InputField _singerInput;
+		[SerializeField]
 		private TMP_InputField _collaborationLabelInput;
+		[SerializeField]
 		private TMP_InputField _descriptionInput;
+		[SerializeField]
 		private RectTransform _difficultyFieldRect;
+		[SerializeField]
 		private TextMeshProUGUI _difficultyLabel;
+		[SerializeField]
 		private Button _difficultyButton;
 		private int _difficultyIndex = 4;
+		[SerializeField]
 		private TMP_InputField _levelInput;
+		[SerializeField]
 		private TMP_InputField _durationInput;
+		[SerializeField]
 		private TMP_InputField _fillerInput;
+		[SerializeField]
 		private TMP_InputField _audioInput;
+		[SerializeField]
 		private TMP_InputField _jacketInput;
+		[SerializeField]
 		private TMP_InputField _scoreInput;
+		[SerializeField]
 		private TMP_InputField _videoInput;
+		[SerializeField]
+		private TextMeshProUGUI _titleText;
+		[SerializeField]
+		private Button _settingsButton;
+		[SerializeField]
+		private Button _refreshButton;
+		[SerializeField]
+		private Button _newButton;
+		[SerializeField]
+		private Button _importButton;
+		[SerializeField]
+		private Button _settingsCancelButton;
+		[SerializeField]
+		private Button _settingsSaveButton;
+		[SerializeField]
+		private Button _settingNoteSkinButton;
+		[SerializeField]
+		private Button _settingNoteSeButton;
+		[SerializeField]
+		private Button _settingNoteEffectButton;
+		[SerializeField]
+		private Button _settingSimultaneousLineButton;
+		[SerializeField]
+		private Button _settingMusicInfoDisplayModeButton;
+		[SerializeField]
+		private Button _settingLiveBackgroundModeButton;
+		[SerializeField]
+		private Button _settingFastLateFlickButton;
+		[SerializeField]
+		private Button _settingFullscreenButton;
+		[SerializeField]
+		private GameObject _settingFullscreenRow;
+		[SerializeField]
+		private CustomMusicScoreEntryCell _entryCellTemplate;
 		private IReadOnlyList<CustomMusicScoreManagerItem> _items = Array.Empty<CustomMusicScoreManagerItem>();
 		private CustomMusicScoreManagerItem _selected;
 		private Sprite _jacketSprite;
 
+		// The view is authored in the prefab (Prefabs/CustomMusicScoreManager); this only binds it, as OurTaikoPlay's
+		// scenes do with their [SerializeField] references.
 		protected override void Awake()
 		{
 			base.Awake();
-			BuildView();
+			SetupOriginalFontAssets();
+			_titleText.text = $"Open Sekai {Application.version}";
+			_settingFullscreenRow.SetActive(ShouldShowDesktopFullscreenSetting());
+			BindEvents();
+			UpdateSelection(null);
+		}
+
+		private void BindEvents()
+		{
+			_settingsButton.onClick.AddListener(OpenSettings);
+			_refreshButton.onClick.AddListener(RefreshList);
+			_newButton.onClick.AddListener(CreateEntry);
+			_importButton.onClick.AddListener(ImportEntry);
+
+			_editButton.onClick.AddListener(OpenEditor);
+			_playButton.onClick.AddListener(PlaySelected);
+			_autoButton.onClick.AddListener(AutoPlaySelected);
+			_duplicateButton.onClick.AddListener(DuplicateSelected);
+			_exportButton.onClick.AddListener(ExportSelected);
+			_deleteButton.onClick.AddListener(DeleteSelected);
+
+			_audioSelectButton.onClick.AddListener(ReplaceSelectedAudio);
+			_jacketSelectButton.onClick.AddListener(ReplaceSelectedJacket);
+			_scoreSelectButton.onClick.AddListener(ReplaceSelectedScore);
+			_videoSelectButton.onClick.AddListener(ReplaceSelectedVideo);
+			_difficultyButton.onClick.AddListener(CycleDifficulty);
+			_saveManifestButton.onClick.AddListener(SaveSelectedManifest);
+
+			_settingNoteSkinButton.onClick.AddListener(CycleSettingNoteSkin);
+			_settingNoteSeButton.onClick.AddListener(CycleSettingNoteSe);
+			_settingNoteEffectButton.onClick.AddListener(CycleSettingNoteEffect);
+			_settingSimultaneousLineButton.onClick.AddListener(CycleSettingSimultaneousLine);
+			_settingMusicInfoDisplayModeButton.onClick.AddListener(CycleSettingMusicInfoDisplayMode);
+			_settingLiveBackgroundModeButton.onClick.AddListener(CycleSettingLiveBackgroundMode);
+			_settingFastLateFlickButton.onClick.AddListener(CycleSettingFastLateFlick);
+			_settingFullscreenButton.onClick.AddListener(CycleSettingFullscreen);
+			_settingsCancelButton.onClick.AddListener(CloseSettings);
+			_settingsSaveButton.onClick.AddListener(SaveSettings);
 		}
 
 		protected override void OnBoot(BootArgBase bootData)
@@ -198,245 +334,6 @@ namespace Sekai.CustomMusicScoreManager
 		{
 			ClearLoadedJacket();
 			base.OnExited();
-		}
-
-		private void BuildView()
-		{
-			RectTransform root = GetComponent<RectTransform>() ?? gameObject.AddComponent<RectTransform>();
-			Stretch(root);
-
-			Image background = gameObject.GetComponent<Image>() ?? gameObject.AddComponent<Image>();
-			background.color = new Color32(21, 25, 31, 255);
-
-			RectTransform topBar = CreatePanel("TopBar", root, new Color32(31, 37, 45, 255));
-			SetStretchTop(topBar, 0f, 0f, 0f, 108f);
-
-			TextMeshProUGUI title = CreateText("Title", topBar, $"Open Sekai {Application.version}", 40, FontStyles.Bold, TextAlignmentOptions.Left);
-			SetAnchor(title.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, 0.5f), new Vector2(36f, 0f), new Vector2(560f, 0f));
-
-			RectTransform toolbar = CreateRect("Toolbar", topBar);
-			SetAnchor(toolbar, new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(1f, 0.5f), new Vector2(-36f, 0f), new Vector2(980f, 0f));
-			HorizontalLayoutGroup toolbarLayout = toolbar.gameObject.AddComponent<HorizontalLayoutGroup>();
-			toolbarLayout.childAlignment = TextAnchor.MiddleRight;
-			toolbarLayout.childControlWidth = false;
-			toolbarLayout.childControlHeight = false;
-			toolbarLayout.spacing = 14f;
-			CreateButton("SettingsButton", toolbar, "设置", OpenSettings, 150f, 56f);
-			CreateButton("RefreshButton", toolbar, "刷新", RefreshList, 150f, 56f);
-			CreateButton("NewButton", toolbar, "新建", CreateEntry, 132f, 56f);
-			CreateButton("ImportButton", toolbar, "导入", ImportEntry, 150f, 56f);
-
-			RectTransform body = CreateRect("Body", root);
-			SetStretchOffsets(body, 28f, 28f, 28f, 136f);
-
-			RectTransform listPanel = CreatePanel("ListPanel", body, new Color32(26, 31, 38, 255));
-			SetAnchor(listPanel, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, 0.5f), new Vector2(28f, 0f), new Vector2(620f, 0f));
-
-			RectTransform listHeader = CreateRect("ListHeader", listPanel);
-			SetStretchTop(listHeader, 18f, 20f, 18f, 50f);
-			TextMeshProUGUI listTitle = CreateText("ListTitle", listHeader, "本地谱面", 26, FontStyles.Bold, TextAlignmentOptions.Left);
-			Stretch(listTitle.rectTransform);
-
-			ScrollRect scrollRect = CreateScrollRect("ScoreScroll", listPanel, out _listContent);
-			SetStretchOffsets(scrollRect.GetComponent<RectTransform>(), 16f, 16f, 16f, 88f);
-
-			_emptyText = CreateText("EmptyText", listPanel, "暂无本地谱面", 24, FontStyles.Normal, TextAlignmentOptions.Center);
-			SetStretchOffsets(_emptyText.rectTransform, 28f, 100f, 28f, 100f);
-
-			RectTransform detailPanel = CreatePanel("DetailPanel", body, new Color32(28, 34, 42, 255));
-			_detailPanel = detailPanel;
-			SetStretchOffsets(detailPanel, 688f, 0f, 0f, 0f);
-
-			_jacketImage = CreateImage("Jacket", detailPanel, new Color32(42, 49, 58, 255));
-			SetAnchor(_jacketImage.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(28f, -28f), new Vector2(200f, 200f));
-			_jacketImage.preserveAspect = true;
-
-			_detailTitle = CreateText("DetailTitle", detailPanel, "请选择谱面", 38, FontStyles.Bold, TextAlignmentOptions.Left);
-			SetStretchTop(_detailTitle.rectTransform, 252f, 30f, 30f, 54f);
-
-			_detailMeta = CreateText("DetailMeta", detailPanel, string.Empty, 22, FontStyles.Normal, TextAlignmentOptions.Left);
-			SetStretchTop(_detailMeta.rectTransform, 252f, 88f, 30f, 88f);
-
-			_detailStatus = CreateText("DetailStatus", detailPanel, string.Empty, 22, FontStyles.Bold, TextAlignmentOptions.Left);
-			SetStretchTop(_detailStatus.rectTransform, 252f, 184f, 30f, 38f);
-
-			_bestResultPanel = CreatePanel("BestResult", detailPanel, new Color32(22, 27, 34, 255));
-			SetAnchor(_bestResultPanel, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-BestResultRight, -BestResultTop), new Vector2(BestResultPreferredWidth, BestResultHeight));
-			VerticalLayoutGroup bestResultLayout = _bestResultPanel.gameObject.AddComponent<VerticalLayoutGroup>();
-			bestResultLayout.padding = new RectOffset(18, 18, 14, 14);
-			bestResultLayout.spacing = 6f;
-			bestResultLayout.childControlWidth = true;
-			bestResultLayout.childControlHeight = true;
-			bestResultLayout.childForceExpandWidth = true;
-			bestResultLayout.childForceExpandHeight = false;
-			TextMeshProUGUI bestResultTitle = CreateText("Title", _bestResultPanel, "最佳成绩", 22, FontStyles.Bold, TextAlignmentOptions.Left);
-			LayoutElement bestResultTitleLayout = bestResultTitle.gameObject.AddComponent<LayoutElement>();
-			bestResultTitleLayout.minHeight = 30f;
-			bestResultTitleLayout.preferredHeight = 30f;
-			RectTransform bestResultContent = CreateRect("Content", _bestResultPanel);
-			LayoutElement bestResultContentLayout = bestResultContent.gameObject.AddComponent<LayoutElement>();
-			bestResultContentLayout.minHeight = 92f;
-			bestResultContentLayout.preferredHeight = 92f;
-			HorizontalLayoutGroup bestResultContentGroup = bestResultContent.gameObject.AddComponent<HorizontalLayoutGroup>();
-			bestResultContentGroup.spacing = 24f;
-			bestResultContentGroup.childControlWidth = true;
-			bestResultContentGroup.childControlHeight = true;
-			bestResultContentGroup.childForceExpandWidth = true;
-			bestResultContentGroup.childForceExpandHeight = true;
-			_bestResultLeftText = CreateText("LeftText", bestResultContent, string.Empty, 18, FontStyles.Normal, TextAlignmentOptions.Left);
-			_bestResultLeftText.textWrappingMode = TextWrappingModes.NoWrap;
-			_bestResultLeftText.overflowMode = TextOverflowModes.Overflow;
-			_bestResultLeftText.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
-			_bestResultRightText = CreateText("RightText", bestResultContent, string.Empty, 18, FontStyles.Normal, TextAlignmentOptions.Left);
-			_bestResultRightText.textWrappingMode = TextWrappingModes.NoWrap;
-			_bestResultRightText.overflowMode = TextOverflowModes.Overflow;
-			_bestResultRightText.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
-			_bestResultPanel.gameObject.SetActive(false);
-
-			RectTransform actionButtons = CreateRect("ActionButtons", detailPanel);
-			SetStretchTop(actionButtons, 28f, ActionButtonsTop, 28f, ActionButtonHeight);
-			_actionButtonsContent = actionButtons;
-			_actionButtonsLayout = actionButtons.gameObject.AddComponent<HorizontalLayoutGroup>();
-			_actionButtonsLayout.spacing = ActionButtonSpacing;
-			_actionButtonsLayout.childAlignment = TextAnchor.MiddleLeft;
-			_actionButtonsLayout.childControlWidth = true;
-			_actionButtonsLayout.childControlHeight = true;
-			_actionButtonsLayout.childForceExpandWidth = true;
-			_actionButtonsLayout.childForceExpandHeight = false;
-			_editButton = CreateButton("EditButton", actionButtons, "编辑", OpenEditor, ActionButtonWidth, ActionButtonHeight);
-			_playButton = CreateButton("PlayButton", actionButtons, "游玩", PlaySelected, ActionButtonWidth, ActionButtonHeight);
-			_autoButton = CreateButton("AutoButton", actionButtons, "自动", AutoPlaySelected, ActionButtonWidth, ActionButtonHeight);
-			_duplicateButton = CreateButton("DuplicateButton", actionButtons, "复制", DuplicateSelected, ActionButtonWidth, ActionButtonHeight);
-			_exportButton = CreateButton("ExportButton", actionButtons, "导出ZIP", ExportSelected, ActionButtonWidth, ActionButtonHeight);
-			_deleteButton = CreateButton("DeleteButton", actionButtons, "删除", DeleteSelected, ActionButtonWidth, ActionButtonHeight, new Color32(110, 49, 57, 255));
-
-			ScrollRect formScroll = CreateMaskedScrollRect("ManifestFormScroll", detailPanel, out RectTransform form);
-			_manifestFormScroll = formScroll;
-			_manifestFormScrollRect = formScroll.GetComponent<RectTransform>();
-			SetStretchOffsets(_manifestFormScrollRect, 28f, ManifestFormBottom, 28f, ActionButtonsTop + ActionButtonHeight + ActionButtonsToFormGap);
-			VerticalLayoutGroup formLayout = form.gameObject.AddComponent<VerticalLayoutGroup>();
-			formLayout.spacing = 14f;
-			formLayout.padding = new RectOffset(Mathf.RoundToInt(ManifestFieldLeftPadding), Mathf.RoundToInt(ManifestFieldRightScrollPadding), 20, 20);
-			formLayout.childControlWidth = true;
-			formLayout.childControlHeight = false;
-			ContentSizeFitter formFitter = form.gameObject.AddComponent<ContentSizeFitter>();
-			formFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-			_manifestFieldGrid = CreateRect("FieldGrid", form);
-			_manifestFieldLayout = _manifestFieldGrid.gameObject.AddComponent<GridLayoutGroup>();
-			_manifestFieldLayout.cellSize = new Vector2(ManifestFieldMinWidth, 116f);
-			_manifestFieldLayout.spacing = new Vector2(ManifestFieldSpacingX, 20f);
-			_manifestFieldLayout.startAxis = GridLayoutGroup.Axis.Horizontal;
-			_manifestFieldLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-			_manifestFieldLayout.constraintCount = MaxManifestFieldColumnCount;
-			ContentSizeFitter fieldFitter = _manifestFieldGrid.gameObject.AddComponent<ContentSizeFitter>();
-			fieldFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-			_titleInput = CreateInputField(_manifestFieldGrid, "曲名", "title");
-			_scoreTitleInput = CreateInputField(_manifestFieldGrid, "谱面标题", "scoreTitle");
-			_userInput = CreateInputField(_manifestFieldGrid, "作者", "userName");
-			_audioInput = CreateInputField(_manifestFieldGrid, "音频", "audioFileName", ReplaceSelectedAudio, out _audioSelectButton);
-			_jacketInput = CreateInputField(_manifestFieldGrid, "封面", "jacketFileName", ReplaceSelectedJacket, out _jacketSelectButton);
-			_scoreInput = CreateInputField(_manifestFieldGrid, "谱面", "scoreFileName", ReplaceSelectedScore, out _scoreSelectButton);
-			_videoInput = CreateInputField(_manifestFieldGrid, "2DMV", "videoFileName", ReplaceSelectedVideo, out _videoSelectButton);
-			_fillerInput = CreateInputField(_manifestFieldGrid, "前置空白秒", "fillerSec");
-			_durationInput = CreateInputField(_manifestFieldGrid, "编辑时长秒", "secForMusicScoreMaker");
-			_difficultyButton = CreateDifficultySelector(_manifestFieldGrid);
-			_levelInput = CreateInputField(_manifestFieldGrid, "等级", "playLevel");
-			_composerInput = CreateInputField(_manifestFieldGrid, "作曲", "composer");
-			_lyricistInput = CreateInputField(_manifestFieldGrid, "作词", "lyricist");
-			_arrangerInput = CreateInputField(_manifestFieldGrid, "编曲", "arranger");
-			_singerInput = CreateInputField(_manifestFieldGrid, "歌手", "singer");
-			_collaborationLabelInput = CreateInputField(_manifestFieldGrid, "联动标签", "collaborationLabel");
-			_descriptionInput = CreateInputField(_manifestFieldGrid, "描述", "description");
-			RectTransform saveRow = CreateRect("SaveManifestRow", detailPanel);
-			SetStretchBottom(saveRow, 28f, 28f, 28f, 64f);
-			HorizontalLayoutGroup saveRowGroup = saveRow.gameObject.AddComponent<HorizontalLayoutGroup>();
-			saveRowGroup.childControlWidth = true;
-			saveRowGroup.childControlHeight = true;
-			saveRowGroup.childForceExpandWidth = false;
-			saveRowGroup.childForceExpandHeight = false;
-			saveRowGroup.childAlignment = TextAnchor.MiddleLeft;
-			_saveManifestButton = CreateButton("SaveManifestButton", saveRow, "保存配置", SaveSelectedManifest, 230f, 58f);
-			_statusText = CreateText("StatusText", saveRow, string.Empty, 21, FontStyles.Normal, TextAlignmentOptions.Right);
-			_statusText.raycastTarget = false;
-			LayoutElement statusLayout = _statusText.gameObject.AddComponent<LayoutElement>();
-			statusLayout.flexibleWidth = 1f;
-			statusLayout.minHeight = 58f;
-			statusLayout.preferredHeight = 58f;
-
-			BuildSettingsOverlay(root);
-			UpdateSelection(null);
-		}
-
-		private void BuildSettingsOverlay(RectTransform root)
-		{
-			_settingsOverlay = CreatePanel("SettingsOverlay", root, new Color32(0, 0, 0, 176));
-			Stretch(_settingsOverlay);
-			_settingsOverlay.gameObject.SetActive(false);
-
-			RectTransform dialog = CreatePanel("SettingsDialog", _settingsOverlay, new Color32(31, 37, 45, 255));
-			SetAnchor(dialog, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(760f, 960f));
-
-			VerticalLayoutGroup dialogLayout = dialog.gameObject.AddComponent<VerticalLayoutGroup>();
-			dialogLayout.padding = new RectOffset(32, 32, 32, 32);
-			dialogLayout.spacing = 16f;
-			dialogLayout.childControlWidth = true;
-			dialogLayout.childControlHeight = true;
-			dialogLayout.childForceExpandWidth = true;
-			dialogLayout.childForceExpandHeight = false;
-
-			TextMeshProUGUI title = CreateText("Title", dialog, "设置", 36, FontStyles.Bold, TextAlignmentOptions.Left);
-			LayoutElement titleLayout = title.gameObject.AddComponent<LayoutElement>();
-			titleLayout.preferredHeight = 46f;
-
-			ScrollRect settingsScroll = CreateMaskedScrollRect("SettingsScroll", dialog, out RectTransform settingsContent);
-			settingsScroll.scrollSensitivity = 48f;
-			LayoutElement settingsScrollLayout = settingsScroll.gameObject.AddComponent<LayoutElement>();
-			settingsScrollLayout.preferredHeight = 760f;
-			settingsScrollLayout.minHeight = 1f;
-			settingsScrollLayout.flexibleHeight = 1f;
-
-			VerticalLayoutGroup settingsLayout = settingsContent.gameObject.AddComponent<VerticalLayoutGroup>();
-			settingsLayout.padding = new RectOffset(16, 16, 16, 16);
-			settingsLayout.spacing = 16f;
-			settingsLayout.childControlWidth = true;
-			settingsLayout.childControlHeight = true;
-			settingsLayout.childForceExpandWidth = true;
-			settingsLayout.childForceExpandHeight = false;
-			ContentSizeFitter settingsFitter = settingsContent.gameObject.AddComponent<ContentSizeFitter>();
-			settingsFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-			_settingLiveBgmInput = CreateInputField(settingsContent, "音乐音量", "0.0 - 1.0");
-			_settingLiveSeInput = CreateInputField(settingsContent, "音效音量", "0.0 - 1.0");
-			_settingNoteSpeedInput = CreateInputField(settingsContent, "音符流速", "1.0 - 12.0");
-			_settingTimingAdjustInput = CreateInputField(settingsContent, "判定偏移", "-20.0 - 20.0");
-			_settingNoteShowRateInput = CreateInputField(settingsContent, "上隐挡板", "0 - 100");
-			_settingNoteLineAlphaInput = CreateInputField(settingsContent, "长条线不透明度", "10 - 100");
-			_settingGuideLineAlphaInput = CreateInputField(settingsContent, "Guide线不透明度", "10 - 100");
-			CreateSettingNoteSkinSelector(settingsContent);
-			CreateSettingNoteSeSelector(settingsContent);
-			CreateSettingNoteEffectSelector(settingsContent);
-			CreateSettingSimultaneousLineSelector(settingsContent);
-			CreateSettingMusicInfoDisplayModeSelector(settingsContent);
-			CreateSettingLiveBackgroundModeSelector(settingsContent);
-			CreateSettingFastLateFlickSelector(settingsContent);
-			CreateSettingFullscreenSelector(settingsContent);
-
-			RectTransform buttonRow = CreateRect("ButtonRow", dialog);
-			LayoutElement buttonRowLayout = buttonRow.gameObject.AddComponent<LayoutElement>();
-			buttonRowLayout.preferredHeight = 58f;
-			buttonRowLayout.minHeight = 58f;
-			HorizontalLayoutGroup buttonRowGroup = buttonRow.gameObject.AddComponent<HorizontalLayoutGroup>();
-			buttonRowGroup.spacing = 14f;
-			buttonRowGroup.childAlignment = TextAnchor.MiddleRight;
-			buttonRowGroup.childControlWidth = false;
-			buttonRowGroup.childControlHeight = false;
-			buttonRowGroup.childForceExpandWidth = false;
-			buttonRowGroup.childForceExpandHeight = false;
-
-			CreateButton("CancelButton", buttonRow, "取消", CloseSettings, 150f, 52f);
-			CreateButton("SaveButton", buttonRow, "保存", SaveSettings, 150f, 52f);
 		}
 
 		private void OpenSettings()
@@ -559,33 +456,6 @@ namespace Sekai.CustomMusicScoreManager
 			return value.ToString("0.###", CultureInfo.InvariantCulture);
 		}
 
-		private void CreateSettingNoteSkinSelector(Transform parent)
-		{
-			RectTransform row = CreateRect("NoteSkinSelector", parent);
-			LayoutElement rowLayout = row.gameObject.AddComponent<LayoutElement>();
-			rowLayout.preferredHeight = 58f;
-			rowLayout.minHeight = 58f;
-
-			HorizontalLayoutGroup rowGroup = row.gameObject.AddComponent<HorizontalLayoutGroup>();
-			rowGroup.spacing = 16f;
-			rowGroup.childAlignment = TextAnchor.MiddleLeft;
-			rowGroup.childControlWidth = true;
-			rowGroup.childControlHeight = true;
-			rowGroup.childForceExpandWidth = false;
-			rowGroup.childForceExpandHeight = false;
-
-			TextMeshProUGUI title = CreateText("Label", row, "Note皮肤", 24, FontStyles.Bold, TextAlignmentOptions.Left);
-			LayoutElement titleLayout = title.gameObject.AddComponent<LayoutElement>();
-			titleLayout.preferredWidth = 180f;
-			titleLayout.minWidth = 180f;
-			titleLayout.preferredHeight = 58f;
-			titleLayout.minHeight = 58f;
-
-			Button button = CreateButton("Button", row, string.Empty, CycleSettingNoteSkin, 220f, 54f);
-			_settingNoteSkinLabel = button.GetComponentInChildren<TextMeshProUGUI>();
-			SetSettingNoteSkinIndex(0);
-		}
-
 		private void CycleSettingNoteSkin()
 		{
 			SetSettingNoteSkinIndex((_settingNoteSkinIndex + 1) % NoteSkinTypeCount);
@@ -598,33 +468,6 @@ namespace Sekai.CustomMusicScoreManager
 			{
 				_settingNoteSkinLabel.text = string.Format("custom{0:00}", _settingNoteSkinIndex + 1);
 			}
-		}
-
-		private void CreateSettingNoteSeSelector(Transform parent)
-		{
-			RectTransform row = CreateRect("NoteSeSelector", parent);
-			LayoutElement rowLayout = row.gameObject.AddComponent<LayoutElement>();
-			rowLayout.preferredHeight = 58f;
-			rowLayout.minHeight = 58f;
-
-			HorizontalLayoutGroup rowGroup = row.gameObject.AddComponent<HorizontalLayoutGroup>();
-			rowGroup.spacing = 16f;
-			rowGroup.childAlignment = TextAnchor.MiddleLeft;
-			rowGroup.childControlWidth = true;
-			rowGroup.childControlHeight = true;
-			rowGroup.childForceExpandWidth = false;
-			rowGroup.childForceExpandHeight = false;
-
-			TextMeshProUGUI title = CreateText("Label", row, "Note音效", 24, FontStyles.Bold, TextAlignmentOptions.Left);
-			LayoutElement titleLayout = title.gameObject.AddComponent<LayoutElement>();
-			titleLayout.preferredWidth = 180f;
-			titleLayout.minWidth = 180f;
-			titleLayout.preferredHeight = 58f;
-			titleLayout.minHeight = 58f;
-
-			Button button = CreateButton("Button", row, string.Empty, CycleSettingNoteSe, 220f, 54f);
-			_settingNoteSeLabel = button.GetComponentInChildren<TextMeshProUGUI>();
-			SetSettingNoteSeIndex(0);
 		}
 
 		private void CycleSettingNoteSe()
@@ -641,33 +484,6 @@ namespace Sekai.CustomMusicScoreManager
 			}
 		}
 
-		private void CreateSettingNoteEffectSelector(Transform parent)
-		{
-			RectTransform row = CreateRect("NoteEffectSelector", parent);
-			LayoutElement rowLayout = row.gameObject.AddComponent<LayoutElement>();
-			rowLayout.preferredHeight = 58f;
-			rowLayout.minHeight = 58f;
-
-			HorizontalLayoutGroup rowGroup = row.gameObject.AddComponent<HorizontalLayoutGroup>();
-			rowGroup.spacing = 16f;
-			rowGroup.childAlignment = TextAnchor.MiddleLeft;
-			rowGroup.childControlWidth = true;
-			rowGroup.childControlHeight = true;
-			rowGroup.childForceExpandWidth = false;
-			rowGroup.childForceExpandHeight = false;
-
-			TextMeshProUGUI title = CreateText("Label", row, "击打特效", 24, FontStyles.Bold, TextAlignmentOptions.Left);
-			LayoutElement titleLayout = title.gameObject.AddComponent<LayoutElement>();
-			titleLayout.preferredWidth = 180f;
-			titleLayout.minWidth = 180f;
-			titleLayout.preferredHeight = 58f;
-			titleLayout.minHeight = 58f;
-
-			Button button = CreateButton("Button", row, string.Empty, CycleSettingNoteEffect, 220f, 54f);
-			_settingNoteEffectLabel = button.GetComponentInChildren<TextMeshProUGUI>();
-			SetSettingNoteEffectIndex(0);
-		}
-
 		private void CycleSettingNoteEffect()
 		{
 			SetSettingNoteEffectIndex((_settingNoteEffectIndex + 1) % NoteEffectTypeCount);
@@ -682,33 +498,6 @@ namespace Sekai.CustomMusicScoreManager
 			}
 		}
 
-		private void CreateSettingSimultaneousLineSelector(Transform parent)
-		{
-			RectTransform row = CreateRect("SimultaneousLineSelector", parent);
-			LayoutElement rowLayout = row.gameObject.AddComponent<LayoutElement>();
-			rowLayout.preferredHeight = 58f;
-			rowLayout.minHeight = 58f;
-
-			HorizontalLayoutGroup rowGroup = row.gameObject.AddComponent<HorizontalLayoutGroup>();
-			rowGroup.spacing = 16f;
-			rowGroup.childAlignment = TextAnchor.MiddleLeft;
-			rowGroup.childControlWidth = true;
-			rowGroup.childControlHeight = true;
-			rowGroup.childForceExpandWidth = false;
-			rowGroup.childForceExpandHeight = false;
-
-			TextMeshProUGUI title = CreateText("Label", row, "多押提示线", 24, FontStyles.Bold, TextAlignmentOptions.Left);
-			LayoutElement titleLayout = title.gameObject.AddComponent<LayoutElement>();
-			titleLayout.preferredWidth = 180f;
-			titleLayout.minWidth = 180f;
-			titleLayout.preferredHeight = 58f;
-			titleLayout.minHeight = 58f;
-
-			Button button = CreateButton("Button", row, string.Empty, CycleSettingSimultaneousLine, 220f, 54f);
-			_settingSimultaneousLineLabel = button.GetComponentInChildren<TextMeshProUGUI>();
-			SetSettingSimultaneousLine(true);
-		}
-
 		private void CycleSettingSimultaneousLine()
 		{
 			SetSettingSimultaneousLine(!_settingSimultaneousLineEnabled);
@@ -721,33 +510,6 @@ namespace Sekai.CustomMusicScoreManager
 			{
 				_settingSimultaneousLineLabel.text = enabled ? "开启" : "关闭";
 			}
-		}
-
-		private void CreateSettingMusicInfoDisplayModeSelector(Transform parent)
-		{
-			RectTransform row = CreateRect("MusicInfoDisplayModeSelector", parent);
-			LayoutElement rowLayout = row.gameObject.AddComponent<LayoutElement>();
-			rowLayout.preferredHeight = 58f;
-			rowLayout.minHeight = 58f;
-
-			HorizontalLayoutGroup rowGroup = row.gameObject.AddComponent<HorizontalLayoutGroup>();
-			rowGroup.spacing = 16f;
-			rowGroup.childAlignment = TextAnchor.MiddleLeft;
-			rowGroup.childControlWidth = true;
-			rowGroup.childControlHeight = true;
-			rowGroup.childForceExpandWidth = false;
-			rowGroup.childForceExpandHeight = false;
-
-			TextMeshProUGUI title = CreateText("Label", row, "MusicInfo显示", 24, FontStyles.Bold, TextAlignmentOptions.Left);
-			LayoutElement titleLayout = title.gameObject.AddComponent<LayoutElement>();
-			titleLayout.preferredWidth = 180f;
-			titleLayout.minWidth = 180f;
-			titleLayout.preferredHeight = 58f;
-			titleLayout.minHeight = 58f;
-
-			Button button = CreateButton("Button", row, string.Empty, CycleSettingMusicInfoDisplayMode, 220f, 54f);
-			_settingMusicInfoDisplayModeLabel = button.GetComponentInChildren<TextMeshProUGUI>();
-			SetSettingMusicInfoDisplayMode(LiveSettingData.MusicInfoDisplayModeCustomScore);
 		}
 
 		private void CycleSettingMusicInfoDisplayMode()
@@ -771,33 +533,6 @@ namespace Sekai.CustomMusicScoreManager
 			}
 		}
 
-		private void CreateSettingLiveBackgroundModeSelector(Transform parent)
-		{
-			RectTransform row = CreateRect("LiveBackgroundModeSelector", parent);
-			LayoutElement rowLayout = row.gameObject.AddComponent<LayoutElement>();
-			rowLayout.preferredHeight = 58f;
-			rowLayout.minHeight = 58f;
-
-			HorizontalLayoutGroup rowGroup = row.gameObject.AddComponent<HorizontalLayoutGroup>();
-			rowGroup.spacing = 16f;
-			rowGroup.childAlignment = TextAnchor.MiddleLeft;
-			rowGroup.childControlWidth = true;
-			rowGroup.childControlHeight = true;
-			rowGroup.childForceExpandWidth = false;
-			rowGroup.childForceExpandHeight = false;
-
-			TextMeshProUGUI title = CreateText("Label", row, "Live背景", 24, FontStyles.Bold, TextAlignmentOptions.Left);
-			LayoutElement titleLayout = title.gameObject.AddComponent<LayoutElement>();
-			titleLayout.preferredWidth = 180f;
-			titleLayout.minWidth = 180f;
-			titleLayout.preferredHeight = 58f;
-			titleLayout.minHeight = 58f;
-
-			Button button = CreateButton("Button", row, string.Empty, CycleSettingLiveBackgroundMode, 220f, 54f);
-			_settingLiveBackgroundModeLabel = button.GetComponentInChildren<TextMeshProUGUI>();
-			SetSettingLiveBackgroundMode(LiveSettingData.CustomMusicScoreBackgroundMode2DMV);
-		}
-
 		private void CycleSettingLiveBackgroundMode()
 		{
 			int nextMode = _settingLiveBackgroundMode == LiveSettingData.CustomMusicScoreBackgroundMode2DMV
@@ -819,33 +554,6 @@ namespace Sekai.CustomMusicScoreManager
 			}
 		}
 
-		private void CreateSettingFastLateFlickSelector(Transform parent)
-		{
-			RectTransform row = CreateRect("FastLateFlickSelector", parent);
-			LayoutElement rowLayout = row.gameObject.AddComponent<LayoutElement>();
-			rowLayout.preferredHeight = 58f;
-			rowLayout.minHeight = 58f;
-
-			HorizontalLayoutGroup rowGroup = row.gameObject.AddComponent<HorizontalLayoutGroup>();
-			rowGroup.spacing = 16f;
-			rowGroup.childAlignment = TextAnchor.MiddleLeft;
-			rowGroup.childControlWidth = true;
-			rowGroup.childControlHeight = true;
-			rowGroup.childForceExpandWidth = false;
-			rowGroup.childForceExpandHeight = false;
-
-			TextMeshProUGUI title = CreateText("Label", row, "判定偏差显示", 24, FontStyles.Bold, TextAlignmentOptions.Left);
-			LayoutElement titleLayout = title.gameObject.AddComponent<LayoutElement>();
-			titleLayout.preferredWidth = 180f;
-			titleLayout.minWidth = 180f;
-			titleLayout.preferredHeight = 58f;
-			titleLayout.minHeight = 58f;
-
-			Button button = CreateButton("Button", row, string.Empty, CycleSettingFastLateFlick, 220f, 54f);
-			_settingFastLateFlickLabel = button.GetComponentInChildren<TextMeshProUGUI>();
-			SetSettingFastLateFlick(false);
-		}
-
 		private void CycleSettingFastLateFlick()
 		{
 			SetSettingFastLateFlick(!_settingFastLateFlickEnabled);
@@ -858,34 +566,6 @@ namespace Sekai.CustomMusicScoreManager
 			{
 				_settingFastLateFlickLabel.text = enabled ? "开启" : "关闭";
 			}
-		}
-
-		private void CreateSettingFullscreenSelector(Transform parent)
-		{
-			RectTransform row = CreateRect("FullscreenSelector", parent);
-			LayoutElement rowLayout = row.gameObject.AddComponent<LayoutElement>();
-			rowLayout.preferredHeight = 58f;
-			rowLayout.minHeight = 58f;
-			row.gameObject.SetActive(ShouldShowDesktopFullscreenSetting());
-
-			HorizontalLayoutGroup rowGroup = row.gameObject.AddComponent<HorizontalLayoutGroup>();
-			rowGroup.spacing = 16f;
-			rowGroup.childAlignment = TextAnchor.MiddleLeft;
-			rowGroup.childControlWidth = true;
-			rowGroup.childControlHeight = true;
-			rowGroup.childForceExpandWidth = false;
-			rowGroup.childForceExpandHeight = false;
-
-			TextMeshProUGUI title = CreateText("Label", row, "桌面全屏", 24, FontStyles.Bold, TextAlignmentOptions.Left);
-			LayoutElement titleLayout = title.gameObject.AddComponent<LayoutElement>();
-			titleLayout.preferredWidth = 180f;
-			titleLayout.minWidth = 180f;
-			titleLayout.preferredHeight = 58f;
-			titleLayout.minHeight = 58f;
-
-			Button button = CreateButton("Button", row, string.Empty, CycleSettingFullscreen, 220f, 54f);
-			_settingFullscreenLabel = button.GetComponentInChildren<TextMeshProUGUI>();
-			SetSettingFullscreen(Screen.fullScreen);
 		}
 
 		private void CycleSettingFullscreen()
@@ -1103,40 +783,27 @@ namespace Sekai.CustomMusicScoreManager
 
 		private RowView CreateRow(RectTransform parent, CustomMusicScoreManagerItem item)
 		{
-			GameObject root = new GameObject("EntryCell", typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
-			root.transform.SetParent(parent, false);
-			RectTransform rect = root.GetComponent<RectTransform>();
-			rect.sizeDelta = new Vector2(0f, 116f);
-			LayoutElement layout = root.GetComponent<LayoutElement>();
-			layout.preferredHeight = 116f;
-			layout.minHeight = 116f;
+			CustomMusicScoreEntryCell cell = Instantiate(_entryCellTemplate, parent, false);
+			cell.name = "EntryCell";
+			cell.gameObject.SetActive(true);
+			cell.Button.onClick.AddListener(() => UpdateSelection(item));
 
-			Image image = root.GetComponent<Image>();
-			image.color = new Color32(39, 46, 55, 255);
-			Button button = root.GetComponent<Button>();
-			button.targetGraphic = image;
-			button.onClick.AddListener(() => UpdateSelection(item));
-
-			TextMeshProUGUI title = CreateText("Title", rect, item.Entry.Manifest.scoreTitle, 26, FontStyles.Bold, TextAlignmentOptions.Left);
-			SetAnchor(title.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 1f), new Vector2(22f, -14f), new Vector2(-44f, 36f));
-
-			string metaText = item.Entry.Manifest.title;
-			if (!string.IsNullOrEmpty(item.Entry.Manifest.userName))
+			CustomMusicScoreManifest manifest = item.Entry.Manifest;
+			string metaText = manifest.title;
+			if (!string.IsNullOrEmpty(manifest.userName))
 			{
-				metaText += "  " + item.Entry.Manifest.userName;
+				metaText += "  " + manifest.userName;
 			}
-			if (!string.IsNullOrEmpty(item.Entry.Manifest.musicDifficultyType))
+			if (!string.IsNullOrEmpty(manifest.musicDifficultyType))
 			{
-				metaText += "  " + item.Entry.Manifest.musicDifficultyType.ToUpperInvariant();
+				metaText += "  " + manifest.musicDifficultyType.ToUpperInvariant();
 			}
-			TextMeshProUGUI meta = CreateText("Meta", rect, metaText, 20, FontStyles.Normal, TextAlignmentOptions.Left);
-			SetAnchor(meta.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 0f), new Vector2(22f, 16f), new Vector2(-210f, 30f));
 
-			TextMeshProUGUI status = CreateText("Status", rect, item.StatusText, 20, FontStyles.Bold, TextAlignmentOptions.Right);
-			SetAnchor(status.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-22f, 16f), new Vector2(178f, 30f));
-			status.color = item.HasAudio && item.HasScore ? new Color32(126, 221, 166, 255) : new Color32(255, 184, 100, 255);
-
-			return new RowView(root, image, item);
+			cell.TitleText.text = manifest.scoreTitle;
+			cell.MetaText.text = metaText;
+			cell.StatusText.text = item.StatusText;
+			cell.StatusText.color = item.HasAudio && item.HasScore ? new Color32(126, 221, 166, 255) : new Color32(255, 184, 100, 255);
+			return new RowView(cell.gameObject, cell.Background, item);
 		}
 
 		private void UpdateSelection(CustomMusicScoreManagerItem item)
@@ -1257,20 +924,8 @@ namespace Sekai.CustomMusicScoreManager
 				return;
 			}
 
-			ScreenLayerMusicScoreMaker.BootArg bootArg = new ScreenLayerMusicScoreMaker.BootArg
-			{
-				musicId = entry.MusicId,
-				difficulty = entry.Manifest.musicDifficultyType,
-				vocalId = 0,
-				baseMusicDifficultyId = -1,
-				MusicScoreMakerData = entry.LoadScore(),
-				LastSavedDataHash = null,
-				CurrentMusicScoreScale = 1f,
-				FromScreenType = MenuScreenType.MusicScoreMakerTop,
-				CustomMusicScoreEntry = entry
-			};
-
-			ScreenManager.Instance?.PushUIScreen(MenuScreenType.MusicScoreMaker, bootArg, false);
+			MusicScoreMakerSceneArgs.Prepare(MusicScoreMakerSceneArgs.CreateBootArg(entry));
+			SceneManager.Instance.RequestScene(SceneManager.Scene.MusicScoreMaker);
 		}
 
 		private void PlaySelected()
@@ -2080,333 +1735,10 @@ namespace Sekai.CustomMusicScoreManager
 			}
 		}
 
-		private static TMP_InputField CreateInputField(Transform parent, string label, string placeholder)
-		{
-			Button actionButton;
-			return CreateInputField(parent, label, placeholder, null, out actionButton);
-		}
-
-		private Button CreateDifficultySelector(Transform parent)
-		{
-			GameObject root = new GameObject("DifficultyInput", typeof(RectTransform));
-			root.transform.SetParent(parent, false);
-			LayoutElement layoutElement = root.AddComponent<LayoutElement>();
-			layoutElement.preferredHeight = 116f;
-			layoutElement.minHeight = 116f;
-
-			VerticalLayoutGroup vertical = root.AddComponent<VerticalLayoutGroup>();
-			vertical.spacing = 12f;
-			vertical.childControlWidth = true;
-			vertical.childControlHeight = false;
-
-			TextMeshProUGUI labelText = CreateText("Label", root.transform, "难度", 23, FontStyles.Bold, TextAlignmentOptions.Left);
-			labelText.rectTransform.sizeDelta = new Vector2(0f, 30f);
-
-			GameObject fieldObject = new GameObject("Field", typeof(RectTransform), typeof(Image), typeof(Button));
-			fieldObject.transform.SetParent(root.transform, false);
-			_difficultyFieldRect = fieldObject.GetComponent<RectTransform>();
-			_difficultyFieldRect.sizeDelta = new Vector2(0f, 70f);
-			Image fieldImage = fieldObject.GetComponent<Image>();
-			fieldImage.color = new Color32(22, 26, 32, 255);
-
-			Button button = fieldObject.GetComponent<Button>();
-			button.targetGraphic = fieldImage;
-			button.transition = Selectable.Transition.ColorTint;
-			ColorBlock colors = button.colors;
-			colors.normalColor = Color.white;
-			colors.highlightedColor = new Color32(220, 238, 255, 255);
-			colors.pressedColor = new Color32(180, 213, 242, 255);
-			colors.disabledColor = new Color32(120, 126, 132, 120);
-			button.colors = colors;
-			button.onClick.AddListener(CycleDifficulty);
-
-			_difficultyLabel = CreateText("Label", _difficultyFieldRect, string.Empty, 26, FontStyles.Normal, TextAlignmentOptions.Left);
-			_difficultyLabel.raycastTarget = false;
-			SetStretchOffsets(_difficultyLabel.rectTransform, 18f, 0f, 124f, 0f);
-
-			TextMeshProUGUI hint = CreateText("Hint", _difficultyFieldRect, "切换", 19, FontStyles.Bold, TextAlignmentOptions.Center);
-			hint.raycastTarget = false;
-			SetAnchor(hint.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(1f, 0.5f), new Vector2(-14f, 0f), new Vector2(104f, 0f));
-			SetDifficultyDropdownValue("master");
-			return button;
-		}
-
 		private void CycleDifficulty()
 		{
 			_difficultyIndex = (_difficultyIndex + 1) % DifficultyTypes.Length;
 			SetDifficultyDropdownValue(DifficultyTypes[_difficultyIndex]);
-		}
-
-		private static TMP_InputField CreateInputField(
-			Transform parent,
-			string label,
-			string placeholder,
-			UnityEngine.Events.UnityAction onClick,
-			out Button actionButton)
-		{
-			actionButton = null;
-			GameObject root = new GameObject(label + "Input", typeof(RectTransform));
-			root.transform.SetParent(parent, false);
-			LayoutElement layoutElement = root.AddComponent<LayoutElement>();
-			layoutElement.preferredHeight = 116f;
-			layoutElement.minHeight = 116f;
-			VerticalLayoutGroup vertical = root.AddComponent<VerticalLayoutGroup>();
-			vertical.spacing = 12f;
-			vertical.childControlWidth = true;
-			vertical.childControlHeight = false;
-
-			TextMeshProUGUI labelText = CreateText("Label", root.transform, label, 23, FontStyles.Bold, TextAlignmentOptions.Left);
-			labelText.rectTransform.sizeDelta = new Vector2(0f, 30f);
-
-			GameObject fieldObject = new GameObject("Field", typeof(RectTransform), typeof(Image), typeof(TMP_InputField));
-			fieldObject.transform.SetParent(root.transform, false);
-			RectTransform fieldRect = fieldObject.GetComponent<RectTransform>();
-			fieldRect.sizeDelta = new Vector2(0f, 70f);
-			fieldObject.GetComponent<Image>().color = new Color32(22, 26, 32, 255);
-
-			RectTransform textArea = CreateRect("Text Area", fieldRect);
-			textArea.gameObject.AddComponent<RectMask2D>();
-			SetStretchOffsets(textArea, 14f, 7f, onClick == null ? 14f : 126f, 7f);
-
-			TextMeshProUGUI text = CreateText("Text", textArea, string.Empty, 26, FontStyles.Normal, TextAlignmentOptions.Left);
-			SetStretchOffsets(text.rectTransform, 4f, 0f, 4f, 0f);
-			text.raycastTarget = false;
-
-			TextMeshProUGUI placeholderText = CreateText("Placeholder", textArea, placeholder, 26, FontStyles.Normal, TextAlignmentOptions.Left);
-			SetStretchOffsets(placeholderText.rectTransform, 4f, 0f, 4f, 0f);
-			placeholderText.color = new Color32(136, 146, 158, 180);
-			placeholderText.raycastTarget = false;
-
-			if (onClick != null)
-			{
-				GameObject actionObject = new GameObject("SelectButton", typeof(RectTransform), typeof(Image), typeof(Button));
-				actionObject.transform.SetParent(fieldRect, false);
-				RectTransform actionRect = actionObject.GetComponent<RectTransform>();
-				SetAnchor(actionRect, new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(1f, 0.5f), new Vector2(-7f, 0f), new Vector2(110f, -14f));
-
-				Image actionImage = actionObject.GetComponent<Image>();
-				actionImage.color = new Color32(62, 78, 92, 255);
-				actionButton = actionObject.GetComponent<Button>();
-				actionButton.targetGraphic = actionImage;
-				actionButton.transition = Selectable.Transition.ColorTint;
-				ColorBlock colors = actionButton.colors;
-				colors.normalColor = Color.white;
-				colors.highlightedColor = new Color32(220, 238, 255, 255);
-				colors.pressedColor = new Color32(180, 213, 242, 255);
-				colors.disabledColor = new Color32(120, 126, 132, 120);
-				actionButton.colors = colors;
-				actionButton.onClick.AddListener(onClick);
-
-				TextMeshProUGUI actionLabel = CreateText("Label", actionRect, "导入", 20, FontStyles.Bold, TextAlignmentOptions.Center);
-				actionLabel.textWrappingMode = TextWrappingModes.NoWrap;
-				actionLabel.overflowMode = TextOverflowModes.Ellipsis;
-				Stretch(actionLabel.rectTransform);
-			}
-
-			TMP_InputField input = fieldObject.GetComponent<TMP_InputField>();
-			input.textViewport = textArea;
-			input.textComponent = text;
-			input.placeholder = placeholderText;
-			input.targetGraphic = fieldObject.GetComponent<Image>();
-			return input;
-		}
-
-		private static Button CreateFormButton(Transform parent, string name, string label, UnityEngine.Events.UnityAction onClick)
-		{
-			GameObject root = new GameObject(name + "Cell", typeof(RectTransform), typeof(LayoutElement));
-			root.transform.SetParent(parent, false);
-			LayoutElement layoutElement = root.GetComponent<LayoutElement>();
-			layoutElement.preferredHeight = 86f;
-			layoutElement.minHeight = 86f;
-
-			GameObject buttonObject = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
-			buttonObject.transform.SetParent(root.transform, false);
-			RectTransform buttonRect = buttonObject.GetComponent<RectTransform>();
-			SetStretchOffsets(buttonRect, 0f, 10f, 0f, 10f);
-
-			Image image = buttonObject.GetComponent<Image>();
-			image.color = new Color32(54, 67, 80, 255);
-			Button button = buttonObject.GetComponent<Button>();
-			button.targetGraphic = image;
-			button.transition = Selectable.Transition.ColorTint;
-			ColorBlock colors = button.colors;
-			colors.normalColor = Color.white;
-			colors.highlightedColor = new Color32(220, 238, 255, 255);
-			colors.pressedColor = new Color32(180, 213, 242, 255);
-			colors.disabledColor = new Color32(120, 126, 132, 120);
-			button.colors = colors;
-			button.onClick.AddListener(onClick);
-
-			TextMeshProUGUI text = CreateText("Label", buttonRect, label, 20, FontStyles.Bold, TextAlignmentOptions.Center);
-			text.textWrappingMode = TextWrappingModes.NoWrap;
-			text.overflowMode = TextOverflowModes.Ellipsis;
-			Stretch(text.rectTransform);
-			return button;
-		}
-
-		private static Button CreateButton(string name, Transform parent, string label, UnityEngine.Events.UnityAction onClick, float width, float height, Color32? color = null)
-		{
-			GameObject root = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
-			root.transform.SetParent(parent, false);
-			RectTransform rect = root.GetComponent<RectTransform>();
-			rect.sizeDelta = new Vector2(width, height);
-			LayoutElement layout = root.GetComponent<LayoutElement>();
-			layout.preferredWidth = width;
-			layout.preferredHeight = height;
-
-			Image image = root.GetComponent<Image>();
-			image.color = color ?? new Color32(54, 67, 80, 255);
-			Button button = root.GetComponent<Button>();
-			button.targetGraphic = image;
-			button.transition = Selectable.Transition.ColorTint;
-			ColorBlock colors = button.colors;
-			colors.normalColor = Color.white;
-			colors.highlightedColor = new Color32(220, 238, 255, 255);
-			colors.pressedColor = new Color32(180, 213, 242, 255);
-			colors.disabledColor = new Color32(120, 126, 132, 120);
-			button.colors = colors;
-			button.onClick.AddListener(onClick);
-
-			TextMeshProUGUI text = CreateText("Label", rect, label, 20, FontStyles.Bold, TextAlignmentOptions.Center);
-			text.textWrappingMode = TextWrappingModes.NoWrap;
-			text.overflowMode = TextOverflowModes.Ellipsis;
-			Stretch(text.rectTransform);
-			return button;
-		}
-
-		private static ScrollRect CreateHorizontalScrollRect(string name, Transform parent, out RectTransform content)
-		{
-			GameObject root = new GameObject(name, typeof(RectTransform), typeof(ScrollRect));
-			root.transform.SetParent(parent, false);
-			ScrollRect scrollRect = root.GetComponent<ScrollRect>();
-			scrollRect.horizontal = true;
-			scrollRect.vertical = false;
-			scrollRect.movementType = ScrollRect.MovementType.Clamped;
-
-			RectTransform viewport = CreateRect("Viewport", root.transform);
-			viewport.gameObject.AddComponent<RectMask2D>();
-			Stretch(viewport);
-
-			content = CreateRect("Content", viewport);
-			content.anchorMin = new Vector2(0f, 0f);
-			content.anchorMax = new Vector2(0f, 1f);
-			content.pivot = new Vector2(0f, 0.5f);
-			content.anchoredPosition = Vector2.zero;
-			content.sizeDelta = Vector2.zero;
-
-			HorizontalLayoutGroup layout = content.gameObject.AddComponent<HorizontalLayoutGroup>();
-			layout.spacing = 12f;
-			layout.padding = new RectOffset(0, 0, 7, 7);
-			layout.childControlWidth = false;
-			layout.childControlHeight = false;
-			layout.childAlignment = TextAnchor.MiddleLeft;
-
-			ContentSizeFitter fitter = content.gameObject.AddComponent<ContentSizeFitter>();
-			fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-			scrollRect.viewport = viewport;
-			scrollRect.content = content;
-			return scrollRect;
-		}
-
-		private static ScrollRect CreateScrollRect(string name, Transform parent, out RectTransform content)
-		{
-			GameObject root = new GameObject(name, typeof(RectTransform), typeof(ScrollRect));
-			root.transform.SetParent(parent, false);
-			ScrollRect scrollRect = root.GetComponent<ScrollRect>();
-
-			Image viewportImage = CreateImage("Viewport", root.transform, new Color32(20, 24, 30, 255));
-			Mask mask = viewportImage.gameObject.AddComponent<Mask>();
-			mask.showMaskGraphic = false;
-			RectTransform viewport = viewportImage.rectTransform;
-			Stretch(viewport);
-
-			content = CreateRect("Content", viewport);
-			content.anchorMin = new Vector2(0f, 1f);
-			content.anchorMax = new Vector2(1f, 1f);
-			content.pivot = new Vector2(0.5f, 1f);
-			content.anchoredPosition = Vector2.zero;
-			content.sizeDelta = Vector2.zero;
-			VerticalLayoutGroup layout = content.gameObject.AddComponent<VerticalLayoutGroup>();
-			layout.spacing = 12f;
-			layout.padding = new RectOffset(10, 10, 10, 10);
-			layout.childControlWidth = true;
-			layout.childControlHeight = false;
-			ContentSizeFitter fitter = content.gameObject.AddComponent<ContentSizeFitter>();
-			fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-			scrollRect.viewport = viewport;
-			scrollRect.content = content;
-			scrollRect.horizontal = false;
-			scrollRect.vertical = true;
-			scrollRect.movementType = ScrollRect.MovementType.Clamped;
-			return scrollRect;
-		}
-
-		private static ScrollRect CreateMaskedScrollRect(string name, Transform parent, out RectTransform content)
-		{
-			GameObject root = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(ScrollRect));
-			root.transform.SetParent(parent, false);
-			root.GetComponent<Image>().color = new Color32(24, 29, 36, 255);
-			ScrollRect scrollRect = root.GetComponent<ScrollRect>();
-
-			RectTransform viewport = CreateRect("Viewport", root.transform);
-			viewport.gameObject.AddComponent<RectMask2D>();
-			Stretch(viewport);
-
-			content = CreateRect("Content", viewport);
-			content.anchorMin = new Vector2(0f, 1f);
-			content.anchorMax = new Vector2(1f, 1f);
-			content.pivot = new Vector2(0.5f, 1f);
-			content.anchoredPosition = Vector2.zero;
-			content.sizeDelta = new Vector2(0f, 430f);
-
-			scrollRect.viewport = viewport;
-			scrollRect.content = content;
-			scrollRect.horizontal = false;
-			scrollRect.vertical = true;
-			scrollRect.movementType = ScrollRect.MovementType.Clamped;
-			return scrollRect;
-		}
-
-		private static RectTransform CreatePanel(string name, Transform parent, Color32 color)
-		{
-			Image image = CreateImage(name, parent, color);
-			return image.rectTransform;
-		}
-
-		private static Image CreateImage(string name, Transform parent, Color32 color)
-		{
-			GameObject go = new GameObject(name, typeof(RectTransform), typeof(Image));
-			go.transform.SetParent(parent, false);
-			Image image = go.GetComponent<Image>();
-			image.color = color;
-			return image;
-		}
-
-		private static TextMeshProUGUI CreateText(string name, Transform parent, string text, float fontSize, FontStyles style, TextAlignmentOptions alignment)
-		{
-			GameObject go = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
-			go.transform.SetParent(parent, false);
-			TextMeshProUGUI tmp = go.GetComponent<TextMeshProUGUI>();
-			TMP_FontAsset fontAsset = GetOriginalFontAsset(style);
-			if (fontAsset != null)
-			{
-				tmp.font = fontAsset;
-			}
-			tmp.text = text;
-			tmp.fontSize = fontSize;
-			tmp.fontStyle = style;
-			tmp.alignment = alignment;
-			tmp.color = new Color32(238, 243, 247, 255);
-			tmp.textWrappingMode = TextWrappingModes.NoWrap;
-			tmp.overflowMode = TextOverflowModes.Ellipsis;
-			return tmp;
-		}
-
-		private static TMP_FontAsset GetOriginalFontAsset(FontStyles style)
-		{
-			SetupOriginalFontAssets();
-			return (style & FontStyles.Bold) != 0 ? _baseFontEB : _baseFontDB;
 		}
 
 		private static void SetupOriginalFontAssets()
@@ -2443,18 +1775,6 @@ namespace Sekai.CustomMusicScoreManager
 			}
 		}
 
-		private static RectTransform CreateRect(string name, Transform parent)
-		{
-			GameObject go = new GameObject(name, typeof(RectTransform));
-			go.transform.SetParent(parent, false);
-			return go.GetComponent<RectTransform>();
-		}
-
-		private static void Stretch(RectTransform rect)
-		{
-			SetAnchor(rect, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
-		}
-
 		private static void SetStretchOffsets(RectTransform rect, float left, float bottom, float right, float top)
 		{
 			rect.anchorMin = Vector2.zero;
@@ -2471,15 +1791,6 @@ namespace Sekai.CustomMusicScoreManager
 			rect.pivot = new Vector2(0.5f, 1f);
 			rect.offsetMin = new Vector2(left, -top - height);
 			rect.offsetMax = new Vector2(-right, -top);
-		}
-
-		private static void SetStretchBottom(RectTransform rect, float left, float bottom, float right, float height)
-		{
-			rect.anchorMin = new Vector2(0f, 0f);
-			rect.anchorMax = new Vector2(1f, 0f);
-			rect.pivot = new Vector2(0.5f, 0f);
-			rect.offsetMin = new Vector2(left, bottom);
-			rect.offsetMax = new Vector2(-right, bottom + height);
 		}
 
 		private static void SetAnchor(RectTransform rect, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 anchoredPosition, Vector2 sizeDelta)

@@ -4,13 +4,19 @@ Local-only custom music score manager. Its code is part of the `OpenSekai.Game` 
 
 - `Models`: manifest and custom score entry data types.
 - `Services`: filesystem scanning, import/export, and entry loading.
-- `UI`: UGUI screens and widgets.
-- `Assets/OpenSekai/Prefabs/CustomMusicScoreManager/Resources/Screen/Prefabs`: screen-layer prefabs loaded by
-  Sekai's `ScreenLayerData` through Unity `Resources`.
+- `UI`: the manager screen and its list cell.
+- `CustomMusicScoreManagerEntryPoint`: starts `Assets/Scenes/CustomMusicScoreManager.unity`, the first scene.
 
-The first local manager screen is implemented as `ScreenLayerMusicScoreMakerTop.prefab`.
-It intentionally reuses the existing `MenuScreenType.MusicScoreMakerTop` entry so we do not
-need to add another global screen enum or modify `EntryScreenLayers.asset`.
+The manager screen is `Assets/OpenSekai/Prefabs/CustomMusicScoreManager/ScreenLayerMusicScoreMakerTop.prefab`.
+Its UI is authored in the prefab and placed in the scene; `ScreenLayerCustomMusicScoreManager` only binds the
+serialized references and button events in `Awake`. List rows are clones of the inactive `EntryCellTemplate`.
+It reuses the existing `MenuScreenType.MusicScoreMakerTop` entry so no new screen enum is needed.
+
+Scene flow (all through `SceneSwitcher`):
+
+- Edit: `MusicScoreMakerSceneArgs.Prepare(...)`, then the `MusicScoreMaker` scene.
+- Play / Auto: `CoreSceneArgs.Prepare(...)`, then the `Core` scene; the live returns here when it ends.
+- Opening `MusicScoreMaker` or `Core` directly in the Unity Editor reopens the last custom chart.
 
 Local score entries are stored under:
 

@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/CustomMusicScoreManager.unity
+    guid: a3721a5365704939b178927ad8756ce5
+  - enabled: 1
     path: Assets/Scenes/MusicScoreMaker.unity
     guid: bd518756a52b7b7448de122af61058a7
   - enabled: 1

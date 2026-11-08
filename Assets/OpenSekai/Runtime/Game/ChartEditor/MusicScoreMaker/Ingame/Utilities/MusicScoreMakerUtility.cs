@@ -1763,7 +1763,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Utilities
 				if (screenType == MenuScreenType.MusicScoreMakerTop)
 				{
 					Sekai.MusicScoreMaker.Ingame.Presenters.MusicScoreMakerEntryPoint.BootData = null;
-					SceneManager.Instance.RequestScene(SceneManager.Scene.MusicScoreMaker);
+					SceneManager.Instance.RequestScene(SceneManager.Scene.CustomMusicScoreManager);
 					return;
 				}
 

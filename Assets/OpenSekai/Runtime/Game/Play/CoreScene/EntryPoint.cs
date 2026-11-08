@@ -12,7 +12,7 @@ namespace Sekai.Core
 	/// Starts the Core scene. The scene is authored with its views and controllers in place (as in OurTaikoPlay's
 	/// play scene); this takes the <see cref="CoreSceneArgs"/> the previous scene prepared and boots the matching
 	/// controller. Without arguments (Core opened directly in the Editor) it replays the last custom chart in auto
-	/// mode, or returns to the chart editor.
+	/// mode, or returns to the custom chart manager.
 	/// </summary>
 	public class EntryPoint : MonoBehaviour
 	{
@@ -52,8 +52,8 @@ namespace Sekai.Core
 
 			if (args == null)
 			{
-				Debug.LogWarning("Core was opened without a live to play; returning to the chart editor.", this);
-				SceneManager.Instance.RequestScene(SceneManager.Scene.MusicScoreMaker);
+				Debug.LogWarning("Core was opened without a live to play; returning to the custom chart manager.", this);
+				SceneManager.Instance.RequestScene(SceneManager.Scene.CustomMusicScoreManager);
 				return;
 			}
 
@@ -63,8 +63,8 @@ namespace Sekai.Core
 					soloLiveController.Boot(args.BootData);
 					break;
 				default:
-					Debug.LogWarning($"Unsupported Core PlayMode: {args.PlayMode}; returning to the chart editor.", this);
-					SceneManager.Instance.RequestScene(SceneManager.Scene.MusicScoreMaker);
+					Debug.LogWarning($"Unsupported Core PlayMode: {args.PlayMode}; returning to the custom chart manager.", this);
+					SceneManager.Instance.RequestScene(SceneManager.Scene.CustomMusicScoreManager);
 					break;
 			}
 		}

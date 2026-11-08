@@ -410,13 +410,24 @@ namespace Sekai.Core.Live
 				if (returnScreenType.Value == MenuScreenType.MusicScoreMakerTop)
 				{
 					MusicScoreMakerEntryPoint.BootData = null;
+					SceneManager.Instance.RequestScene(SceneManager.Scene.CustomMusicScoreManager);
 				}
-				SceneManager.Instance.RequestScene(SceneManager.Scene.MusicScoreMaker);
+				else
+				{
+					ReturnToChartEditor();
+				}
 			}
 			else if (BootData?.MusicData?.IsTestPlay == true)
 			{
-				SceneManager.Instance.RequestScene(SceneManager.Scene.MusicScoreMaker);
+				ReturnToChartEditor();
 			}
+		}
+
+		/// <summary>Reopens the chart editor with the state it saved before the test play.</summary>
+		private static void ReturnToChartEditor()
+		{
+			MusicScoreMakerSceneArgs.Prepare(MusicScoreMakerEntryPoint.BootData?.bootData);
+			SceneManager.Instance.RequestScene(SceneManager.Scene.MusicScoreMaker);
 		}
 
 		private void SetFinish(float delay, float waitTime, float finishWaitSeconds)

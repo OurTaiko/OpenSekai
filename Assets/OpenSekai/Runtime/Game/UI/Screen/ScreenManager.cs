@@ -2307,6 +2307,21 @@ namespace Sekai
 			return result;
 		}
 
+		// Screen layers placed in the scene, used by the first push of their type instead of a Resources prefab.
+		private readonly Dictionary<MenuScreenType, ScreenLayer> sceneLayers = new Dictionary<MenuScreenType, ScreenLayer>();
+
+		/// <summary>
+		/// Registers a screen layer authored in the scene. The next push of <paramref name="screenType"/> shows this
+		/// instance instead of loading the layer prefab from Resources.
+		/// </summary>
+		public void RegisterSceneLayer(MenuScreenType screenType, ScreenLayer screenLayer)
+		{
+			if (screenLayer != null)
+			{
+				sceneLayers[screenType] = screenLayer;
+			}
+		}
+
 		private bool InstantiateLayerScreen(ScreenLayerState layer)
 		{
 			if (layer?.Data == null)
@@ -2321,14 +2336,30 @@ namespace Sekai
 				return false;
 			}
 
-			var prefab = layer.Data.LoadScreenLayerPrefab();
-			if (prefab == null)
+			GameObject instanceObject;
+			if (sceneLayers.TryGetValue(layer.Data.ScreenType, out var sceneLayer) && sceneLayer != null)
 			{
-				LogUtility.LogError("Not Found ScreenLayer;" + layer.Data.name, Array.Empty<object>());
-				return false;
+				// Authored in the scene (OurTaikoPlay style): use that instance instead of instantiating the prefab.
+				sceneLayers.Remove(layer.Data.ScreenType);
+				instanceObject = sceneLayer.gameObject;
+				if (instanceObject.transform.parent != layerObject.transform)
+				{
+					instanceObject.transform.SetParent(layerObject.transform, false);
+				}
+				instanceObject.SetActive(true);
+			}
+			else
+			{
+				var prefab = layer.Data.LoadScreenLayerPrefab();
+				if (prefab == null)
+				{
+					LogUtility.LogError("Not Found ScreenLayer;" + layer.Data.name, Array.Empty<object>());
+					return false;
+				}
+
+				instanceObject = Instantiate(prefab, layerObject.transform);
 			}
 
-			var instanceObject = Instantiate(prefab, layerObject.transform);
 			instanceObject.transform.localScale = Vector3.one;
 			instanceObject.transform.localPosition = Vector3.zero;
 			instanceObject.name = layer.Data.name;

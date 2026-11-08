@@ -1,67 +1,43 @@
+using System.IO;
 using CP;
+using Sekai.MusicScoreMaker.Common;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.Scripting;
 
 namespace Sekai.MusicScoreMaker.Ingame.Presenters
 {
-	public class MusicScoreMakerEntryPoint : SceneEntryPoint
+	/// <summary>
+	/// Starts the chart editor scene. The editor screen is authored in MusicScoreMaker.unity; this takes the
+	/// <see cref="MusicScoreMakerSceneArgs"/> the previous scene prepared and shows it. Opened directly in the Unity
+	/// Editor it reopens the last edited custom chart, or returns to the custom chart manager.
+	/// </summary>
+	public class MusicScoreMakerEntryPoint : MenuSceneEntryPoint
 	{
 		public class MusicScoreMakerBootData
 		{
 			public ScreenLayerMusicScoreMaker.BootArg bootData { get; set; }
-
-			public MusicScoreMakerBootData()
-			{
-			}
 		}
 
+		/// <summary>The editor state saved before a test play; read by the live and restored when it returns.</summary>
 		public static MusicScoreMakerBootData BootData { get; set; }
 
-		public ApplicationLocalSettings LocalSettings { get; set; }
+		[SerializeField]
+		private ScreenLayerMusicScoreMaker editorScreen;
 
 		protected override void Awake()
 		{
-			LogUtility.WriteLog(1, "\u8b5c\u9762\u30c4\u30fc\u30eb\u3078\u9077\u79fb\u3057\u307e\u3057\u305f", System.Array.Empty<object>());
+			LogUtility.WriteLog(1, "譜面ツールへ遷移しました", System.Array.Empty<object>());
 			base.Awake();
-			GameBootstrap.Initialize();
-			Sekai.TextMeshProUtility.SetupBuiltinFontAsset();
-			FramerateUtility.SetFrameRate();
-			GarbageCollector.GCMode = GarbageCollector.Mode.Enabled;
-
 			BootData ??= new MusicScoreMakerBootData();
 		}
 
-		protected override void Start()
+		protected override void OnSceneStart()
 		{
-			LocalSettings = ApplicationLocalSettings.LoadFromStorage();
-			if (LocalSettings.LiveVolume == null)
+			ScreenLayerMusicScoreMaker.BootArg bootArg = MusicScoreMakerSceneArgs.Take()?.BootArg;
+			if (bootArg == null && Application.isEditor)
 			{
-				LocalSettings.LiveVolume = LocalSettings.SetupLiveVolume();
+				bootArg = CreateLastCustomChartBootArg();
 			}
 
-			SoundManager.Instance.SetupVolume(
-				1f,
-				LocalSettings.SystemVolume.Bgm,
-				LocalSettings.SystemVolume.Se,
-				LocalSettings.SystemVolume.Voice);
-
-			const string menuCommonSoundBundle = "sound/menu/menu_common";
-			if (!SoundManager.Instance.IsLoadedSoundBundle(menuCommonSoundBundle))
-			{
-				SoundManager.Instance.LoadSoundBundle(menuCommonSoundBundle, true);
-			}
-
-			ScreenManager.Instance.CreateEmptyBaseCamera();
-
-			// Scene transitions are covered by the global SceneSwitcher, which opens once this scene is ready.
-			ScreenManager.Instance.FadeIn(0f, 0f, null);
-
-			ScreenManager.Instance.AddScreen(MenuScreenType.Header);
-			ScreenManager.Instance.AddScreen(MenuScreenType.TouchEffect);
-			ScreenManager.Instance.AddScreen(MenuScreenType.InsertNoti);
-
-			var bootArg = BootData?.bootData;
 			if (bootArg?.FinishTransitionCallback == null)
 			{
 				LiveTransitioner.SafeForceFinish(null);
@@ -69,32 +45,32 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 
 			if (bootArg == null)
 			{
-				ScreenManager.Instance.PushUIScreen(MenuScreenType.MusicScoreMakerTop, false);
+				Debug.LogWarning("The chart editor was opened without a chart; returning to the custom chart manager.", this);
+				SceneManager.Instance.RequestScene(SceneManager.Scene.CustomMusicScoreManager);
 				return;
 			}
 
-			ScreenManager.Instance.PushUIScreen(MenuScreenType.MusicScoreMaker, bootArg, false);
+			ShowSceneScreen(MenuScreenType.MusicScoreMaker, editorScreen, bootArg);
 		}
 
-		protected override void ExitScene()
+		/// <summary>Editor convenience: reopens the custom chart that was last opened in the chart editor.</summary>
+		private ScreenLayerMusicScoreMaker.BootArg CreateLastCustomChartBootArg()
 		{
-			base.ExitScene();
-		}
-
-		public void OnApplicationPause(bool pause)
-		{
-			if (pause)
+			string path = MusicScoreMakerSceneArgs.LastCustomMusicScorePath;
+			if (string.IsNullOrEmpty(path) || !Directory.Exists(path))
 			{
-				SoundManager.Instance.Pause();
+				return null;
 			}
-			else
-			{
-				SoundManager.Instance.Resume();
-			}
-		}
 
-		public MusicScoreMakerEntryPoint()
-		{
+			CustomMusicScoreEntry entry = CustomMusicScoreStorage.LoadEntry(path);
+			if (entry == null)
+			{
+				Debug.LogWarning($"Could not load the last edited custom chart: {path}", this);
+				return null;
+			}
+
+			Debug.Log($"Chart editor opened directly: reopening \"{entry.Manifest.scoreTitle}\".", this);
+			return MusicScoreMakerSceneArgs.CreateBootArg(entry);
 		}
 	}
 }

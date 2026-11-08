@@ -1124,17 +1124,8 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 
 		private void ExitToOutGame()
 		{
-			if (_model?.CustomMusicScoreEntry != null || _fromScreenType == MenuScreenType.MusicScoreMakerTop)
-			{
-				ReturnToMusicScoreMakerTop();
-				return;
-			}
-
-			Dispose();
-			if (ScreenManager.Instance != null)
-			{
-				ScreenManager.Instance.RemoveScreen(MenuScreenType.MusicScoreMaker);
-			}
+			// The editor has its own scene; leaving it always returns to the custom chart manager scene.
+			ReturnToMusicScoreMakerTop();
 		}
 
 		private void ReturnToMusicScoreMakerTop()
@@ -1142,14 +1133,6 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 			StopMusicIfPlaying();
 			SaveCustomMusicScoreBeforeReturningToManager();
 			MusicScoreMakerEntryPoint.BootData = null;
-			ScreenManager screenManager = ScreenManager.Instance;
-			if (screenManager != null && screenManager.GetScreenStackList().Contains(MenuScreenType.MusicScoreMakerTop))
-			{
-				Dispose();
-				screenManager.BackUIScreenAndDestroyExitedScreen(MenuScreenType.MusicScoreMaker);
-				return;
-			}
-
 			MusicScoreMakerUtility.RequestTransitionToOutGame(MenuScreenType.MusicScoreMakerTop);
 			Dispose();
 		}

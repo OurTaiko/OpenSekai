@@ -23,9 +23,11 @@ namespace Sekai
 			Splash = 6,
 			SuperVirtualLiveLobby = 7,
 			Mysekai = 8,
-			MusicScoreMaker = 9
+			MusicScoreMaker = 9,
+			CustomMusicScoreManager = 10
 		}
 
+		private const string CustomMusicScoreManagerSceneName = "CustomMusicScoreManager";
 		private const string MusicScoreMakerSceneName = "MusicScoreMaker";
 		private const string CoreSceneName = "Core";
 
@@ -122,9 +124,11 @@ namespace Sekai
 			{
 				case Scene.Core:
 					return CoreSceneName;
-				// OpenSekai's out-game (title, menus) lives in the MusicScoreMaker scene.
+				// OpenSekai's out-game (title, menus) is the custom chart manager.
 				case Scene.Title:
 				case Scene.OutGame:
+				case Scene.CustomMusicScoreManager:
+					return CustomMusicScoreManagerSceneName;
 				case Scene.MusicScoreMaker:
 					return MusicScoreMakerSceneName;
 				default:
