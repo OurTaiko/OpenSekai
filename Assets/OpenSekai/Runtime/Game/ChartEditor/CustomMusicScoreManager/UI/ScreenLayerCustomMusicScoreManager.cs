@@ -24,39 +24,15 @@ namespace Sekai.CustomMusicScoreManager
 
 		private const string DynamicFontDbPath = "font/FOT-RodinNTLGPro-DB SDF_Dynamic";
 
-		private const int MaxManifestFieldColumnCount = 3;
+		private const int MaxManifestFieldColumnCount = 2;
 
-		private const float ManifestFieldMinWidth = 300f;
+		private const float ManifestFieldMinWidth = 260f;
 
-		private const float ManifestFieldSpacingX = 22f;
+		private const float ManifestFieldSpacingX = 18f;
 
-		private const float ManifestFieldLeftPadding = 20f;
+		private const float ManifestFieldLeftPadding = 8f;
 
-		private const float ManifestFieldRightScrollPadding = 44f;
-
-		private const float ActionButtonWidth = 196f;
-
-		private const float ActionButtonHeight = 54f;
-
-		private const float ActionButtonSpacing = 12f;
-
-		private const float ActionButtonsTop = 256f;
-
-		private const float ActionButtonsToFormGap = 22f;
-
-		private const float ManifestFormBottom = 112f;
-
-		private const float BestResultPreferredWidth = 500f;
-
-		private const float BestResultMinWidth = 420f;
-
-		private const float BestResultHeight = 168f;
-
-		private const float BestResultTop = 28f;
-
-		private const float BestResultRight = 28f;
-
-		private const float BestResultGap = 24f;
+		private const float ManifestFieldRightScrollPadding = 24f;
 
 		private const int NoteSkinTypeCount = 2;
 
@@ -94,35 +70,70 @@ namespace Sekai.CustomMusicScoreManager
 
 		private static bool _fontAssetSetup;
 
+		private static readonly string[] FilterDifficultyTypes =
+		{
+			null,
+			"easy",
+			"normal",
+			"hard",
+			"expert",
+			"master",
+			"append"
+		};
+
 		private readonly List<RowView> _rows = new List<RowView>();
 		[SerializeField]
 		private RectTransform _listContent;
 		[SerializeField]
-		private RectTransform _actionButtonsContent;
-		[SerializeField]
 		private ScrollRect _manifestFormScroll;
-		[SerializeField]
-		private RectTransform _manifestFormScrollRect;
 		[SerializeField]
 		private RectTransform _manifestFieldGrid;
 		[SerializeField]
 		private GridLayoutGroup _manifestFieldLayout;
 		[SerializeField]
-		private HorizontalLayoutGroup _actionButtonsLayout;
-		[SerializeField]
 		private TextMeshProUGUI _emptyText;
 		[SerializeField]
 		private TextMeshProUGUI _statusText;
 		[SerializeField]
-		private RectTransform _detailPanel;
+		private TextMeshProUGUI _listCountText;
+		[SerializeField]
+		private Button[] _difficultyFilterButtons = Array.Empty<Button>();
+		[SerializeField]
+		private Image[] _difficultyFilterFills = Array.Empty<Image>();
+		[SerializeField]
+		private TextMeshProUGUI[] _difficultyFilterLabels = Array.Empty<TextMeshProUGUI>();
+		private int _difficultyFilterIndex;
+		[SerializeField]
+		private GameObject _createMenuOverlay;
+		[SerializeField]
+		private Button _openCreateMenuButton;
+		[SerializeField]
+		private Button _createMenuCloseButton;
+		[SerializeField]
+		private TextMeshProUGUI _windowTitleText;
+		[SerializeField]
+		private GameObject _detailEmptyState;
+		[SerializeField]
+		private GameObject _detailContent;
+		[SerializeField]
+		private GameObject _overviewPage;
+		[SerializeField]
+		private GameObject _formPage;
+		[SerializeField]
+		private Button _detailToggleButton;
+		[SerializeField]
+		private TextMeshProUGUI _detailToggleLabel;
+		private bool _showingForm;
+		[SerializeField]
+		private CustomMusicScoreDifficultyBadge _detailBadge;
+		[SerializeField]
+		private TextMeshProUGUI _detailDescription;
 		[SerializeField]
 		private TextMeshProUGUI _detailTitle;
 		[SerializeField]
 		private TextMeshProUGUI _detailMeta;
 		[SerializeField]
 		private TextMeshProUGUI _detailStatus;
-		[SerializeField]
-		private RectTransform _bestResultPanel;
 		[SerializeField]
 		private TextMeshProUGUI _bestResultLeftText;
 		[SerializeField]
@@ -264,6 +275,7 @@ namespace Sekai.CustomMusicScoreManager
 		private GameObject _settingFullscreenRow;
 		[SerializeField]
 		private CustomMusicScoreEntryCell _entryCellTemplate;
+		private IReadOnlyList<CustomMusicScoreManagerItem> _allItems = Array.Empty<CustomMusicScoreManagerItem>();
 		private IReadOnlyList<CustomMusicScoreManagerItem> _items = Array.Empty<CustomMusicScoreManagerItem>();
 		private CustomMusicScoreManagerItem _selected;
 		private Sprite _jacketSprite;
@@ -284,8 +296,25 @@ namespace Sekai.CustomMusicScoreManager
 		{
 			_settingsButton.onClick.AddListener(OpenSettings);
 			_refreshButton.onClick.AddListener(RefreshList);
-			_newButton.onClick.AddListener(CreateEntry);
-			_importButton.onClick.AddListener(ImportEntry);
+			_newButton.onClick.AddListener(() =>
+			{
+				SetCreateMenuVisible(false);
+				CreateEntry();
+			});
+			_importButton.onClick.AddListener(() =>
+			{
+				SetCreateMenuVisible(false);
+				ImportEntry();
+			});
+			if (_openCreateMenuButton != null)
+			{
+				_openCreateMenuButton.onClick.AddListener(() => SetCreateMenuVisible(true));
+			}
+			if (_createMenuCloseButton != null)
+			{
+				_createMenuCloseButton.onClick.AddListener(() => SetCreateMenuVisible(false));
+			}
+			SetCreateMenuVisible(false);
 
 			_editButton.onClick.AddListener(OpenEditor);
 			_playButton.onClick.AddListener(PlaySelected);
@@ -311,6 +340,86 @@ namespace Sekai.CustomMusicScoreManager
 			_settingFullscreenButton.onClick.AddListener(CycleSettingFullscreen);
 			_settingsCancelButton.onClick.AddListener(CloseSettings);
 			_settingsSaveButton.onClick.AddListener(SaveSettings);
+
+			if (_detailToggleButton != null)
+			{
+				_detailToggleButton.onClick.AddListener(() => SetDetailPage(!_showingForm));
+			}
+			for (int i = 0; i < _difficultyFilterButtons.Length; i++)
+			{
+				int filterIndex = i;
+				if (_difficultyFilterButtons[i] != null)
+				{
+					_difficultyFilterButtons[i].onClick.AddListener(() => SetDifficultyFilter(filterIndex));
+				}
+			}
+			UpdateDifficultyFilterVisuals();
+			SetDetailPage(false);
+		}
+
+		private void SetCreateMenuVisible(bool visible)
+		{
+			if (_createMenuOverlay == null)
+			{
+				return;
+			}
+
+			_createMenuOverlay.SetActive(visible);
+			if (visible)
+			{
+				_createMenuOverlay.transform.SetAsLastSibling();
+			}
+		}
+
+		private void SetDetailPage(bool showForm)
+		{
+			_showingForm = showForm;
+			if (_overviewPage != null)
+			{
+				_overviewPage.SetActive(!showForm);
+			}
+			if (_formPage != null)
+			{
+				_formPage.SetActive(showForm);
+			}
+			if (_detailToggleLabel != null)
+			{
+				_detailToggleLabel.text = showForm ? "概要" : "编辑信息";
+			}
+		}
+
+		private void SetDifficultyFilter(int filterIndex)
+		{
+			_difficultyFilterIndex = Mathf.Clamp(filterIndex, 0, FilterDifficultyTypes.Length - 1);
+			UpdateDifficultyFilterVisuals();
+			RebuildRows();
+		}
+
+		private void UpdateDifficultyFilterVisuals()
+		{
+			Color32 teal = new Color32(103, 221, 205, 255);
+			for (int i = 0; i < _difficultyFilterButtons.Length; i++)
+			{
+				bool selected = i == _difficultyFilterIndex;
+				Color32 color = i == 0 ? teal : CustomMusicScoreDifficultyBadge.GetDifficultyColor(FilterDifficultyTypes[i]);
+				if (i < _difficultyFilterFills.Length && _difficultyFilterFills[i] != null)
+				{
+					_difficultyFilterFills[i].color = selected ? color : new Color32(64, 58, 104, 170);
+				}
+				if (i < _difficultyFilterLabels.Length && _difficultyFilterLabels[i] != null)
+				{
+					_difficultyFilterLabels[i].color = Color.white;
+				}
+			}
+		}
+
+		private static bool MatchesDifficultyFilter(CustomMusicScoreManagerItem item, string difficultyType)
+		{
+			if (string.IsNullOrEmpty(difficultyType))
+			{
+				return true;
+			}
+			return string.Equals(NormalizeDifficulty(item.Entry.Manifest.musicDifficultyType), difficultyType, StringComparison.OrdinalIgnoreCase);
 		}
 
 		protected override void OnBoot(BootArgBase bootData)
@@ -325,14 +434,13 @@ namespace Sekai.CustomMusicScoreManager
 
 		private void LateUpdate()
 		{
-			UpdateActionButtonLayout();
 			UpdateManifestFieldLayout();
-			UpdateDetailHeaderLayout();
 		}
 
 		protected override void OnExited()
 		{
 			ClearLoadedJacket();
+			ClearRows();
 			base.OnExited();
 		}
 
@@ -635,102 +743,6 @@ namespace Sekai.CustomMusicScoreManager
 			return _manifestFieldGrid.rect.width;
 		}
 
-		private void UpdateActionButtonLayout()
-		{
-			if (_actionButtonsContent == null || _actionButtonsLayout == null)
-			{
-				return;
-			}
-
-			float availableWidth = _actionButtonsContent.rect.width;
-			if (availableWidth <= 0f)
-			{
-				return;
-			}
-
-			int childCount = _actionButtonsContent.childCount;
-			if (childCount <= 0)
-			{
-				return;
-			}
-
-			float totalSpacing = ActionButtonSpacing * Mathf.Max(0, childCount - 1);
-			float buttonWidth = Mathf.Max(1f, Mathf.Floor((availableWidth - totalSpacing) / childCount));
-			bool layoutChanged = false;
-			for (int i = 0; i < childCount; i++)
-			{
-				LayoutElement layoutElement = _actionButtonsContent.GetChild(i).GetComponent<LayoutElement>();
-				if (layoutElement == null)
-				{
-					continue;
-				}
-
-				if (Mathf.Abs(layoutElement.minWidth - 1f) > 0.5f
-					|| Mathf.Abs(layoutElement.preferredWidth - buttonWidth) > 0.5f
-					|| Mathf.Abs(layoutElement.flexibleWidth - 1f) > 0.5f
-					|| Mathf.Abs(layoutElement.minHeight - ActionButtonHeight) > 0.5f
-					|| Mathf.Abs(layoutElement.preferredHeight - ActionButtonHeight) > 0.5f)
-				{
-					layoutElement.minWidth = 1f;
-					layoutElement.preferredWidth = buttonWidth;
-					layoutElement.flexibleWidth = 1f;
-					layoutElement.preferredHeight = ActionButtonHeight;
-					layoutElement.minHeight = ActionButtonHeight;
-					layoutChanged = true;
-				}
-			}
-
-			float actionHeight = ActionButtonHeight;
-			float formTop = ActionButtonsTop + actionHeight + ActionButtonsToFormGap;
-			bool actionHeightChanged = Mathf.Abs(_actionButtonsContent.rect.height - actionHeight) > 0.5f;
-			bool formTopChanged = _manifestFormScrollRect != null && Mathf.Abs(_manifestFormScrollRect.offsetMax.y + formTop) > 0.5f;
-			if (!layoutChanged && !actionHeightChanged && !formTopChanged)
-			{
-				return;
-			}
-
-			SetStretchTop(_actionButtonsContent, 28f, ActionButtonsTop, 28f, actionHeight);
-			if (_manifestFormScrollRect != null)
-			{
-				SetStretchOffsets(_manifestFormScrollRect, 28f, ManifestFormBottom, 28f, formTop);
-			}
-			LayoutRebuilder.MarkLayoutForRebuild(_actionButtonsContent);
-		}
-
-		private void UpdateDetailHeaderLayout()
-		{
-			if (_detailPanel == null || _detailTitle == null || _detailMeta == null || _detailStatus == null)
-			{
-				return;
-			}
-
-			float panelWidth = _detailPanel.rect.width;
-			if (panelWidth <= 0f)
-			{
-				return;
-			}
-
-			bool showBestResult = _selected != null && panelWidth >= 980f;
-			float bestWidth = Mathf.Clamp(panelWidth * 0.36f, BestResultMinWidth, BestResultPreferredWidth);
-			float textRight = showBestResult ? BestResultRight + bestWidth + BestResultGap : 30f;
-			SetStretchTop(_detailTitle.rectTransform, 252f, 30f, textRight, 54f);
-			SetStretchTop(_detailMeta.rectTransform, 252f, 88f, textRight, 88f);
-			SetStretchTop(_detailStatus.rectTransform, 252f, 184f, textRight, 38f);
-
-			if (_bestResultPanel == null)
-			{
-				return;
-			}
-
-			_bestResultPanel.gameObject.SetActive(showBestResult);
-			if (!showBestResult)
-			{
-				return;
-			}
-
-			SetAnchor(_bestResultPanel, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-BestResultRight, -BestResultTop), new Vector2(bestWidth, BestResultHeight));
-		}
-
 		private static int CalculateManifestColumnCount(float availableWidth)
 		{
 			for (int columns = MaxManifestFieldColumnCount; columns > 1; columns--)
@@ -747,15 +759,25 @@ namespace Sekai.CustomMusicScoreManager
 
 		private void RefreshList()
 		{
-			_items = CustomMusicScoreManagerService.LoadItems();
-			foreach (RowView row in _rows)
+			_allItems = CustomMusicScoreManagerService.LoadItems();
+			RebuildRows();
+			SetStatus("已加载 " + _allItems.Count.ToString(CultureInfo.InvariantCulture) + " 个谱面。");
+		}
+
+		private void RebuildRows()
+		{
+			ClearRows();
+
+			string difficultyFilter = FilterDifficultyTypes[Mathf.Clamp(_difficultyFilterIndex, 0, FilterDifficultyTypes.Length - 1)];
+			List<CustomMusicScoreManagerItem> visibleItems = new List<CustomMusicScoreManagerItem>();
+			foreach (CustomMusicScoreManagerItem item in _allItems)
 			{
-				if (row.Root != null)
+				if (MatchesDifficultyFilter(item, difficultyFilter))
 				{
-					Destroy(row.Root);
+					visibleItems.Add(item);
 				}
 			}
-			_rows.Clear();
+			_items = visibleItems;
 
 			foreach (CustomMusicScoreManagerItem item in _items)
 			{
@@ -764,6 +786,14 @@ namespace Sekai.CustomMusicScoreManager
 			}
 
 			_emptyText.gameObject.SetActive(_items.Count == 0);
+			_emptyText.text = _allItems.Count == 0
+				? "还没有本地谱面。\n点击右上角的「新建」或「导入」开始制作。"
+				: "没有符合条件的谱面。";
+			if (_listCountText != null)
+			{
+				_listCountText.text = _items.Count.ToString(CultureInfo.InvariantCulture) + " / " + _allItems.Count.ToString(CultureInfo.InvariantCulture);
+			}
+
 			CustomMusicScoreManagerItem selected = null;
 			if (_selected != null)
 			{
@@ -778,7 +808,19 @@ namespace Sekai.CustomMusicScoreManager
 				}
 			}
 			UpdateSelection(selected ?? (_items.Count > 0 ? _items[0] : null));
-			SetStatus("已加载 " + _items.Count.ToString(CultureInfo.InvariantCulture) + " 个谱面。");
+		}
+
+		private void ClearRows()
+		{
+			foreach (RowView row in _rows)
+			{
+				row.ReleaseJacket();
+				if (row.Root != null)
+				{
+					Destroy(row.Root);
+				}
+			}
+			_rows.Clear();
 		}
 
 		private RowView CreateRow(RectTransform parent, CustomMusicScoreManagerItem item)
@@ -789,29 +831,70 @@ namespace Sekai.CustomMusicScoreManager
 			cell.Button.onClick.AddListener(() => UpdateSelection(item));
 
 			CustomMusicScoreManifest manifest = item.Entry.Manifest;
-			string metaText = manifest.title;
+			string metaText = string.IsNullOrEmpty(manifest.title) ? "-" : manifest.title;
 			if (!string.IsNullOrEmpty(manifest.userName))
 			{
-				metaText += "  " + manifest.userName;
-			}
-			if (!string.IsNullOrEmpty(manifest.musicDifficultyType))
-			{
-				metaText += "  " + manifest.musicDifficultyType.ToUpperInvariant();
+				metaText += "  /  " + manifest.userName;
 			}
 
-			cell.TitleText.text = manifest.scoreTitle;
+			cell.TitleText.text = string.IsNullOrWhiteSpace(manifest.scoreTitle) ? manifest.title : manifest.scoreTitle;
 			cell.MetaText.text = metaText;
 			cell.StatusText.text = item.StatusText;
-			cell.StatusText.color = item.HasAudio && item.HasScore ? new Color32(126, 221, 166, 255) : new Color32(255, 184, 100, 255);
-			return new RowView(cell.gameObject, cell.Background, item);
+			cell.StatusText.color = GetStatusColor(item);
+			if (cell.DifficultyBadge != null)
+			{
+				cell.DifficultyBadge.Set(NormalizeDifficulty(manifest.musicDifficultyType), manifest.playLevel);
+			}
+
+			Sprite jacket = null;
+			if (cell.JacketImage != null)
+			{
+				jacket = LoadSpriteFromFile(item.Entry.JacketPath);
+				cell.JacketImage.sprite = jacket;
+				cell.JacketImage.color = jacket != null ? Color.white : Color.clear;
+			}
+			return new RowView(cell.gameObject, cell, item, jacket);
+		}
+
+		/// <summary>Buttons with a CanvasGroup fade as a whole (outline and label too) while not interactable.</summary>
+		private void SyncDisabledButtonVisuals()
+		{
+			Button[] buttons =
+			{
+				_editButton, _playButton, _autoButton, _duplicateButton, _deleteButton, _exportButton, _saveManifestButton,
+				_audioSelectButton, _jacketSelectButton, _scoreSelectButton, _videoSelectButton, _difficultyButton, _detailToggleButton
+			};
+			foreach (Button button in buttons)
+			{
+				if (button != null && button.TryGetComponent(out CanvasGroup group))
+				{
+					group.alpha = button.interactable ? 1f : 0.4f;
+				}
+			}
+		}
+
+		private static Color32 GetStatusColor(CustomMusicScoreManagerItem item)
+		{
+			return item.HasAudio && item.HasScore ? new Color32(103, 221, 205, 255) : new Color32(255, 184, 100, 255);
 		}
 
 		private void UpdateSelection(CustomMusicScoreManagerItem item)
 		{
 			_selected = item;
-			foreach (RowView row in _rows)
+			for (int i = 0; i < _rows.Count; i++)
 			{
-				row.Background.color = row.Item == item ? new Color32(52, 91, 112, 255) : new Color32(39, 46, 55, 255);
+				RowView row = _rows[i];
+				bool selected = row.Item == item;
+				bool nextSelected = i + 1 < _rows.Count && _rows[i + 1].Item == item;
+				row.Cell.Background.color = selected ? new Color32(255, 255, 255, 96) : new Color32(255, 255, 255, 0);
+				if (row.Cell.SelectedFrame != null)
+				{
+					row.Cell.SelectedFrame.SetActive(selected);
+				}
+				if (row.Cell.Separator != null)
+				{
+					row.Cell.Separator.SetActive(!selected && !nextSelected && i < _rows.Count - 1);
+				}
 			}
 
 			bool hasSelection = item != null;
@@ -826,13 +909,34 @@ namespace Sekai.CustomMusicScoreManager
 			_jacketSelectButton.interactable = hasSelection;
 			_scoreSelectButton.interactable = hasSelection;
 			_videoSelectButton.interactable = hasSelection;
+			if (_detailToggleButton != null)
+			{
+				_detailToggleButton.interactable = hasSelection;
+			}
 			SetFormInteractable(hasSelection);
+			SyncDisabledButtonVisuals();
+			if (_detailEmptyState != null)
+			{
+				_detailEmptyState.SetActive(!hasSelection);
+			}
+			if (_detailContent != null)
+			{
+				_detailContent.SetActive(hasSelection);
+			}
 
 			if (!hasSelection)
 			{
-				_detailTitle.text = "请选择谱面";
+				if (_windowTitleText != null)
+				{
+					_windowTitleText.text = "NOT FOUND";
+				}
+				_detailTitle.text = string.Empty;
 				_detailMeta.text = string.Empty;
 				_detailStatus.text = string.Empty;
+				if (_detailDescription != null)
+				{
+					_detailDescription.text = string.Empty;
+				}
 				SetBestResultText(null);
 				ClearLoadedJacket();
 				ClearForm();
@@ -840,16 +944,29 @@ namespace Sekai.CustomMusicScoreManager
 			}
 
 			CustomMusicScoreManifest manifest = item.Entry.Manifest;
-			_detailTitle.text = manifest.scoreTitle;
+			if (_windowTitleText != null)
+			{
+				string artist = !string.IsNullOrWhiteSpace(manifest.singer) ? manifest.singer : manifest.composer;
+				_windowTitleText.text = string.IsNullOrWhiteSpace(artist) ? manifest.title : manifest.title + " - " + artist;
+			}
+			_detailTitle.text = string.IsNullOrWhiteSpace(manifest.scoreTitle) ? manifest.title : manifest.scoreTitle;
 			_detailMeta.text = string.Format(
 				CultureInfo.InvariantCulture,
-				"曲名：{0}\nID：{1}\n路径：{2}\n更新：{3:yyyy-MM-dd HH:mm}",
-				manifest.title,
+				"<color=#9C98C8>谱师</color>  {0}\n<color=#9C98C8>更新</color>  {1:yyyy-MM-dd HH:mm}\n<color=#9C98C8>ID</color>  {2}\n<color=#9C98C8>路径</color>  {3}",
+				string.IsNullOrWhiteSpace(manifest.userName) ? "-" : manifest.userName,
+				item.LastWriteTime,
 				manifest.id,
-				item.Entry.RootDirectory,
-				item.LastWriteTime);
+				item.Entry.RootDirectory);
 			_detailStatus.text = item.StatusText;
-			_detailStatus.color = item.HasAudio && item.HasScore ? new Color32(126, 221, 166, 255) : new Color32(255, 184, 100, 255);
+			_detailStatus.color = GetStatusColor(item);
+			if (_detailBadge != null)
+			{
+				_detailBadge.Set(NormalizeDifficulty(manifest.musicDifficultyType), manifest.playLevel);
+			}
+			if (_detailDescription != null)
+			{
+				_detailDescription.text = string.IsNullOrWhiteSpace(manifest.description) ? "<color=#8F8BB8>（没有简介）</color>" : manifest.description;
+			}
 			UpdateBestResult(manifest);
 			LoadJacket(item.Entry.JacketPath);
 			LoadForm(manifest);
@@ -1687,24 +1804,51 @@ namespace Sekai.CustomMusicScoreManager
 		private void LoadJacket(string path)
 		{
 			ClearLoadedJacket();
+			_jacketSprite = LoadSpriteFromFile(path);
+			_jacketImage.sprite = _jacketSprite;
+			_jacketImage.color = _jacketSprite != null ? Color.white : Color.clear;
+		}
+
+		private static Sprite LoadSpriteFromFile(string path)
+		{
 			if (string.IsNullOrEmpty(path) || !File.Exists(path))
 			{
-				_jacketImage.sprite = null;
-				_jacketImage.color = new Color32(42, 49, 58, 255);
-				return;
+				return null;
 			}
 
-			byte[] bytes = File.ReadAllBytes(path);
+			byte[] bytes;
+			try
+			{
+				bytes = File.ReadAllBytes(path);
+			}
+			catch (IOException)
+			{
+				return null;
+			}
+
 			Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
 			if (!texture.LoadImage(bytes))
 			{
 				Destroy(texture);
+				return null;
+			}
+
+			return Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
+		}
+
+		private static void DestroySpriteAndTexture(Sprite sprite)
+		{
+			if (sprite == null)
+			{
 				return;
 			}
 
-			_jacketSprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
-			_jacketImage.sprite = _jacketSprite;
-			_jacketImage.color = Color.white;
+			Texture texture = sprite.texture;
+			Destroy(sprite);
+			if (texture != null)
+			{
+				Destroy(texture);
+			}
 		}
 
 		private void ClearLoadedJacket()
@@ -1714,12 +1858,7 @@ namespace Sekai.CustomMusicScoreManager
 				return;
 			}
 
-			Texture texture = _jacketSprite.texture;
-			Destroy(_jacketSprite);
-			if (texture != null)
-			{
-				Destroy(texture);
-			}
+			DestroySpriteAndTexture(_jacketSprite);
 			_jacketSprite = null;
 			if (_jacketImage != null)
 			{
@@ -1775,46 +1914,28 @@ namespace Sekai.CustomMusicScoreManager
 			}
 		}
 
-		private static void SetStretchOffsets(RectTransform rect, float left, float bottom, float right, float top)
-		{
-			rect.anchorMin = Vector2.zero;
-			rect.anchorMax = Vector2.one;
-			rect.pivot = new Vector2(0.5f, 0.5f);
-			rect.offsetMin = new Vector2(left, bottom);
-			rect.offsetMax = new Vector2(-right, -top);
-		}
-
-		private static void SetStretchTop(RectTransform rect, float left, float top, float right, float height)
-		{
-			rect.anchorMin = new Vector2(0f, 1f);
-			rect.anchorMax = new Vector2(1f, 1f);
-			rect.pivot = new Vector2(0.5f, 1f);
-			rect.offsetMin = new Vector2(left, -top - height);
-			rect.offsetMax = new Vector2(-right, -top);
-		}
-
-		private static void SetAnchor(RectTransform rect, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 anchoredPosition, Vector2 sizeDelta)
-		{
-			rect.anchorMin = anchorMin;
-			rect.anchorMax = anchorMax;
-			rect.pivot = pivot;
-			rect.anchoredPosition = anchoredPosition;
-			rect.sizeDelta = sizeDelta;
-		}
-
 		private sealed class RowView
 		{
+			private Sprite _jacket;
+
 			public GameObject Root { get; }
 
-			public Image Background { get; }
+			public CustomMusicScoreEntryCell Cell { get; }
 
 			public CustomMusicScoreManagerItem Item { get; }
 
-			public RowView(GameObject root, Image background, CustomMusicScoreManagerItem item)
+			public RowView(GameObject root, CustomMusicScoreEntryCell cell, CustomMusicScoreManagerItem item, Sprite jacket)
 			{
 				Root = root;
-				Background = background;
+				Cell = cell;
 				Item = item;
+				_jacket = jacket;
+			}
+
+			public void ReleaseJacket()
+			{
+				DestroySpriteAndTexture(_jacket);
+				_jacket = null;
 			}
 		}
 	}

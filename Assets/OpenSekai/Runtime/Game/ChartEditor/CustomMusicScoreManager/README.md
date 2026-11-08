@@ -12,6 +12,14 @@ Its UI is authored in the prefab and placed in the scene; `ScreenLayerCustomMusi
 serialized references and button events in `Awake`. List rows are clones of the inactive `EntryCellTemplate`.
 It reuses the existing `MenuScreenType.MusicScoreMakerTop` entry so no new screen enum is needed.
 
+The screen follows the official "CREATE SCORE" style: a header with the watermark, the `新建谱面` button
+(opens a two-card create menu: blank chart or ZIP/folder import), refresh and settings; a difficulty
+filter rail (local filtering only); the chart list with difficulty badges and jackets; and a window-style
+detail panel whose `编辑信息` toggle swaps the overview for the manifest form. `CustomMusicScoreDifficultyBadge`
+holds the difficulty colours. Its sprites come from the official atlases (`Art/Sprites/txt_create_score_outline`,
+`logo_score_maker_wh`, `icon_score_create_*`, `jacket_placeholder_disc`) plus generated round shapes in
+`Art/Textures/CustomMusicScoreManager` (the canvases use 1 pixel per unit, so sliced sprites are 1 PPU).
+
 Scene flow (all through `SceneSwitcher`):
 
 - Edit: `MusicScoreMakerSceneArgs.Prepare(...)`, then the `MusicScoreMaker` scene.

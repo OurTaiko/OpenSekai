@@ -22,6 +22,18 @@ namespace Sekai.CustomMusicScoreManager
 		[SerializeField]
 		private TextMeshProUGUI statusText;
 
+		[SerializeField]
+		private CustomMusicScoreDifficultyBadge difficultyBadge;
+
+		[SerializeField]
+		private Image jacketImage;
+
+		[SerializeField]
+		private GameObject selectedFrame;
+
+		[SerializeField]
+		private GameObject separator;
+
 		public Image Background => background;
 
 		public Button Button => button;
@@ -32,13 +44,34 @@ namespace Sekai.CustomMusicScoreManager
 
 		public TextMeshProUGUI StatusText => statusText;
 
-		internal void SetReferences(Image background, Button button, TextMeshProUGUI titleText, TextMeshProUGUI metaText, TextMeshProUGUI statusText)
+		public CustomMusicScoreDifficultyBadge DifficultyBadge => difficultyBadge;
+
+		public Image JacketImage => jacketImage;
+
+		public GameObject SelectedFrame => selectedFrame;
+
+		public GameObject Separator => separator;
+
+		internal void SetReferences(
+			Image background,
+			Button button,
+			TextMeshProUGUI titleText,
+			TextMeshProUGUI metaText,
+			TextMeshProUGUI statusText,
+			CustomMusicScoreDifficultyBadge difficultyBadge,
+			Image jacketImage,
+			GameObject selectedFrame,
+			GameObject separator)
 		{
 			this.background = background;
 			this.button = button;
 			this.titleText = titleText;
 			this.metaText = metaText;
 			this.statusText = statusText;
+			this.difficultyBadge = difficultyBadge;
+			this.jacketImage = jacketImage;
+			this.selectedFrame = selectedFrame;
+			this.separator = separator;
 		}
 	}
 }
