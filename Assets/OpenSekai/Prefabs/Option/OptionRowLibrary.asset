@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04147a0f6c7404dc782005c450fca33c, type: 3}
+  m_Name: OptionRowLibrary
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.OptionRowLibrary
+  sectionHeader: {fileID: 6421820152573928906, guid: 3ebde12ccef0144dc9a5bf032b8abe7c, type: 3}
+  label: {fileID: 8954397602007219672, guid: 0682114356d3c48698a3dff0d88d8b41, type: 3}
+  stepper: {fileID: 3420051957855270258, guid: 66d976b63090f41a885e51eea1468027, type: 3}
+  radio: {fileID: 6799308780609720205, guid: 3a83a048ec3594ac8bd336e6e7feead3, type: 3}
+  volume: {fileID: 6440031372271715504, guid: 32ad40b3c0c2c427fb8508300d8d0672, type: 3}
+  selector: {fileID: 8095909879412075987, guid: 8b1b8c4bfe06a4cdfa0d194abc0eab5c, type: 3}
+  skin: {fileID: 987436524713545476, guid: 2594ba94655bd4f05a29e4e67cca8a22, type: 3}
+  button: {fileID: 7155004559496595723, guid: c9e97dd0130a74cf48d4bfee3d5d9265, type: 3}
+  buttonGrid: {fileID: 391619314304700121, guid: 9b5ec0105680d44d6a016e786cf88e54, type: 3}
+  notePreview: {fileID: 1078780743054524378, guid: 61e67b437f8f14747b4db57f0b9a423e, type: 3}
+  lanePreview: {fileID: 1447271004356262967, guid: e7c5571ea70d34b40aef95075e8be977, type: 3}
+  text: {fileID: 6795601786751485871, guid: f2bd44232203e460c9b394b4027b6d8b, type: 3}

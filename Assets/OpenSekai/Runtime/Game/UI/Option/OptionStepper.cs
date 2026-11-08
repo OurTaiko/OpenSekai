@@ -48,6 +48,20 @@ namespace Sekai
 			Bind();
 		}
 
+		/// <summary>Wires buttons a row built at runtime from its catalog entry.</summary>
+		public void Setup(Button[] stepButtons, float[] stepDeltas, TMP_Text text, float minimum, float maximum, string valueFormat, string valueSuffix)
+		{
+			buttons = stepButtons;
+			deltas = stepDeltas;
+			valueText = text;
+			min = minimum;
+			max = maximum;
+			format = valueFormat;
+			suffix = valueSuffix ?? string.Empty;
+			bound = false;
+			Bind();
+		}
+
 		public void SetValueWithoutNotify(float newValue)
 		{
 			Bind();

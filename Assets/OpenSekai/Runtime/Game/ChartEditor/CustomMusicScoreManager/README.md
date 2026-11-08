@@ -10,6 +10,11 @@ Local-only custom music score manager. Its code is part of the `OpenSekai.Game` 
 The manager screen is `Assets/OpenSekai/Prefabs/CustomMusicScoreManager/ScreenLayerMusicScoreMakerTop.prefab`.
 Its UI is authored in the prefab and placed in the scene; `ScreenLayerCustomMusicScoreManager` only binds the
 serialized references and button events in `Awake`. List rows are clones of the inactive `EntryCellTemplate`.
+Each part of the screen is its own prefab, nested in the screen prefab: `CustomMusicScoreHeader`,
+`CustomMusicScoreDifficultyRail`, `CustomMusicScoreListArea` (holding `CustomMusicScoreEntryCell` as the template),
+`CustomMusicScoreDetailWindow`, `CustomMusicScoreActionButtons` and `CustomMusicScoreCreateMenuOverlay`. Edit a part in
+its own prefab. In the detail window only `EmptyState` is active in the prefab; the screen turns on the overview or the
+form at run time.
 It reuses the existing `MenuScreenType.MusicScoreMakerTop` entry so no new screen enum is needed.
 
 The screen follows the official "CREATE SCORE" style: a header with the watermark, the `新建谱面` button
@@ -21,8 +26,8 @@ holds the difficulty colours. Its sprites come from the official atlases (`Art/S
 `Art/Textures/CustomMusicScoreManager` (the canvases use 1 pixel per unit, so sliced sprites are 1 PPU).
 
 The settings button opens the shared option dialog (`UI/Option/OptionDialog`, `DialogType.OptionDialog`), a copy of the
-official オプション dialog. Every change is saved and applied at once. Settings that are stored but not used yet are
-listed in the repository's `AGENTS.md`.
+official オプション dialog. Every change is saved and applied at once. Its structure is described in the repository's
+`AGENTS.md`, which also lists the settings that are stored but not used yet.
 
 Scene flow (all through `SceneSwitcher`):
 

@@ -2,15 +2,29 @@
 
 Notes for anyone (human or agent) working on OpenSekai.
 
-## Option dialog: placeholder settings
+## Option dialog
 
 The option dialog (`Assets/OpenSekai/Runtime/Game/UI/Option/OptionDialog.cs`, prefab
 `Assets/OpenSekai/Resources/dialog/OptionDialog.prefab`) copies the official オプション dialog. Its ライブ, 音量 and システム
 tabs match the original. The fourth tab, コミュニケーション in the original, is **Additionals** and holds OpenSekai's own
 settings.
 
+It is built the way OurTaikoPlay builds its settings overlay:
+
+- `OptionCatalog` declares every page, section, block (its layout) and row (its kind, labels, range and the getter and
+  setter on `OptionSettings`). To add or move a setting, edit the catalog.
+- `OptionSettings` loads `LiveSettingData` and `ApplicationLocalSettings`, and `Commit()` saves and applies them.
+- `OptionPageView` builds a page from the catalog. Each row is an instance of the prefab for its kind, listed in
+  `Assets/OpenSekai/Prefabs/Option/OptionRowLibrary.asset`. The row prefabs (`OptionStepperRow`, `OptionRadioRow`, ...)
+  are in the same folder; change a row's look there. Gaps and widths between rows are constants in `OptionPageView`,
+  measured from a recording of the original.
+- `OptionDialog` and `LiveNoteSettingDialog` (プレビューで詳細設定, built from `OptionCatalog.NoteDetail()`) only connect these.
+
+## Option dialog: placeholder settings
+
 Some settings exist in the original game but OpenSekai has nothing behind them yet. They are in the dialog anyway: you can
-change them and they are saved, but **they have no effect**. When you implement one, remove it from this list.
+change them and they are saved, but **they have no effect**. Each one is marked with `.Placeholder(reason)` in
+`OptionCatalog`. When you implement one, remove the marker and its row in this list.
 
 | Tab | Setting | Stored in | Why it has no effect |
 | --- | --- | --- | --- |

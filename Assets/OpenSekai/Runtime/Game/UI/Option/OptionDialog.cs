@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Sekai.Live;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,15 +7,15 @@ using UnityEngine.UI;
 namespace Sekai
 {
 	/// <summary>
-	/// The official オプション dialog (<see cref="DialogType.OptionDialog"/>), rebuilt for OpenSekai.
-	/// Tabs: ライブ / 音量 / システム like the original, and Additionals for OpenSekai's own settings in place of
-	/// the original コミュニケーション tab. Every change is saved and applied at once; the footer button only closes.
-	/// Settings OpenSekai stores but does not use yet are listed in AGENTS.md.
+	/// The official オプション dialog (<see cref="DialogType.OptionDialog"/>), rebuilt for OpenSekai and organised like
+	/// OurTaikoPlay's settings overlay: <see cref="OptionCatalog"/> declares the pages and rows, <see cref="OptionSettings"/>
+	/// loads, saves and applies them, <see cref="OptionPageView"/> builds each tab page from the row prefabs in
+	/// <see cref="OptionRowLibrary"/>, and this controller connects them. Tabs: ライブ / 音量 / システム like the original,
+	/// and Additionals for OpenSekai's own settings in place of コミュニケーション. Every change is saved and applied at
+	/// once; the footer button only closes.
 	/// </summary>
-	public sealed class OptionDialog : Common1ButtonDialog
+	public sealed class OptionDialog : Common1ButtonDialog, IOptionRowHost
 	{
-		private const float MinNoteAlphaPercent = 10f;
-
 		// The original dialog is 1033 units tall (measured on a 4:3 screen) and leaves at least this much screen above
 		// and below it on shorter screens.
 		private const float FullDialogHeight = 1033f;
@@ -23,20 +24,15 @@ namespace Sekai
 
 		// Tab band (72) + gap under the tabs (64) + footer (144).
 		private const float DialogChromeHeight = 280f;
-		private const float SeTestLongDuration = 0.6f;
-		private static readonly string[] SeTestCues =
-		{
-			LiveSoundDefine.SE_LIVE_PERFECT,
-			LiveSoundDefine.SE_LIVE_FLICK,
-			LiveSoundDefine.SE_LIVE_LONG,
-			LiveSoundDefine.SE_LIVE_TRACE,
-		};
 
-		[Header("Layout")]
+		private const float SeTestLongDuration = 0.6f;
+
+		[SerializeField]
+		private OptionRowLibrary library;
+
 		[SerializeField]
 		private LayoutElement contentRoot;
 
-		[Header("Tabs")]
 		[SerializeField]
 		private UIPartsDialogTabGroup tabGroup;
 
@@ -46,149 +42,95 @@ namespace Sekai
 		[SerializeField]
 		private ScrollRect[] tabScrolls;
 
-		[Header("ライブ: ノーツ設定")]
 		[SerializeField]
-		private OptionStepper noteSpeed;
+		private RectTransform[] pageContents;
 
-		[SerializeField]
-		private OptionStepper timingAdjust;
-
-		[SerializeField]
-		private Button previewDetailButton;
-
-		[SerializeField]
-		private OptionSelector noteSkin;
-
-		[SerializeField]
-		private OptionStepper longNoteAlpha;
-
-		[SerializeField]
-		private OptionStepper guideAlpha;
-
-		[SerializeField]
-		private Graphic longNotePreview;
-
-		[SerializeField]
-		private Graphic guidePreview;
-
-		[SerializeField]
-		private OptionSelector noteSe;
-
-		[SerializeField]
-		private Button[] seTestButtons;
-
-		[Header("ライブ: 見やすさ・演出設定")]
-		[SerializeField]
-		private OptionStepper brightness;
-
-		[SerializeField]
-		private OptionStepper laneAlpha;
-
-		[SerializeField]
-		private OptionRadioGroup tapEffect;
-
-		[SerializeField]
-		private OptionRadioGroup cutIn;
-
-		[SerializeField]
-		private OptionRadioGroup fever;
-
-		[SerializeField]
-		private OptionRadioGroup skillDisplay;
-
-		[SerializeField]
-		private OptionRadioGroup fps;
-
-		[Header("ライブ: ライブ補助設定")]
-		[SerializeField]
-		private OptionRadioGroup simultaneousLine;
-
-		[SerializeField]
-		private OptionRadioGroup apEffect;
-
-		[SerializeField]
-		private OptionRadioGroup fastLateFlick;
-
-		[SerializeField]
-		private OptionRadioGroup mirror;
-
-		[SerializeField]
-		private OptionRadioGroup vibration;
-
-		[Header("ライブ: MV設定")]
-		[SerializeField]
-		private OptionRadioGroup mvMode;
-
-		[SerializeField]
-		private OptionRadioGroup mvQuality;
-
-		[Header("音量")]
-		[SerializeField]
-		private OptionVolumeSlider liveBgm;
-
-		[SerializeField]
-		private OptionVolumeSlider liveSe;
-
-		[SerializeField]
-		private OptionVolumeSlider liveVoice;
-
-		[SerializeField]
-		private OptionVolumeSlider systemBgm;
-
-		[SerializeField]
-		private OptionVolumeSlider systemSe;
-
-		[SerializeField]
-		private OptionVolumeSlider systemVoice;
-
-		[Header("システム")]
-		[SerializeField]
-		private OptionRadioGroup defaultVocal;
-
-		[SerializeField]
-		private OptionRadioGroup screenLock;
-
-		[SerializeField]
-		private OptionRadioGroup confirmBeforeLive;
-
-		[SerializeField]
-		private OptionRadioGroup onlineStatus;
-
-		[SerializeField]
-		private OptionRadioGroup liveBonusNotify;
-
-		[Header("Additionals")]
-		[SerializeField]
-		private OptionRadioGroup musicInfoDisplay;
-
-		[SerializeField]
-		private OptionRadioGroup liveBackground;
-
-		[SerializeField]
-		private OptionRadioGroup fullscreen;
-
-		[SerializeField]
-		private GameObject fullscreenRow;
-
-		private LiveSettingData liveSetting;
-		private ApplicationLocalSettings localSettings;
+		private OptionSettings settings;
+		private readonly Dictionary<string, OptionRow> rows = new Dictionary<string, OptionRow>();
+		private readonly List<OptionRowView> views = new List<OptionRowView>();
 		private string loadedSeBundle;
 		private uint longSePlaybackId;
 		private Coroutine stopLongSeRoutine;
+
+		public OptionSettings Settings => settings;
 
 		public override void Initialize(DialogSize dialogSize = DialogSize.Manual, bool allowCloseExternal = true)
 		{
 			// The footer button is 閉じる: it only closes, because every change is already saved.
 			Initialize(null, null, null, dialogSize, allowCloseExternal);
 			FitContentHeight(this, contentRoot, DialogChromeHeight);
+			settings = OptionSettings.Load();
+			BuildPages(OptionCatalog.Pages());
+			RefreshRows();
 			SetupTabs();
-			Load();
-			BindEvents();
+		}
+
+		private void BuildPages(IReadOnlyList<OptionPage> pages)
+		{
+			rows.Clear();
+			foreach (OptionPage page in pages)
+			{
+				foreach (OptionSection section in page.Sections)
+				{
+					foreach (OptionBlock block in section.Blocks)
+					{
+						foreach (OptionRow row in block.Rows)
+						{
+							rows[row.Id] = row;
+						}
+					}
+				}
+			}
+			for (int i = 0; i < pages.Count && i < pageContents.Length; i++)
+			{
+				views.AddRange(OptionPageView.Build(pages[i], pageContents[i], library, this));
+			}
+		}
+
+		private void RefreshRows()
+		{
+			foreach (OptionRowView view in views)
+			{
+				view.Refresh(settings);
+			}
+		}
+
+		public void OnRowChanged(OptionRow row)
+		{
+			settings.Commit();
+			RefreshRows();
+		}
+
+		public OptionRow FindRow(string id)
+		{
+			return id != null && rows.TryGetValue(id, out OptionRow row) ? row : null;
+		}
+
+		public void RunAction(string action)
+		{
+			switch (action)
+			{
+				case OptionCatalog.ActionNoteDetail:
+					OpenNoteDetail();
+					break;
+				case OptionCatalog.ActionSeTap:
+					PlaySeTest(LiveSoundDefine.SE_LIVE_PERFECT);
+					break;
+				case OptionCatalog.ActionSeFlick:
+					PlaySeTest(LiveSoundDefine.SE_LIVE_FLICK);
+					break;
+				case OptionCatalog.ActionSeLong:
+					PlaySeTest(LiveSoundDefine.SE_LIVE_LONG);
+					break;
+				case OptionCatalog.ActionSeTrace:
+					PlaySeTest(LiveSoundDefine.SE_LIVE_TRACE);
+					break;
+			}
 		}
 
 		/// <summary>
-		/// Sizes a dialog's scrolling content so the whole dialog is as tall as the original's
-		/// (<see cref="FullDialogHeight"/>) when the screen allows, and keeps <see cref="MinScreenMargin"/> otherwise.
+		/// Sizes a dialog's content so the whole dialog is as tall as the original's (<see cref="FullDialogHeight"/>) when
+		/// the screen allows, and keeps <see cref="MinScreenMargin"/> above and below otherwise.
 		/// </summary>
 		public static void FitContentHeight(Component dialog, LayoutElement content, float chromeHeight)
 		{
@@ -222,14 +164,11 @@ namespace Sekai
 
 		private void ShowTab(int index)
 		{
-			if (tabPages != null)
+			for (int i = 0; i < tabPages.Length; i++)
 			{
-				for (int i = 0; i < tabPages.Length; i++)
-				{
-					tabPages[i]?.SetActive(i == index);
-				}
+				tabPages[i]?.SetActive(i == index);
 			}
-			if (tabScrolls != null && index >= 0 && index < tabScrolls.Length && tabScrolls[index] != null)
+			if (index >= 0 && index < tabScrolls.Length && tabScrolls[index] != null)
 			{
 				// Content is pivoted at its top, so a zero position shows the top of the page even before layout runs.
 				ScrollRect scroll = tabScrolls[index];
@@ -241,222 +180,19 @@ namespace Sekai
 			}
 		}
 
-		private void Load()
-		{
-			liveSetting = LiveSettingData.LoadFromStorage();
-			localSettings = ApplicationLocalSettings.LoadFromStorage();
-			ApplicationLocalSettings.VolumeSettings live = localSettings.LiveVolume ?? localSettings.SetupLiveVolume();
-			ApplicationLocalSettings.VolumeSettings system = localSettings.SystemVolume;
-			ApplicationLocalSettings.SystemOptionSettings systemOptions = localSettings.SystemOptions;
-
-			noteSpeed?.SetValueWithoutNotify(liveSetting.NoteSpeed);
-			timingAdjust?.SetValueWithoutNotify(liveSetting.TimingAdjustData);
-			noteSkin?.SetValueWithoutNotify(liveSetting.NoteSkinIndex);
-			longNoteAlpha?.SetValueWithoutNotify(liveSetting.GetNoteAlpha() * 100f);
-			guideAlpha?.SetValueWithoutNotify(liveSetting.GetGuideAlpha() * 100f);
-			noteSe?.SetValueWithoutNotify(liveSetting.NoteSeIndex);
-			RefreshAlphaPreviews();
-
-			brightness?.SetValueWithoutNotify(liveSetting.Brightness * 100f);
-			laneAlpha?.SetValueWithoutNotify(liveSetting.LaneTransparent * 100f);
-			tapEffect?.SetValueWithoutNotify(liveSetting.NoteEffect);
-			cutIn?.SetOnWithoutNotify(liveSetting.UseCutIn);
-			fever?.SetValueWithoutNotify(liveSetting.FeverEffectTypeIndex);
-			skillDisplay?.SetOnWithoutNotify(!liveSetting.HiddenSkillAndPraise);
-			fps?.SetValueWithoutNotify(liveSetting.Use120FPS ? 0 : 1);
-
-			simultaneousLine?.SetOnWithoutNotify(liveSetting.UseSimultaneousPushingLine);
-			apEffect?.SetOnWithoutNotify(liveSetting.UseAllPerfectEffect);
-			fastLateFlick?.SetOnWithoutNotify(liveSetting.IsFastLateFlick);
-			mirror?.SetOnWithoutNotify(liveSetting.IsMirror);
-			vibration?.SetOnWithoutNotify(liveSetting.UseVibration);
-			mvMode?.SetValueWithoutNotify(LiveModeToIndex(liveSetting.LiveMode));
-			mvQuality?.SetValueWithoutNotify(liveSetting.QualityType == MVQualityType.High ? 0 : 1);
-
-			liveBgm?.SetValueWithoutNotify(ToPercent(live.Bgm));
-			liveSe?.SetValueWithoutNotify(ToPercent(live.Se));
-			liveVoice?.SetValueWithoutNotify(ToPercent(live.Voice));
-			systemBgm?.SetValueWithoutNotify(ToPercent(system.Bgm));
-			systemSe?.SetValueWithoutNotify(ToPercent(system.Se));
-			systemVoice?.SetValueWithoutNotify(ToPercent(system.Voice));
-
-			defaultVocal?.SetValueWithoutNotify(systemOptions.DefaultVocalType);
-			screenLock?.SetOnWithoutNotify(systemOptions.LockScreenOrientation);
-			confirmBeforeLive?.SetOnWithoutNotify(systemOptions.ConfirmSettingsBeforeLive);
-			onlineStatus?.SetOnWithoutNotify(systemOptions.ShowOnlineStatus);
-			liveBonusNotify?.SetOnWithoutNotify(systemOptions.NotifyLiveBonusFullRecovery);
-
-			musicInfoDisplay?.SetValueWithoutNotify(liveSetting.UsesCustomMusicScoreMusicInfoDisplay ? 0 : 1);
-			liveBackground?.SetValueWithoutNotify(
-				(liveSetting.CustomMusicScoreLiveBackgroundMode ?? LiveSettingData.CustomMusicScoreBackgroundMode2DMV)
-				== LiveSettingData.CustomMusicScoreBackgroundModeJacket ? 0 : 1);
-			fullscreenRow?.SetActive(SupportsFullscreenSetting);
-			fullscreen?.SetOnWithoutNotify(localSettings.FullscreenEnabled ?? Screen.fullScreen);
-		}
-
-		private void BindEvents()
-		{
-			Listen(noteSpeed, v => liveSetting.NoteSpeed = v);
-			Listen(timingAdjust, v => liveSetting.TimingAdjustData = v);
-			Listen(noteSkin, v => liveSetting.NoteSkinIndex = v);
-			Listen(longNoteAlpha, v => liveSetting.NoteAlpha = Mathf.Max(v, MinNoteAlphaPercent) / 100f);
-			Listen(guideAlpha, v => liveSetting.GuideAlpha = Mathf.Max(v, MinNoteAlphaPercent) / 100f);
-			Listen(noteSe, v => liveSetting.NoteSeIndex = v);
-			previewDetailButton?.onClick.AddListener(OpenNoteDetail);
-			if (seTestButtons != null)
-			{
-				for (int i = 0; i < seTestButtons.Length && i < SeTestCues.Length; i++)
-				{
-					string cue = SeTestCues[i];
-					seTestButtons[i]?.onClick.AddListener(() => PlaySeTest(cue));
-				}
-			}
-
-			Listen(brightness, v => liveSetting.Brightness = v / 100f);
-			Listen(laneAlpha, v => liveSetting.LaneTransparent = v / 100f);
-			Listen(tapEffect, v => liveSetting.NoteEffect = v);
-			Listen(cutIn, v => liveSetting.UseCutIn = v == 0);
-			Listen(fever, v => liveSetting.FeverEffectTypeIndex = v);
-			Listen(skillDisplay, v => liveSetting.HiddenSkillAndPraise = v != 0);
-			Listen(fps, v => liveSetting.Use120FPS = v == 0);
-
-			Listen(simultaneousLine, v => liveSetting.UseSimultaneousPushingLine = v == 0);
-			Listen(apEffect, v => liveSetting.UseAllPerfectEffect = v == 0);
-			Listen(fastLateFlick, v => liveSetting.IsFastLateFlick = v == 0);
-			Listen(mirror, v => liveSetting.IsMirror = v == 0);
-			Listen(vibration, v => liveSetting.UseVibration = v == 0);
-			Listen(mvMode, v => liveSetting.LiveMode = IndexToLiveMode(v));
-			Listen(mvQuality, v => liveSetting.QualityType = v == 0 ? MVQualityType.High : MVQualityType.Default);
-
-			Listen(liveBgm, v => LiveVolume.Bgm = v / 100f);
-			Listen(liveSe, v => LiveVolume.Se = v / 100f);
-			Listen(liveVoice, v => LiveVolume.Voice = v / 100f);
-			Listen(systemBgm, v => localSettings.SystemVolume.Bgm = v / 100f);
-			Listen(systemSe, v => localSettings.SystemVolume.Se = v / 100f);
-			Listen(systemVoice, v => localSettings.SystemVolume.Voice = v / 100f);
-
-			Listen(defaultVocal, v => localSettings.SystemOptions.DefaultVocalType = v);
-			Listen(screenLock, v => localSettings.SystemOptions.LockScreenOrientation = v == 0);
-			Listen(confirmBeforeLive, v => localSettings.SystemOptions.ConfirmSettingsBeforeLive = v == 0);
-			Listen(onlineStatus, v => localSettings.SystemOptions.ShowOnlineStatus = v == 0);
-			Listen(liveBonusNotify, v => localSettings.SystemOptions.NotifyLiveBonusFullRecovery = v == 0);
-
-			Listen(musicInfoDisplay, v => liveSetting.CustomMusicScoreMusicInfoDisplayMode = v == 0
-				? LiveSettingData.MusicInfoDisplayModeCustomScore
-				: LiveSettingData.MusicInfoDisplayModeNormal);
-			Listen(liveBackground, v => liveSetting.CustomMusicScoreLiveBackgroundMode = v == 0
-				? LiveSettingData.CustomMusicScoreBackgroundModeJacket
-				: LiveSettingData.CustomMusicScoreBackgroundMode2DMV);
-			Listen(fullscreen, v => localSettings.FullscreenEnabled = v == 0);
-		}
-
-		private ApplicationLocalSettings.VolumeSettings LiveVolume => localSettings.LiveVolume ?? localSettings.SetupLiveVolume();
-
-		private static bool SupportsFullscreenSetting
-		{
-			get
-			{
-#if UNITY_STANDALONE || UNITY_EDITOR
-				return true;
-#else
-				return false;
-#endif
-			}
-		}
-
-		private void Listen(OptionStepper stepper, System.Action<float> write)
-		{
-			if (stepper != null)
-			{
-				stepper.OnValueChanged += v => Commit(() => write(v));
-			}
-		}
-
-		private void Listen(OptionRadioGroup group, System.Action<int> write)
-		{
-			if (group != null)
-			{
-				group.OnValueChanged += v => Commit(() => write(v));
-			}
-		}
-
-		private void Listen(OptionSelector selector, System.Action<int> write)
-		{
-			if (selector != null)
-			{
-				selector.OnValueChanged += v => Commit(() => write(v));
-			}
-		}
-
-		private void Listen(OptionVolumeSlider slider, System.Action<int> write)
-		{
-			if (slider != null)
-			{
-				slider.OnValueChanged += v => Commit(() => write(v));
-			}
-		}
-
-		/// <summary>Writes one change, saves both stores and applies what takes effect outside a live.</summary>
-		private void Commit(System.Action write)
-		{
-			write();
-			LiveSettingData.SaveToStorage(liveSetting);
-			ApplicationLocalSettings.SaveToStorage(localSettings);
-
-			ApplicationLocalSettings.VolumeSettings system = localSettings.SystemVolume;
-			SoundManager.Instance.SetupVolume(1f, system.Bgm, system.Se, system.Voice);
-			LiveConfig.LongNoteAlpha = liveSetting.GetNoteAlpha();
-			LiveConfig.GuideAlpha = liveSetting.GetGuideAlpha();
-			LiveConfig.SetNoteSkinAssetBundleName(liveSetting.NoteSkinIndex);
-			LiveConfig.SetNoteSeName(liveSetting.NoteSeIndex);
-			LiveConfig.SetNoteEffectName(liveSetting.NoteEffect);
-			LiveConfig.SetFeverEffectName(liveSetting.FeverEffectTypeIndex);
-			if (SupportsFullscreenSetting && localSettings.FullscreenEnabled.HasValue
-				&& Screen.fullScreen != localSettings.FullscreenEnabled.Value)
-			{
-				ScreenConfig.SetStandaloneFullscreen(localSettings.FullscreenEnabled.Value);
-			}
-			RefreshAlphaPreviews();
-		}
-
-		private void RefreshAlphaPreviews()
-		{
-			SetAlpha(longNotePreview, liveSetting?.GetNoteAlpha() ?? 1f);
-			SetAlpha(guidePreview, liveSetting?.GetGuideAlpha() ?? 0.6f);
-		}
-
-		private static void SetAlpha(Graphic graphic, float alpha)
-		{
-			if (graphic == null)
-			{
-				return;
-			}
-
-			Color color = graphic.color;
-			color.a = alpha;
-			graphic.color = color;
-		}
-
 		private void OpenNoteDetail()
 		{
 			var dialog = ScreenManager.Instance?.ShowDialog<LiveNoteSettingDialog>(DialogType.LiveNoteSettingDialog);
-			dialog?.Setup(
-				liveSetting.NoteSpeed,
-				liveSetting._noteShowRate * 100f,
-				liveSetting.TimingAdjustData,
-				(speed, startPosition, timing) => Commit(() =>
-				{
-					liveSetting.NoteSpeed = speed;
-					liveSetting.SetNoteShowRate(startPosition);
-					liveSetting.TimingAdjustData = timing;
-					noteSpeed?.SetValueWithoutNotify(speed);
-					timingAdjust?.SetValueWithoutNotify(timing);
-				}));
+			dialog?.Setup(settings, () =>
+			{
+				settings.Commit();
+				RefreshRows();
+			});
 		}
 
 		private void PlaySeTest(string cue)
 		{
-			string bundle = "live/tap_se/" + LiveConfig.GetNoteSeName(liveSetting.NoteSeIndex);
+			string bundle = "live/tap_se/" + LiveConfig.GetNoteSeName(settings.Live.NoteSeIndex);
 			if (loadedSeBundle != bundle)
 			{
 				SoundManager.Instance.LoadSoundBundle(bundle, false);
@@ -500,34 +236,6 @@ namespace Sekai
 		{
 			StopLongSeTest();
 			base.OnDisable();
-		}
-
-		private static int ToPercent(float volume)
-		{
-			return Mathf.RoundToInt(Mathf.Clamp01(volume) * 100f);
-		}
-
-		// MV設定 > モード: 3DMV / 2DMV / 原曲MV / 軽量.
-		private static int LiveModeToIndex(LiveSettingData.LiveModeType mode)
-		{
-			return mode switch
-			{
-				LiveSettingData.LiveModeType.Mode2D => 1,
-				LiveSettingData.LiveModeType.OriginalMV => 2,
-				LiveSettingData.LiveModeType.Low => 3,
-				_ => 0,
-			};
-		}
-
-		private static LiveSettingData.LiveModeType IndexToLiveMode(int index)
-		{
-			return index switch
-			{
-				1 => LiveSettingData.LiveModeType.Mode2D,
-				2 => LiveSettingData.LiveModeType.OriginalMV,
-				3 => LiveSettingData.LiveModeType.Low,
-				_ => LiveSettingData.LiveModeType.Default3D,
-			};
 		}
 	}
 }

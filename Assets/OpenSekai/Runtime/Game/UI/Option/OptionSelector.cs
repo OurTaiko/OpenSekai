@@ -40,6 +40,11 @@ namespace Sekai
 			Bind();
 		}
 
+		public void SetLabels(string[] newLabels)
+		{
+			labels = newLabels;
+		}
+
 		public void SetValueWithoutNotify(int newValue)
 		{
 			Bind();

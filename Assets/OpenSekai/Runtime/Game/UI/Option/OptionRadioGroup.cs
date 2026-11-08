@@ -28,6 +28,15 @@ namespace Sekai
 			Bind();
 		}
 
+		/// <summary>Wires options a row built at runtime from its catalog entry.</summary>
+		public void Setup(Button[] optionButtons, GameObject[] optionMarks)
+		{
+			options = optionButtons;
+			marks = optionMarks;
+			bound = false;
+			Bind();
+		}
+
 		public void SetValueWithoutNotify(int newValue)
 		{
 			Bind();
