@@ -128,7 +128,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 				return false;
 			}
 
-			SubWindowSlideAnimationController[] subWindows = FindObjectsOfType<SubWindowSlideAnimationController>(true);
+			SubWindowSlideAnimationController[] subWindows = FindObjectsByType<SubWindowSlideAnimationController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 			foreach (SubWindowSlideAnimationController subWindow in subWindows)
 			{
 				if (subWindow != null && subWindow.gameObject.activeSelf)

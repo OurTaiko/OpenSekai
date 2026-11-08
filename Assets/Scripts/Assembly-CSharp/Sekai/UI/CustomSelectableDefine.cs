@@ -109,7 +109,7 @@ namespace Sekai.UI
 
 			try
 			{
-				InputManager inputManager = UnityEngine.Object.FindObjectOfType<InputManager>();
+				InputManager inputManager = InputManager.ExistsInstance ? InputManager.Instance : null;
 				if (inputManager != null)
 				{
 					return inputManager.CheckAndResetIntervalTime(interval);

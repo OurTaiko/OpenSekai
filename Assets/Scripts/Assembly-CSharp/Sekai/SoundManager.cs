@@ -127,6 +127,34 @@ namespace Sekai
 			StopAll();
 		}
 
+		/// <summary>
+		/// Drops all loaded sheets, external audio and playback state. Called when a new play session starts without a
+		/// domain reload, because the previous session's audio output (and every decoded buffer) is gone.
+		/// </summary>
+		public void ResetForNewSession()
+		{
+			StopAll();
+			HashSet<CueSheet> sheets = new HashSet<CueSheet>(acbByBundleName.Values);
+			foreach (CueSheet sheet in sheets)
+			{
+				sheet?.Dispose();
+			}
+			acbByBundleName.Clear();
+			foreach (ExternalAudioEntry entry in externalAudioByKey.Values)
+			{
+				entry.Buffer?.Dispose();
+			}
+			externalAudioByKey.Clear();
+			loadedBundles.Clear();
+			loadedBundleSearchOrder.Clear();
+			warnedMissingBundles.Clear();
+			warnedMissingCues.Clear();
+			ingameTrack = null;
+			initialized = false;
+			defaultSoundBundlesRequested = false;
+			appPaused = false;
+		}
+
 		public void SetupVolume(float master, float bgm, float se, float voice)
 		{
 			volumes.master = Mathf.Clamp01(master);

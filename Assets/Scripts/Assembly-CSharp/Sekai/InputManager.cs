@@ -185,11 +185,6 @@ namespace Sekai
 			}
 		}
 
-		private void Awake()
-		{
-			throw null;
-		}
-
 		public bool CheckIntervalTime()
 		{
 			throw null;

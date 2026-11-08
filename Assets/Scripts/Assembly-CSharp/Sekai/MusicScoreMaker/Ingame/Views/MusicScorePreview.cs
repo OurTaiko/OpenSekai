@@ -669,7 +669,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 
 		private void UpdateSubWindowCache()
 		{
-			_cachedSubWindows = FindObjectsOfType<SubWindowSlideAnimationController>(true);
+			_cachedSubWindows = FindObjectsByType<SubWindowSlideAnimationController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 		}
 
 		private void InvalidateSubWindowCache()

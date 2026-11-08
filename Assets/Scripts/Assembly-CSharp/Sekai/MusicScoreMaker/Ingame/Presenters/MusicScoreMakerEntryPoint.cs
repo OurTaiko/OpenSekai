@@ -7,8 +7,6 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 {
 	public class MusicScoreMakerEntryPoint : SceneEntryPoint
 	{
-		private const string EventSystemPrefabPath = "Common/Input/EventSystem";
-
 		public class MusicScoreMakerBootData
 		{
 			public ScreenLayerMusicScoreMaker.BootArg bootData { get; set; }
@@ -26,17 +24,12 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 		{
 			LogUtility.WriteLog(1, "\u8b5c\u9762\u30c4\u30fc\u30eb\u3078\u9077\u79fb\u3057\u307e\u3057\u305f", System.Array.Empty<object>());
 			base.Awake();
-			EnsureEventSystem();
+			GameBootstrap.Initialize();
 			Sekai.TextMeshProUtility.SetupBuiltinFontAsset();
 			FramerateUtility.SetFrameRate();
 			GarbageCollector.GCMode = GarbageCollector.Mode.Enabled;
 
 			BootData ??= new MusicScoreMakerBootData();
-
-			AssetBundleMetaManager.Instance.Initialize();
-			AssetBundleManager.Instance.Initialize();
-			SoundManager.Instance.Initialize();
-			SoundUtility.SetupGlobalSeSettings(GlobalSeSettings.Normal);
 		}
 
 		protected override void Start()
@@ -86,23 +79,6 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 		protected override void ExitScene()
 		{
 			base.ExitScene();
-		}
-
-		private static void EnsureEventSystem()
-		{
-			if (EventSystem.current != null || FindObjectOfType<EventSystem>() != null)
-			{
-				return;
-			}
-
-			// Original boot flow creates this in SekaiSingletonManager.OnInitialize.
-			// MusicScoreMaker.unity is entered directly in OpenSekai, so mirror just that required input setup here.
-			GameObject prefab = Resources.Load<GameObject>(EventSystemPrefabPath);
-			GameObject eventSystemObject = prefab != null
-				? Instantiate(prefab)
-				: new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
-			eventSystemObject.name = "EventSystem";
-			DontDestroyOnLoad(eventSystemObject);
 		}
 
 		public void OnApplicationPause(bool pause)

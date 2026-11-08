@@ -6,6 +6,10 @@ namespace CP
 	{
 		private static T instance;
 
+		// OpenSekai: AddComponent/FindObjectOfType already ran Awake -> Initialize; the Instance getter must not
+		// call OnInitialize a second time.
+		private bool initialized;
+
 		public static T Instance
 		{
 			get
@@ -15,7 +19,7 @@ namespace CP
 					return instance;
 				}
 
-				instance = Object.FindObjectOfType<T>();
+				instance = Object.FindAnyObjectByType<T>();
 				if (instance != null)
 				{
 					instance.SetupInstance(instance);
@@ -82,6 +86,12 @@ namespace CP
 		private void Initialize(T target)
 		{
 			instance = target;
+			if (target.initialized)
+			{
+				return;
+			}
+
+			target.initialized = true;
 			if (target.IsDontDestroy())
 			{
 				DontDestroyOnLoad(target.gameObject);

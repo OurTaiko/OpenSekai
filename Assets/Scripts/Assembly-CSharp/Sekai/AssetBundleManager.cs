@@ -90,6 +90,13 @@ namespace Sekai
 
 		public bool Initialize()
 		{
+			// OpenSekai: called from the bootstrap and several entry points; only (re)load when not initialized
+			// (ClearCache resets this).
+			if (initialized)
+			{
+				return true;
+			}
+
 			InitLocalPaths();
 			LoadClientAssetBundleInfo();
 			serverAssetBundleInfo = clientAssetBundleInfo;

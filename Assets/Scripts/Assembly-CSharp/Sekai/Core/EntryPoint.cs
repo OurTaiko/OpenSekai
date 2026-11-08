@@ -20,7 +20,7 @@ namespace Sekai.Core
 				PlayerLoopTiming.Update);
 
 			ShaderPreloader.Status = ShaderPreloader.PreloadStatus.None;
-			SceneTransitionLoadingIndicator loadingIndicator = FindObjectOfType<SceneTransitionLoadingIndicator>();
+			SceneTransitionLoadingIndicator loadingIndicator = FindAnyObjectByType<SceneTransitionLoadingIndicator>();
 			if (loadingIndicator != null)
 			{
 				Destroy(loadingIndicator.gameObject);

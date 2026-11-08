@@ -169,7 +169,7 @@ namespace Sekai
 			}
 
 			dispKeyFlag = flag;
-			foreach (var customText in Object.FindObjectsOfType<CustomText>())
+			foreach (var customText in Object.FindObjectsByType<CustomText>(FindObjectsSortMode.None))
 			{
 				customText.UpdateWordingText();
 			}

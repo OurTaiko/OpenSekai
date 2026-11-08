@@ -148,7 +148,7 @@ namespace Sekai.Core.Live
 			calcCamera = CameraUtility.GetFrontCamera();
 			if (calcCamera == null)
 			{
-				calcCamera = Camera.main ?? UnityEngine.Object.FindObjectOfType<Camera>();
+				calcCamera = Camera.main ?? UnityEngine.Object.FindAnyObjectByType<Camera>();
 			}
 			ResetScoreState();
 			RefreshInput();
