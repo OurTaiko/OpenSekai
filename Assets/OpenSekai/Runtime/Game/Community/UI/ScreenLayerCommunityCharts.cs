@@ -8,6 +8,7 @@ using Sekai.MusicScoreMaker.Common;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Sekai.Community
@@ -32,7 +33,10 @@ namespace Sekai.Community
 		private static readonly string[] FilterDifficultyTypes = { null, "easy", "normal", "hard", "expert", "master", "append" };
 
 		/// <summary>優先表示カテゴリ: 人気 / 高難易度 / 新着 / ランダム.</summary>
-		private static readonly string[] SearchSorts = { CommunitySort.Popular, CommunitySort.Hard, CommunitySort.New, CommunitySort.Random };
+		private const string UpvoteColor = "#FF7DA8";
+		private const string DownvoteColor = "#7D9BFF";
+		// 人気 is Reddit's hot ranking, the same as おすすめ.
+		private static readonly string[] SearchSorts = { CommunitySort.Hot, CommunitySort.Hard, CommunitySort.New, CommunitySort.Random };
 
 		private static readonly Color32 Teal = new Color32(103, 221, 205, 255);
 		private static readonly Color32 IdleFill = new Color32(64, 58, 104, 170);
@@ -126,9 +130,15 @@ namespace Sekai.Community
 		[SerializeField]
 		private TextMeshProUGUI detailDescription;
 		[SerializeField]
-		private Button likeButton;
+		[FormerlySerializedAs("likeButton")]
+		private Button upvoteButton;
 		[SerializeField]
-		private TextMeshProUGUI likeLabel;
+		[FormerlySerializedAs("likeLabel")]
+		private TextMeshProUGUI upvoteLabel;
+		[SerializeField]
+		private Button downvoteButton;
+		[SerializeField]
+		private TextMeshProUGUI downvoteLabel;
 		[SerializeField]
 		private Button previewButton;
 		[SerializeField]
@@ -205,6 +215,7 @@ namespace Sekai.Community
 		private int _loadVersion;
 		private CommunityChart _selected;
 		private bool _downloading;
+		private bool _voting;
 		private bool _started;
 		private CancellationTokenSource _previewCts;
 		private AudioClip _previewClip;
@@ -233,7 +244,8 @@ namespace Sekai.Community
 			searchBackButton.onClick.AddListener(ShowSearchForm);
 			listScroll.onValueChanged.AddListener(_ => MaybeLoadMore());
 
-			likeButton.onClick.AddListener(() => ToggleLikeAsync().Forget());
+			upvoteButton.onClick.AddListener(() => VoteAsync(1).Forget());
+			downvoteButton.onClick.AddListener(() => VoteAsync(-1).Forget());
 			previewButton.onClick.AddListener(TogglePreview);
 			webPageButton.onClick.AddListener(() =>
 			{
@@ -543,9 +555,9 @@ namespace Sekai.Community
 			switch (_tab)
 			{
 				case Tab.Recommended:
-					return new CommunityQuery { Sort = CommunitySort.Recommended, Page = page };
+					return new CommunityQuery { Sort = CommunitySort.Hot, Page = page };
 				case Tab.Ranking:
-					return new CommunityQuery { Sort = _rankingDaily ? CommunitySort.Daily : CommunitySort.Plays, Difficulty = difficulty, Page = page };
+					return new CommunityQuery { Sort = _rankingDaily ? CommunitySort.Daily : CommunitySort.Top, Difficulty = difficulty, Page = page };
 				case Tab.New:
 					return new CommunityQuery { Sort = CommunitySort.New, Difficulty = difficulty, Page = page };
 				case Tab.MyList:
@@ -678,7 +690,7 @@ namespace Sekai.Community
 
 		private static string StatsLine(CommunityChart chart)
 		{
-			return "<color=#9C98C8>▶</color> " + chart.PlayCount + "   <color=#FF7DA8>♥</color> " + chart.LikeCount;
+			return "<color=#9C98C8>▶</color> " + chart.PlayCount + "   <color=#FF7DA8>▲</color> " + chart.Score;
 		}
 
 		private static string BadgesLine(CommunityChart chart)
@@ -782,7 +794,7 @@ namespace Sekai.Community
 			detailMeta.text = string.Join("\n", credits);
 			infoLabel.text = "谱面信息";
 			infoLeft.text = "<color=#9C98C8>游玩</color>  " + chart.PlayCount
-				+ "\n<color=#9C98C8>喜欢</color>  " + chart.LikeCount
+				+ "\n<color=#9C98C8>得分</color>  " + chart.Score + "  <color=#9C98C8>(▲" + chart.Upvotes + " ▼" + chart.Downvotes + ")</color>"
 				+ "\n<color=#9C98C8>下载</color>  " + chart.DownloadCount;
 			infoRight.text = "<color=#9C98C8>上传</color>  " + chart.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
 				+ "\n<color=#9C98C8>更新</color>  " + chart.UpdatedAt.ToLocalTime().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
@@ -828,15 +840,17 @@ namespace Sekai.Community
 				// The label needs the icon's room for ダウンロード and the download progress.
 				playIcon.SetActive(playLabel.text == "プレイ");
 			}
-			likeButton.interactable = has;
-			likeLabel.text = has ? (chart.Liked == true ? "<color=#FF7DA8>♥</color> " : "♡ ") + chart.LikeCount : "♡";
+			upvoteButton.interactable = has;
+			downvoteButton.interactable = has;
+			upvoteLabel.text = (has && chart.MyVote == 1 ? "<color=" + UpvoteColor + ">▲</color> " : "▲ ") + (has ? chart.Score : 0);
+			downvoteLabel.text = has && chart.MyVote == -1 ? "<color=" + DownvoteColor + ">▼</color>" : "▼";
 			previewButton.interactable = has && !string.IsNullOrEmpty(chart.AudioUrl);
 			webPageButton.interactable = has;
 			if (previewLabel != null && _previewCts == null)
 			{
 				previewLabel.text = "试听";
 			}
-			foreach (Button button in new[] { parentButton, bookmarkButton, playButton, likeButton, previewButton, webPageButton })
+			foreach (Button button in new[] { parentButton, bookmarkButton, playButton, upvoteButton, downvoteButton, previewButton, webPageButton })
 			{
 				if (button != null && button.TryGetComponent(out CanvasGroup group))
 				{
@@ -856,8 +870,10 @@ namespace Sekai.Community
 				}
 				if (!ReferenceEquals(row.Chart, chart))
 				{
-					row.Chart.LikeCount = chart.LikeCount;
-					row.Chart.Liked = chart.Liked;
+					row.Chart.Score = chart.Score;
+					row.Chart.Upvotes = chart.Upvotes;
+					row.Chart.Downvotes = chart.Downvotes;
+					row.Chart.MyVote = chart.MyVote;
 					row.Chart.Bookmarked = chart.Bookmarked;
 					row.Chart.DownloadCount = chart.DownloadCount;
 					row.Chart.PlayCount = chart.PlayCount;
@@ -878,18 +894,27 @@ namespace Sekai.Community
 			return false;
 		}
 
-		private async UniTaskVoid ToggleLikeAsync()
+		/// <summary>▲ / ▼ as on the site: pressing the vote you already gave takes it back.</summary>
+		private async UniTaskVoid VoteAsync(int direction)
 		{
 			CommunityChart chart = _selected;
-			if (chart == null || !RequireLogin("登录后才能点喜欢。", () => ToggleLikeAsync().Forget()))
+			if (chart == null || !RequireLogin(direction > 0 ? "登录后才能赞。" : "登录后才能踩。", () => VoteAsync(direction).Forget()))
 			{
 				return;
 			}
-			bool liked = chart.Liked != true;
+			if (_voting)
+			{
+				return;
+			}
+			_voting = true;
+			int value = chart.MyVote == direction ? 0 : direction;
 			try
 			{
-				chart.LikeCount = await CommunityClient.SetLikeAsync(chart.Id, liked, DestroyToken);
-				chart.Liked = liked;
+				CommunityClient.VoteReply reply = await CommunityClient.SetVoteAsync(chart.Id, value, DestroyToken);
+				chart.Score = reply.Score;
+				chart.Upvotes = reply.Upvotes;
+				chart.Downvotes = reply.Downvotes;
+				chart.MyVote = reply.MyVote;
 				RefreshRowFor(chart);
 				if (_selected == chart)
 				{
@@ -899,6 +924,10 @@ namespace Sekai.Community
 			catch (CommunityException exception)
 			{
 				HandleActionError(exception);
+			}
+			finally
+			{
+				_voting = false;
 			}
 		}
 
@@ -1026,7 +1055,7 @@ namespace Sekai.Community
 			}
 			else if (_started && _tab != Tab.Search)
 			{
-				// Liked / 登録済み flags depend on who is signed in.
+				// Vote / 登録済み flags depend on who is signed in.
 				Reload();
 			}
 		}

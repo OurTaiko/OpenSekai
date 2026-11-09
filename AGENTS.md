@@ -75,6 +75,9 @@ community chart browser is the `CommunityCharts` scene; its charts come from Sek
   Lives started from either screen go through `CustomMusicScorePlayLauncher`; `ReturnScreenType` decides whether the
   live goes back to the manager or to `CommunityCharts`. A finished, non-auto live of a downloaded chart reports one
   play to the site (`CustomMusicScorePlayHistoryStorage` calls `CommunityLibrary.OnLocalChartPlayed`).
+- Votes work like the site (Reddit style): ▲ / ▼ in the chart window send `PUT /api/v1/charts/<id>/vote` with 1, -1, or
+  0 to take the vote back; `Score` is upvotes minus downvotes. おすすめ and 検索 > 人気 use `CommunitySort.Hot` (Reddit's
+  hot ranking), ランキング 総合 uses `Top` (score) and デイリー uses `Daily` (plays in the last 24 hours).
 - Chart ids are 32 random hex digits (`CommunityChart.Id`); `NumberId` is the short number 譜面ID検索 takes. Install
   records written when ids were numbers hold the number and are re-keyed to the id on first use.
 - The signed-in account remembers which community server it belongs to: pointed at another server (a local

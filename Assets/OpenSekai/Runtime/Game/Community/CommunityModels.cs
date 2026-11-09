@@ -29,13 +29,17 @@ namespace Sekai.Community
 		public string PackageUrl;
 		public int DownloadCount;
 		public int PlayCount;
-		public int LikeCount;
+		/// <summary>Upvotes minus downvotes.</summary>
+		public int Score;
+		public int Upvotes;
+		public int Downvotes;
 		public int CommentCount;
 		public List<string> Tags = new List<string>();
 		public bool AllowDerivative;
 		/// <summary>The 親譜面's id, or null.</summary>
 		public string ParentChartId;
-		public bool? Liked;
+		/// <summary>The signed-in player's vote: 1, 0 or -1; null when signed out.</summary>
+		public int? MyVote;
 		public bool? Bookmarked;
 		public DateTime CreatedAt;
 		public DateTime UpdatedAt;
@@ -93,11 +97,13 @@ namespace Sekai.Community
 	/// <summary>Sort orders the site understands (the `sort` query parameter).</summary>
 	public static class CommunitySort
 	{
-		public const string Recommended = "recommended";
+		/// <summary>Reddit's hot ranking (score against age). おすすめ and 人気.</summary>
+		public const string Hot = "hot";
+		/// <summary>Score, upvotes minus downvotes. ランキング 総合.</summary>
+		public const string Top = "top";
+		/// <summary>Plays in the last 24 hours. ランキング デイリー.</summary>
 		public const string Daily = "daily";
-		public const string Plays = "plays";
 		public const string New = "new";
-		public const string Popular = "popular";
 		public const string Hard = "hard";
 		public const string Random = "random";
 	}

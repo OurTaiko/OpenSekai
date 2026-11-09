@@ -82,10 +82,11 @@ namespace Sekai.Community
 			return reply?.Tags ?? new List<CommunityTagCount>();
 		}
 
-		public static async UniTask<int> SetLikeAsync(string id, bool liked, CancellationToken ct = default)
+		/// <summary>Votes on a chart: 1 up, -1 down, 0 takes the vote back.</summary>
+		public static async UniTask<VoteReply> SetVoteAsync(string id, int value, CancellationToken ct = default)
 		{
-			LikeReply reply = await SendWithSessionAsync<LikeReply>(liked ? "PUT" : "DELETE", Server + "/api/v1/charts/" + id + "/like", null, ct);
-			return reply?.LikeCount ?? 0;
+			return await SendWithSessionAsync<VoteReply>("PUT", Server + "/api/v1/charts/" + id + "/vote", new { value }, ct)
+				?? throw new CommunityException("RESPONSE_INVALID", "服务器返回的数据无法识别。");
 		}
 
 		public static async UniTask SetBookmarkAsync(string id, bool saved, CancellationToken ct = default)
@@ -185,10 +186,12 @@ namespace Sekai.Community
 			public List<CommunityTagCount> Tags;
 		}
 
-		private sealed class LikeReply
+		public sealed class VoteReply
 		{
-			public bool Liked;
-			public int LikeCount;
+			public int Score;
+			public int Upvotes;
+			public int Downvotes;
+			public int MyVote;
 		}
 	}
 }
