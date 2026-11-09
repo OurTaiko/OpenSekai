@@ -794,10 +794,9 @@ namespace Sekai.Community
 			detailMeta.text = string.Join("\n", credits);
 			infoLabel.text = "谱面信息";
 			infoLeft.text = "<color=#9C98C8>游玩</color>  " + chart.PlayCount
-				+ "\n<color=#9C98C8>得分</color>  " + chart.Score + "  <color=#9C98C8>(▲" + chart.Upvotes + " ▼" + chart.Downvotes + ")</color>"
-				+ "\n<color=#9C98C8>下载</color>  " + chart.DownloadCount;
-			infoRight.text = "<color=#9C98C8>上传</color>  " + chart.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
-				+ "\n<color=#9C98C8>更新</color>  " + chart.UpdatedAt.ToLocalTime().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+				+ "\n<color=#9C98C8>得分</color>  " + chart.Score + "  <color=#9C98C8>(▲" + chart.Upvotes + " ▼" + chart.Downvotes + ")</color>";
+			// Two lines each: a third one runs past the info box.
+			infoRight.text = "<color=#9C98C8>更新</color>  " + chart.UpdatedAt.ToLocalTime().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
 				+ "\n<color=#9C98C8>大小</color>  " + (chart.PackageSize / 1024f / 1024f).ToString("0.0", CultureInfo.InvariantCulture) + " MB"
 				+ (chart.HasVideo ? "  · MV" : string.Empty);
 			detailDescription.text = string.IsNullOrWhiteSpace(chart.Description) ? "<color=#8F8BB8>（没有简介）</color>" : chart.Description;
