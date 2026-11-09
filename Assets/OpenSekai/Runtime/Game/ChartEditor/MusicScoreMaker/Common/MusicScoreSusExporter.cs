@@ -194,7 +194,6 @@ namespace Sekai.MusicScoreMaker.Common
 			{
 				return;
 			}
-			int feverEndCount = 0;
 			foreach (MusicScoreSkillFeverMarker marker in markers)
 			{
 				if (marker == null)
@@ -212,14 +211,7 @@ namespace Sekai.MusicScoreMaker.Common
 				case MusicScoreSkillFeverMarkerType.FeverStart:
 					rows.Add(GroupTap, marker.ticks, "1f", "21", 1f, null);
 					break;
-				case MusicScoreSkillFeverMarkerType.FeverEnd:
-					feverEndCount++;
-					break;
 				}
-			}
-			if (feverEndCount > 0)
-			{
-				warnings.Add($"SUS 没有 Fever 结束标记，{feverEndCount} 个没有导出。");
 			}
 		}
 

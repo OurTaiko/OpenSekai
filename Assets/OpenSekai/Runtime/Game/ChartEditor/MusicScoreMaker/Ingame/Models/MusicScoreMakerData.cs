@@ -325,6 +325,8 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 				InvalidateNoteIdCache();
 				RebuildNoteIdCache();
 				UpdateConnectionNotes();
+				// The SUS importer places skip relays on its own bar grid; use the one live play uses.
+				RecalculateSkipNoteLanes();
 			}
 			MusicScoreTicksMax = GetMaxTicks();
 			InvalidPlacements = new List<InvalidPlacementInfo>();
@@ -1819,9 +1821,6 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 					}
 					result.Add(new FeverStartEvent(info));
 					break;
-				case MusicScoreSkillFeverMarkerType.FeverEnd:
-					result.Add(new FeverEndEvent(info));
-					break;
 				}
 			}
 			return result.ToArray();
@@ -1872,9 +1871,6 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 					break;
 				case FeverStartEvent _:
 					type = MusicScoreSkillFeverMarkerType.FeverStart;
-					break;
-				case FeverEndEvent _:
-					type = MusicScoreSkillFeverMarkerType.FeverEnd;
 					break;
 				default:
 					continue;
@@ -2728,6 +2724,28 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 			else
 			{
 				VersionCode = CURRENT_VERSION;
+			}
+			RecalculateSkipNoteLanes();
+		}
+
+		// A skip relay sits on the slide path between its neighbours, and live play (CalcSkipNoteLane) and the SUS
+		// importer always work its lanes out from them. The editor only stores them when a note is made a skip
+		// relay, so they go stale when a neighbour moves; this brings them back in line with what the game plays.
+		public void RecalculateSkipNoteLanes()
+		{
+			if (NoteList == null || NoteList.Count == 0)
+			{
+				return;
+			}
+			Dictionary<int, MusicScoreNoteBase> noteIdCache = GetNoteIdCacheOrRebuild();
+			List<MusicScoreNoteBase> connectedNotesBuffer = new List<MusicScoreNoteBase>();
+			foreach (MusicScoreNoteBase note in NoteList)
+			{
+				if (note == null || !note.isSkip || note.previousConnectionId == -1)
+				{
+					continue;
+				}
+				(note.laneStart, note.laneEnd) = MusicScoreMakerUtility.CalcSkipNoteLaneForMusicScoreNoteBase(note, noteIdCache, connectedNotesBuffer);
 			}
 		}
 

@@ -446,15 +446,31 @@ namespace Sekai.MusicScoreMaker.Ingame.Utilities
 					break;
 				}
 			}
-			if (prevNote == null || nextNote == null || nextNote.ticks == prevNote.ticks)
+			if (prevNote == null || nextNote == null)
 			{
 				return (note.laneStart, note.laneEnd);
 			}
-			float rate = (note.ticks - prevNote.ticks) / (float)(nextNote.ticks - prevNote.ticks);
+			// Same float steps as CalcSkipNoteLane in live play, so a value that lands exactly on a lane line floors
+			// the same way in both.
+			float prevPosition = GetLivePlayBarPosition(prevNote.ticks);
+			float nextPosition = GetLivePlayBarPosition(nextNote.ticks);
+			float targetPosition = GetLivePlayBarPosition(note.ticks);
+			float rate = Mathf.Approximately(nextPosition, prevPosition) ? 0f : (targetPosition - prevPosition) / (nextPosition - prevPosition);
 			rate = ApplyLineEase(rate, prevNote.noteLineType);
-			int laneStart = ClampLaneStart(Mathf.RoundToInt(prevNote.laneStart + rate * (nextNote.laneStart - prevNote.laneStart)));
-			int laneEnd = ClampLaneEnd(Mathf.RoundToInt(prevNote.laneEnd + rate * (nextNote.laneEnd - prevNote.laneEnd)));
+			// Floor, as live play (MusicScoreMakerData.CalcSkipNoteLane) and the SUS importer do, so the stored lanes
+			// match the ones the game works out.
+			int laneStart = ClampLaneStart(Mathf.FloorToInt(prevNote.laneStart + rate * (nextNote.laneStart - prevNote.laneStart)));
+			int laneEnd = ClampLaneEnd(Mathf.FloorToInt(prevNote.laneEnd + rate * (nextNote.laneEnd - prevNote.laneEnd)));
 			return (laneStart, laneEnd);
+		}
+
+		// MusicScoreMakerData.ToMusicScore converts on a fixed 4/4 grid, so this is the bar + barProgress a note gets
+		// in live play (CalculateBarAndProgressFromTicks with a single 4/4 event).
+		private static float GetLivePlayBarPosition(long ticks)
+		{
+			int bar = (int)(ticks / TICKS_PER_BAR);
+			float barProgress = (ticks - bar * TICKS_PER_BAR) / (float)TICKS_PER_BAR;
+			return bar + barProgress;
 		}
 
 		public static long CalculateTicksFromBarAndProgress(int bar, float barProgress, MusicScoreEventData[] eventDatas)

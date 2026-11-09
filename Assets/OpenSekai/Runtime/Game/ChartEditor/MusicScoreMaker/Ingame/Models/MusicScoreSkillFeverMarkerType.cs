@@ -4,7 +4,8 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 	{
 		Skill = 0,
 		FeverBegin = 1,
-		FeverStart = 2,
-		FeverEnd = 3
+		// No FeverEnd: the end is not authored. It falls a tenth of the chart's judgment notes after FeverStart
+		// (MusicScoreMakerData.SetupFeverBeginAndFindEndInfo), and SUS has no way to write one either.
+		FeverStart = 2
 	}
 }

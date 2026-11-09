@@ -7420,6 +7420,8 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 				{
 					return;
 				}
+				// The other load paths (repository, entry, downloader) migrate too.
+				data.MigrateToCurrentVersion();
 			}
 			if (e.ClearNotesAndSpeedEvents)
 			{
