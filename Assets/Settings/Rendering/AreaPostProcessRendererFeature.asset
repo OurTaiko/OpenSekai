@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: AreaPostProcessRendererFeature
   m_EditorClassIdentifier:
   m_Active: 1
-  shader: {fileID: 4800000, guid: 33d483631ce20bf4e9b18b2048641085, type: 3}
+  shader: {fileID: 0}

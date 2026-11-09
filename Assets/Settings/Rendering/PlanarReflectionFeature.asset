@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlanarReflectionFeature
   m_EditorClassIdentifier:
   m_Active: 1
-  _drawStencilShader: {fileID: 4800000, guid: 56c35fac0a55bc8409649ee2d41be81c, type: 3}
+  _drawStencilShader: {fileID: 0}
   _planarReflectionInfo:
     width: 1024
     height: 1024

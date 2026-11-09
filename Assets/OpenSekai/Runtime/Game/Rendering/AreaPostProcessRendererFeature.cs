@@ -10,6 +10,7 @@ namespace Sekai.Rendering
 		public override void Create()
 		{
 			// TODO: Port AreaPostProcessRenderPass from rendering_tmp/Sekai.Rendering.
+			// Its shader (Area/Post) was GLSL-only and has been removed: write it in HLSL with the pass.
 		}
 
 		public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)

@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: ScenarioPostProcessRendererFeature
   m_EditorClassIdentifier:
   m_Active: 1
-  shader: {fileID: 4800000, guid: 16dc3b36211206b4cb16de04c4f7e13d, type: 3}
+  shader: {fileID: 0}
