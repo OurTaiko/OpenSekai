@@ -760,7 +760,7 @@ namespace Sekai.Community
 
 			windowTitleText.text = string.IsNullOrWhiteSpace(chart.ArtistLine) ? chart.Title : chart.Title + " - " + chart.ArtistLine;
 			detailTitle.text = string.IsNullOrWhiteSpace(chart.ScoreTitle) ? chart.Title : chart.ScoreTitle;
-			detailStatus.text = "<color=#9C98C8>谱师</color>  " + chart.Uploader.Nickname + "   <color=#9C98C8>ID</color>  #" + chart.Id + BadgesLine(chart);
+			detailStatus.text = "<color=#9C98C8>谱师</color>  " + chart.Uploader.Nickname + BadgesLine(chart);
 			detailBadge?.Set(chart.Difficulty, chart.PlayLevel);
 			List<string> credits = new List<string>();
 			void Credit(string label, string value)
