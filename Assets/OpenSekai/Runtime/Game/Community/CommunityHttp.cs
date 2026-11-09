@@ -12,6 +12,8 @@ namespace Sekai.Community
 	internal static class CommunityHttp
 	{
 		private const int TimeoutSeconds = 20;
+		// A large package over a slow line, plus the server's check of it.
+		private const int UploadTimeoutSeconds = 600;
 
 		private const int MaxResponseBytes = 4 * 1024 * 1024;
 
@@ -73,6 +75,46 @@ namespace Sekai.Community
 			{
 				throw new CommunityException("RESPONSE_TOO_LARGE", "服务器返回的数据太大。");
 			}
+			return request.downloadHandler.text;
+		}
+
+		/// <summary>
+		/// PUTs a file as the raw request body (the chart upload) and returns the response text. Progress is the
+		/// share of the file sent; the server checks the package after that, so the last step can take a while.
+		/// </summary>
+		public static async UniTask<string> UploadFileAsync(string url, string bearer, string path, string contentType, IProgress<float> progress, CancellationToken ct)
+		{
+			using UnityWebRequest request = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPUT);
+			request.uploadHandler = new UploadHandlerFile(path) { contentType = contentType };
+			request.downloadHandler = new DownloadHandlerBuffer();
+			request.timeout = UploadTimeoutSeconds;
+			request.SetRequestHeader("Accept", "application/json");
+			request.SetRequestHeader("Content-Type", contentType);
+			if (!string.IsNullOrEmpty(bearer))
+			{
+				request.SetRequestHeader("Authorization", "Bearer " + bearer);
+			}
+
+			UnityWebRequestAsyncOperation operation = request.SendWebRequest();
+			try
+			{
+				while (!operation.isDone)
+				{
+					progress?.Report(request.uploadProgress);
+					await UniTask.Yield(PlayerLoopTiming.Update, ct);
+				}
+			}
+			catch (OperationCanceledException)
+			{
+				request.Abort();
+				throw;
+			}
+
+			if (request.result != UnityWebRequest.Result.Success)
+			{
+				throw ToException(request.responseCode, request.downloadHandler?.text, request.error);
+			}
+			progress?.Report(1f);
 			return request.downloadHandler.text;
 		}
 

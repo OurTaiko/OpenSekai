@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Sekai.Community
@@ -80,6 +81,49 @@ namespace Sekai.Community
 		{
 			TagsReply reply = await CommunityHttp.SendAsync<TagsReply>("GET", Server + "/api/v1/tags", null, null, ct);
 			return reply?.Tags ?? new List<CommunityTagCount>();
+		}
+
+		/// <summary>
+		/// Uploads a chart package (a ZIP the manager exported) as the signed-in player. With
+		/// <paramref name="replaceId"/> it becomes the new version of that chart, which must be the player's own.
+		/// Returns the chart's id.
+		/// </summary>
+		public static async UniTask<string> UploadChartAsync(string zipPath, string replaceId, IProgress<float> progress, CancellationToken ct = default)
+		{
+			string url = Server + "/api/v1/uploads" + (string.IsNullOrEmpty(replaceId) ? string.Empty : "?chart=" + Uri.EscapeDataString(replaceId));
+			string session = await CommunityAccount.GetSessionAsync(ct);
+			if (session == null)
+			{
+				throw new CommunityException("AUTH_REQUIRED", "请先登录 OurTaiko 账号。", 401);
+			}
+			string text;
+			try
+			{
+				text = await CommunityHttp.UploadFileAsync(url, session, zipPath, "application/zip", progress, ct);
+			}
+			catch (CommunityException exception) when (exception.Status == 401)
+			{
+				CommunityAccount.DropSession();
+				session = await CommunityAccount.GetSessionAsync(ct, forceNew: true);
+				if (session == null)
+				{
+					throw;
+				}
+				text = await CommunityHttp.UploadFileAsync(url, session, zipPath, "application/zip", progress, ct);
+			}
+			UploadReply reply = null;
+			try
+			{
+				reply = JsonConvert.DeserializeObject<UploadReply>(text, CommunityHttp.JsonSettings);
+			}
+			catch (JsonException)
+			{
+			}
+			if (string.IsNullOrEmpty(reply?.Id))
+			{
+				throw new CommunityException("RESPONSE_INVALID", "服务器返回的数据无法识别。");
+			}
+			return reply.Id;
 		}
 
 		/// <summary>Votes on a chart: 1 up, -1 down, 0 takes the vote back.</summary>
@@ -184,6 +228,11 @@ namespace Sekai.Community
 		private sealed class TagsReply
 		{
 			public List<CommunityTagCount> Tags;
+		}
+
+		private sealed class UploadReply
+		{
+			public string Id;
 		}
 
 		public sealed class VoteReply

@@ -82,6 +82,12 @@ community chart browser is the `CommunityCharts` scene; its charts come from Sek
 - Votes work like the site (Reddit style): ▲ / ▼ in the chart window send `PUT /api/v1/charts/<id>/vote` with 1, -1, or
   0 to take the vote back; `Score` is upvotes minus downvotes. おすすめ and 検索 > 人気 use `CommunitySort.Hot` (Reddit's
   hot ranking), ランキング 総合 uses `Top` (score) and デイリー uses `Daily` (plays in the last 24 hours).
+- 自制谱管理 › 上传 sends the selected chart to the site: `CustomMusicScoreManagerService.ExportZip` into
+  `GamePaths.Root/CommunityUploads` (deleted afterwards), then `CommunityClient.UploadChartAsync` (`PUT /api/v1/uploads`
+  with the game session). The local folder is then linked in `CommunityInstalls.json` (`CommunityLibrary.RememberUpload`),
+  so a later 上传 of a chart linked to the player's own site chart replaces it (`?chart=<id>`); a chart downloaded from
+  someone else goes up as a new chart. The button is an added object in `ScreenLayerMusicScoreMakerTop.prefab`, like
+  导出SUS.
 - Chart ids are 32 random hex digits (`CommunityChart.Id`); `NumberId` is the short number 譜面ID検索 takes. Install
   records written when ids were numbers hold the number and are re-keyed to the id on first use.
 - The signed-in account remembers which community server it belongs to: pointed at another server (a local

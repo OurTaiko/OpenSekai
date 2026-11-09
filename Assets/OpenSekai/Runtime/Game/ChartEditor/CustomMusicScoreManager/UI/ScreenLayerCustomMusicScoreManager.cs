@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 using Cysharp.Threading.Tasks;
+using OpenSekai.Platform;
+using Sekai.Community;
 using Sekai.Live;
 using Sekai.MusicScoreMaker.Common;
 using Sekai.MusicScoreMaker.Ingame.Models;
@@ -113,6 +116,7 @@ namespace Sekai.CustomMusicScoreManager
 		[SerializeField]
 		private TextMeshProUGUI _detailToggleLabel;
 		private bool _showingForm;
+		private bool _uploading;
 		[SerializeField]
 		private CustomMusicScoreDifficultyBadge _detailBadge;
 		[SerializeField]
@@ -143,6 +147,9 @@ namespace Sekai.CustomMusicScoreManager
 		private Button _exportButton;
 		[SerializeField]
 		private Button _exportSusButton;
+		/// <summary>上传: sends the chart to the community site (sekai.ourtaiko.org) as the signed-in player.</summary>
+		[SerializeField]
+		private Button _uploadButton;
 		[SerializeField]
 		private Button _saveManifestButton;
 		[SerializeField]
@@ -253,6 +260,10 @@ namespace Sekai.CustomMusicScoreManager
 			_duplicateButton.onClick.AddListener(DuplicateSelected);
 			_exportButton.onClick.AddListener(ExportSelected);
 			_exportSusButton.onClick.AddListener(ExportSelectedSus);
+			if (_uploadButton != null)
+			{
+				_uploadButton.onClick.AddListener(UploadSelected);
+			}
 			_deleteButton.onClick.AddListener(DeleteSelected);
 
 			_audioSelectButton.onClick.AddListener(ReplaceSelectedAudio);
@@ -534,7 +545,7 @@ namespace Sekai.CustomMusicScoreManager
 		{
 			Button[] buttons =
 			{
-				_editButton, _playButton, _autoButton, _duplicateButton, _deleteButton, _exportButton, _exportSusButton, _saveManifestButton,
+				_editButton, _playButton, _autoButton, _duplicateButton, _deleteButton, _exportButton, _exportSusButton, _uploadButton, _saveManifestButton,
 				_audioSelectButton, _jacketSelectButton, _scoreSelectButton, _videoSelectButton, _difficultyButton, _detailToggleButton
 			};
 			foreach (Button button in buttons)
@@ -578,6 +589,10 @@ namespace Sekai.CustomMusicScoreManager
 			_deleteButton.interactable = hasSelection;
 			_exportButton.interactable = hasSelection;
 			_exportSusButton.interactable = hasSelection && item.HasScore;
+			if (_uploadButton != null)
+			{
+				_uploadButton.interactable = CanUpload(item);
+			}
 			_saveManifestButton.interactable = hasSelection;
 			_audioSelectButton.interactable = hasSelection;
 			_jacketSelectButton.interactable = hasSelection;
@@ -967,6 +982,179 @@ namespace Sekai.CustomMusicScoreManager
 				"sus",
 				destination => CustomMusicScoreManagerService.ExportSus(entry, out warnings, destination),
 				(result, path) => ShowExportResult(result, path, FormatSusWarnings(warnings), "导出失败：没有谱面。"));
+		}
+
+		private bool CanUpload(CustomMusicScoreManagerItem item)
+		{
+			return item != null && item.HasScore && item.HasAudio && !_uploading;
+		}
+
+		private void SetUploading(bool uploading)
+		{
+			_uploading = uploading;
+			if (this != null && _uploadButton != null)
+			{
+				_uploadButton.interactable = CanUpload(_selected);
+				SyncDisabledButtonVisuals();
+			}
+		}
+
+		private void UploadSelected()
+		{
+			if (_selected?.Entry == null || _uploading)
+			{
+				return;
+			}
+			if (!CommunityAccount.IsSignedIn)
+			{
+				SetStatus("上传前请先登录 OurTaiko 账号：右上角菜单 → Additionals → アカウント。");
+				return;
+			}
+			PrepareUploadAsync(_selected.Entry).Forget();
+		}
+
+		/// <summary>
+		/// Works out whether the upload adds a chart or replaces one: a local chart linked to the player's own site
+		/// chart (uploaded from here before, or downloaded) becomes its new version. Then asks before sending.
+		/// </summary>
+		private async UniTaskVoid PrepareUploadAsync(CustomMusicScoreEntry entry)
+		{
+			string title = string.IsNullOrWhiteSpace(entry.Manifest.scoreTitle) ? entry.Manifest.title : entry.Manifest.scoreTitle;
+			CancellationToken token = this.GetCancellationTokenOnDestroy();
+			CommunityChart linked = null;
+			SetUploading(true);
+			try
+			{
+				string linkedId = CommunityLibrary.FindChartId(entry.RootDirectory);
+				if (linkedId != null)
+				{
+					SetStatus("正在确认社区上的谱面…");
+					try
+					{
+						linked = await CommunityClient.GetAsync(linkedId, token);
+					}
+					catch (CommunityException exception) when (exception.Status == 404)
+					{
+						CommunityLibrary.Forget(linkedId);
+					}
+				}
+			}
+			catch (OperationCanceledException)
+			{
+				return;
+			}
+			catch (CommunityException exception)
+			{
+				SetStatus("上传失败：" + exception.Message);
+				return;
+			}
+			finally
+			{
+				SetUploading(false);
+			}
+
+			SetStatus(string.Empty);
+			// The dialog has room for about three lines.
+			bool own = linked != null && string.Equals(linked.Uploader?.Id, CommunityAccount.UserId, StringComparison.Ordinal);
+			string replaceId = own ? linked.Id : null;
+			string message;
+			if (own)
+			{
+				message = "用当前版本更新 Sekai Fanmade 上的「" + title + "」（#" + linked.NumberId + "）？\n简介、标签、得分和评论会保留。";
+			}
+			else if (linked != null)
+			{
+				message = "「" + title + "」是从 Sekai Fanmade 下载的（谱师 " + linked.Uploader?.Nickname + "），会作为新谱面上传。\n改编别人的谱面前，请确认对方允许二次利用。";
+			}
+			else
+			{
+				message = "把「" + title + "」上传到 Sekai Fanmade？\n上传后所有人都能下载，请只上传你有权分享的内容。";
+			}
+
+			Common2ButtonDialog dialog = ScreenManager.Instance?.Show2ButtonDialog<Common2ButtonDialog>(
+				DialogType.Common2ButtonDialog,
+				null,
+				"WORD_DECIDE",
+				"WORD_CANCEL",
+				() => UploadAsync(entry, replaceId).Forget(),
+				() => SetStatus("已取消上传。"),
+				DisplayLayerType.Layer_Dialog,
+				DialogSize.Manual,
+				true);
+			if (dialog != null)
+			{
+				dialog.SetMessageBodyText(message);
+				return;
+			}
+			UploadAsync(entry, replaceId).Forget();
+		}
+
+		private async UniTaskVoid UploadAsync(CustomMusicScoreEntry entry, string replaceId)
+		{
+			if (_uploading)
+			{
+				return;
+			}
+			CancellationToken token = this.GetCancellationTokenOnDestroy();
+			string folder = Path.Combine(GamePaths.Root, "CommunityUploads");
+			string zipPath = Path.Combine(folder, Guid.NewGuid().ToString("N") + ".zip");
+			SetUploading(true);
+			try
+			{
+				SetStatus("正在打包谱面…");
+				Directory.CreateDirectory(folder);
+				// The server keeps only manifest.json, the score, audio, jacket and MV, so the folder goes as it is.
+				await UniTask.RunOnThreadPool(() => CustomMusicScoreManagerService.ExportZip(entry, zipPath), cancellationToken: token);
+
+				int shown = -1;
+				IProgress<float> progress = Progress.Create<float>(value =>
+				{
+					int percent = Mathf.Clamp(Mathf.FloorToInt(value * 100f), 0, 100);
+					if (percent != shown)
+					{
+						shown = percent;
+						SetStatus(percent >= 100 ? "服务器正在检查谱面包…" : "正在上传 " + percent + "%…");
+					}
+				});
+				string id = await CommunityClient.UploadChartAsync(zipPath, replaceId, progress, token);
+
+				CommunityChart chart = null;
+				try
+				{
+					chart = await CommunityClient.GetAsync(id, token);
+				}
+				catch (CommunityException)
+				{
+				}
+				CommunityLibrary.RememberUpload(id, chart?.Revision ?? 1, entry.RootDirectory);
+				string number = chart != null ? "（#" + chart.NumberId + "）" : string.Empty;
+				SetStatus(replaceId == null ? "已上传到 Sekai Fanmade" + number + "。" : "已更新 Sekai Fanmade 上的谱面" + number + "。");
+			}
+			catch (OperationCanceledException)
+			{
+			}
+			catch (CommunityException exception)
+			{
+				SetStatus("上传失败：" + exception.Message);
+			}
+			catch (Exception exception) when (exception is IOException || exception is UnauthorizedAccessException)
+			{
+				SetStatus("打包失败：" + exception.Message);
+			}
+			finally
+			{
+				try
+				{
+					if (File.Exists(zipPath))
+					{
+						File.Delete(zipPath);
+					}
+				}
+				catch (IOException)
+				{
+				}
+				SetUploading(false);
+			}
 		}
 
 		private void ShowExportResult(PlatformFileDialog.ExportResult result, string path, string suffix, string writeFailedStatus = "导出失败。")

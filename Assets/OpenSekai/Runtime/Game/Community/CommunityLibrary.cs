@@ -138,6 +138,59 @@ namespace Sekai.Community
 		}
 
 		/// <summary>
+		/// The site chart a local chart folder is linked to: one downloaded from the site, or one the player uploaded
+		/// from the manager. Null when it has none.
+		/// </summary>
+		public static string FindChartId(string chartDirectory)
+		{
+			string name = FolderName(chartDirectory);
+			if (string.IsNullOrEmpty(name))
+			{
+				return null;
+			}
+			return Index().Values
+				.Where(i => string.Equals(i.Directory, name, StringComparison.Ordinal))
+				.OrderByDescending(i => i.InstalledAt)
+				.Select(i => i.ChartId)
+				.FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Links a local chart folder to the site chart it was just uploaded as, so the online browser shows it as
+		/// downloaded, plays of it are reported, and the next upload replaces that chart instead of adding another.
+		/// </summary>
+		public static void RememberUpload(string chartId, int revision, string chartDirectory)
+		{
+			string name = FolderName(chartDirectory);
+			if (string.IsNullOrEmpty(chartId) || string.IsNullOrEmpty(name))
+			{
+				return;
+			}
+			foreach (string stale in Index().Where(p => p.Key != chartId && string.Equals(p.Value.Directory, name, StringComparison.Ordinal)).Select(p => p.Key).ToList())
+			{
+				Index().Remove(stale);
+			}
+			Index()[chartId] = new Install { ChartId = chartId, Revision = revision, Directory = name, InstalledAt = DateTime.UtcNow };
+			SaveIndex();
+		}
+
+		/// <summary>Forgets a link whose site chart is gone.</summary>
+		public static void Forget(string chartId)
+		{
+			if (!string.IsNullOrEmpty(chartId) && Index().Remove(chartId))
+			{
+				SaveIndex();
+			}
+		}
+
+		private static string FolderName(string chartDirectory)
+		{
+			return string.IsNullOrEmpty(chartDirectory)
+				? null
+				: Path.GetFileName(chartDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+		}
+
+		/// <summary>
 		/// Called when a live of a local custom chart finishes (not auto, not a test play). If the chart came from
 		/// the community site, the play is reported there in the background.
 		/// </summary>
