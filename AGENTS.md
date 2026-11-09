@@ -187,6 +187,24 @@ git show c7278ae^:Assets/OpenSekai/Resources/shaders/areapost.shader
 | `AreaPostProcessRendererFeature` | `Area/Post` | `Assets/OpenSekai/Resources/shaders/areapost.shader` |
 | none (scenario text) | `Sekai/TextMeshPro/Mobile/Distance Field` | `Assets/OpenSekai/Resources/font/scenario/tmp_scenario_distancefield_outline.shader`, materials `FOT-RodinNTLGPro-DB SDF_Base_Scenario_Outline.mat` and `FOT-RodinNTLGPro-EB SDF_Base_Scenario_Outline.mat` in the same folder |
 
+## Removed original-game prefabs
+
+Commit `8e678db` removed nine prefabs copied from the original game that nothing loaded. Their components came from the
+original game's DLLs (the game's own SafeAreaAdjuster and live view controllers, and UGUI classes under the ripped
+`UnityEngine.UI.dll` GUID), so every player build warned about missing scripts. Read them from the commit before it,
+e.g. `git show 8e678db^:Assets/OpenSekai/Prefabs/Live/Views/FrontRankUIView.prefab`.
+
+| Prefab (path in `8e678db^`) | What it was |
+| --- | --- |
+| `Assets/OpenSekai/Prefabs/Live/Views/FrontMultiUIView.prefab` | The original's マルチライブ live UI: `FrontUIView` plus a FEVER CHANCE / FEVER view on the lane, a team score bar with one gauge segment per player, and five player thumbnails (frame, character, dying / dead, FEVER OK, each player's combo, YOU). |
+| `Assets/OpenSekai/Prefabs/Live/Views/FrontRankUIView.prefab` | ランクマッチ live UI: both players' info (name, win streak) and both combos. |
+| `Assets/OpenSekai/Prefabs/Live/Views/FrontCheerfulCarnivalUIView.prefab` | チアフルカーニバル live UI: both teams' info and a background info layer. |
+| `Assets/OpenSekai/Prefabs/Live/Views/FrontMusicVideoView.prefab` | MV viewing mode: no lane, only pause, music info and a screenshot camera and UI. |
+| `Assets/OpenSekai/Resources/dialog/subwindow/SubWindowComponent.prefab`, `CenterSubWindowComponent.prefab`, `BottomSubWindowComponent.prefab`, `LeftSubWindowComponent.prefab`, `RightSubWindowComponent.prefab` | Empty sub-window frames (close area, white base, close button, `Content`), fading in (Center) or sliding in from one side. The sub-window dialogs OpenSekai uses have their own prefabs. |
+
+Many of `FrontMultiUIView`'s own sprites (FEVER lines and icons, the thumbnail frame, dying / dead, FEVER OK, YOU, the
+score gauge segment) were never in the project; their GUIDs resolve to nothing.
+
 ## Scene names
 
 Scene files are named by area, not by class: `Home`, `Charts.Local` (自制谱管理, `SceneManager.Scene.CustomMusicScoreManager`),
