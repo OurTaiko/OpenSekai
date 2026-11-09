@@ -55,7 +55,7 @@ Also note:
 
 ## Home and community charts
 
-The first scene is `Home` (navigation: 在线谱面, 自制谱管理, the OurTaiko account page, the option dialog). The
+The first scene is `Home` (navigation: 在线谱面, 自制谱管理, and ☰ for the option dialog). The
 community chart browser is the `CommunityCharts` scene; its charts come from SekaiFanmade
 (https://sekai.ourtaiko.org, separate repository `~/Repos/SekaiFanmade`, whose README lists the API).
 
@@ -66,10 +66,11 @@ community chart browser is the `CommunityCharts` scene; its charts come from Sek
 - Prefabs are in `Assets/OpenSekai/Prefabs/Community/`. They were made from the manager screen's parts: in
   `ScreenLayerCommunityCharts` the `DifficultyRail` and `ListArea` are still nested instances of the manager's part
   prefabs (so the rail and list cells look the same in both), the rest is its own. The list rows are
-  `CustomMusicScoreEntryCell`. `CommunityLoginPanel` is nested in both screens.
+  `CustomMusicScoreEntryCell`. `CommunityLoginPanel` is nested in `ScreenLayerCommunityCharts`.
 - Signing in lives in the option dialog: Additionals > アカウント has an OurTaiko 账号 button (the nickname when signed
-  in) that opens `CommunityLoginPanel` over the dialog (`OptionDialog.loginPanelPrefab`). `CommunityCharts` has the
-  manager's ☰ button in place of a login button; its nested panel still pops up when voting or マイリスト needs a sign-in.
+  in) that opens `CommunityLoginPanel` over the dialog (`OptionDialog.loginPanelPrefab`). Home and `CommunityCharts` have
+  no account button, only the manager's ☰; the charts screen's nested panel still pops up when voting or マイリスト needs
+  a sign-in.
 - Sign-in works like OurTaikoPlay: the password goes only to OurTaiko SSO (`/api/v1/game/account/login`); the
   account token is kept in `community_account.dat` under `GamePaths.Root`, encrypted with a key of this device, and
   traded for a game session of the site (`/api/v1/game/tokens`, service from `/api/v1/meta`), sent as a Bearer token.

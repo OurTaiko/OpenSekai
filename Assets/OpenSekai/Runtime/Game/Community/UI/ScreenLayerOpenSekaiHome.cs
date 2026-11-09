@@ -7,7 +7,7 @@ namespace Sekai.Community
 {
 	/// <summary>
 	/// The Home scene (the first scene): the navigation hub. It leads to the community charts (在线谱面),
-	/// the local chart manager (自制谱管理), the OurTaiko account page and the option dialog.
+	/// the local chart manager (自制谱管理) and the option dialog (☰), whose Additionals tab holds the OurTaiko sign-in.
 	/// Authored in <c>Prefabs/Community/ScreenLayerOpenSekaiHome</c>; this only binds it.
 	/// </summary>
 	public sealed class ScreenLayerOpenSekaiHome : ScreenLayer
@@ -19,15 +19,6 @@ namespace Sekai.Community
 		private Button managerButton;
 
 		[SerializeField]
-		private Button accountButton;
-
-		[SerializeField]
-		private TextMeshProUGUI accountTitle;
-
-		[SerializeField]
-		private TextMeshProUGUI accountDetail;
-
-		[SerializeField]
 		private Button settingsButton;
 
 		[SerializeField]
@@ -36,9 +27,6 @@ namespace Sekai.Community
 		[SerializeField]
 		private TextMeshProUGUI versionText;
 
-		[SerializeField]
-		private CommunityLoginPanel loginPanel;
-
 		private bool _leaving;
 
 		protected override void Awake()
@@ -46,10 +34,7 @@ namespace Sekai.Community
 			base.Awake();
 			communityButton.onClick.AddListener(() => Leave(SceneManager.Scene.CommunityCharts));
 			managerButton.onClick.AddListener(() => Leave(SceneManager.Scene.CustomMusicScoreManager));
-			accountButton.onClick.AddListener(() => loginPanel.Show());
 			settingsButton.onClick.AddListener(() => ScreenManager.Instance?.ShowDialog<OptionDialog>(DialogType.OptionDialog));
-			loginPanel.gameObject.SetActive(false);
-			CommunityAccount.Changed += UpdateAccount;
 			if (versionText != null)
 			{
 				versionText.text = "OpenSekai " + Application.version;
@@ -57,30 +42,11 @@ namespace Sekai.Community
 			statusText.text = string.Empty;
 		}
 
-		private void OnDestroy()
-		{
-			CommunityAccount.Changed -= UpdateAccount;
-		}
-
 		protected override void OnScreenStart()
 		{
 			_leaving = false;
-			UpdateAccount();
+			// Checks the saved sign-in with the SSO (and refreshes the nickname) before the online charts need it.
 			CommunityAccount.RefreshAsync(this.GetCancellationTokenOnDestroy()).SuppressCancellationThrow().Forget();
-		}
-
-		private void UpdateAccount()
-		{
-			if (CommunityAccount.IsSignedIn)
-			{
-				accountTitle.text = CommunityAccount.Nickname;
-				accountDetail.text = "已登录 OurTaiko 账号：" + CommunityAccount.Nickname;
-			}
-			else
-			{
-				accountTitle.text = "登录";
-				accountDetail.text = "登录 OurTaiko 账号后，可以在在线谱面里赞踩、使用マイリスト。";
-			}
 		}
 
 		private void Leave(SceneManager.Scene scene)
