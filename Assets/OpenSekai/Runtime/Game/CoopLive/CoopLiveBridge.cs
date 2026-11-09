@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Sekai.Core.Live;
 using Sekai.CoopLive.Proto;
+using Sekai.Live;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,10 +13,13 @@ namespace Sekai.CoopLive
 	/// Turns the Core scene's solo live into this player's part of a 協力ライブ:
 	/// <list type="bullet">
 	/// <item>start: once the music is ready it reports `loaded` and waits for `start_live`, so everyone starts together;</item>
-	/// <item>during the live: sends this player's score, combo and life, and shows the other players at the left;</item>
+	/// <item>during the live: sends this player's score, combo and life. The live UI gets the original マルチライブ UI's
+	/// parts (<c>Resources/live/view/CoopLiveFrontParts</c>, taken from <c>FrontMultiUIView</c>): the team score bar in
+	/// place of the solo one, every player's thumbnail (SSO avatar, combo, dying / dead, FEVER OK, YOU) and the FEVER
+	/// view on the lane;</item>
 	/// <item>FEVER CHANCE: reports what this player hit in it, shows the team's FEVER / SUPER FEVER, and FEVER
 	/// notes score 1.5 times (<see cref="CoopScoreLogic"/>);</item>
-	/// <item>end: sends the final score; the live then returns to the co-op room, which shows the result.</item>
+	/// <item>end: sends the final score; the live then goes to the Result scene.</item>
 	/// </list>
 	/// The live keeps going at life 0 and cannot be paused, as in the original.
 	/// </summary>
@@ -47,21 +51,20 @@ namespace Sekai.CoopLive
 		private LiveScore _chanceStartScore;
 		private FeverKind _fever = FeverKind.Unspecified;
 
-		private RectTransform _hud;
-		private RectTransform _players;
-		private TextMeshProUGUI _banner;
-		private TextMeshProUGUI _waiting;
-		private readonly Dictionary<string, PlayerRow> _rows = new Dictionary<string, PlayerRow>();
+		private const string FrontPartsPath = "live/view/CoopLiveFrontParts";
 
-		private sealed class PlayerRow
-		{
-			public RectTransform Root;
-			public TextMeshProUGUI Name;
-			public TextMeshProUGUI Score;
-			public TextMeshProUGUI Detail;
-			public RectTransform LifeFill;
-			public CanvasGroup Group;
-		}
+		private RectTransform _hud;
+		private TextMeshProUGUI _waiting;
+
+		// The multi-live parts grafted onto the live UI (see GraftFrontParts).
+		private MultiFeverView _feverView;
+		private MultiScoreView _teamScore;
+		private MultiThumbnailViewGroup _thumbnails;
+		private readonly List<Member> _players = new List<Member>();
+		private readonly Dictionary<string, MemberStatus> _statuses = new Dictionary<string, MemberStatus>();
+		// Each player's GOOD + BAD + MISS when FEVER CHANCE started; FEVER OK while it has not grown.
+		private readonly Dictionary<string, int> _chanceMissBase = new Dictionary<string, int>();
+		private int[] _teamScores = System.Array.Empty<int>();
 
 		/// <summary>Whether FEVER is on now: decided FEVER or SUPER FEVER, within the FEVER span.</summary>
 		public bool FeverActive
@@ -91,6 +94,7 @@ namespace Sekai.CoopLive
 			CoopSession.RoomChanged += OnRoom;
 			CoopSession.Closed += OnClosed;
 			BuildHud();
+			GraftFrontParts();
 		}
 
 		private void OnDestroy()
@@ -168,9 +172,14 @@ namespace Sekai.CoopLive
 			{
 				_abort = true;
 			}
-			foreach (PlayerRow row in _rows.Values)
+			// Nothing more comes from the others: show them as cut off.
+			foreach (Member player in _players)
 			{
-				row.Detail.text = "切断";
+				if (player.UserId != CoopSession.MyUserId)
+				{
+					PlayerStatus s = _statuses.TryGetValue(player.UserId, out MemberStatus last) ? last.Status ?? new PlayerStatus() : new PlayerStatus();
+					_thumbnails?.Find(player.UserId)?.UpdateStatus(s.Combo, false, s.Life, false);
+				}
 			}
 		}
 
@@ -185,7 +194,7 @@ namespace Sekai.CoopLive
 			LiveScore score = _controller.CurrentScore;
 			_minLife = Mathf.Min(_minLife, score.life);
 			UpdateFeverChance(score);
-			UpdateBanner();
+			UpdateFrontParts(score);
 
 			if (Time.unscaledTime >= _nextStatusAt)
 			{
@@ -246,33 +255,6 @@ namespace Sekai.CoopLive
 			_fever = kind;
 		}
 
-		private void UpdateBanner()
-		{
-			long t = _controller.MusicTimeMs;
-			string text = string.Empty;
-			Color color = Color.white;
-			if (_chanceStartMs >= 0 && t >= _chanceStartMs && t < _chanceEndMs)
-			{
-				text = "FEVER CHANCE!";
-				color = new Color32(0xFF, 0xEE, 0x88, 0xFF);
-			}
-			else if (FeverActive)
-			{
-				text = _fever == FeverKind.SuperFever ? "SUPER FEVER!!" : "FEVER!";
-				color = _fever == FeverKind.SuperFever ? new Color32(0xFF, 0x88, 0xDD, 0xFF) : new Color32(0xFF, 0xCC, 0x44, 0xFF);
-			}
-			if (_banner.text != text)
-			{
-				_banner.text = text;
-				_banner.color = color;
-			}
-			if (text.Length > 0)
-			{
-				float pulse = 1f + 0.04f * Mathf.Sin(Time.unscaledTime * 8f);
-				_banner.rectTransform.localScale = new Vector3(pulse, pulse, 1f);
-			}
-		}
-
 		private void OnStatuses(LiveStatuses statuses)
 		{
 			foreach (MemberStatus status in statuses.Members)
@@ -281,32 +263,133 @@ namespace Sekai.CoopLive
 				{
 					continue;
 				}
-				PlayerRow row = Row(status.UserId);
-				if (row == null)
+				_statuses[status.UserId] = status;
+				PlayerStatus s = status.Status ?? new PlayerStatus();
+				bool allPerfect = s.Perfect > 0 && s.Great + s.Good + s.Bad + s.Miss == 0;
+				_thumbnails?.Find(status.UserId)?.UpdateStatus(s.Combo, allPerfect, s.Life, status.Connected);
+			}
+		}
+
+		/* ---------- the multi-live parts of the live UI ---------- */
+
+		/// <summary>
+		/// Moves the parts of <c>CoopLiveFrontParts</c> under the live UI's anchors of the same names (as they sit in
+		/// the original's <c>FrontMultiUIView</c>) and hides the solo score bar. Runs before the live UI is set up, so
+		/// the parts fade in with the rest of it.
+		/// </summary>
+		private void GraftFrontParts()
+		{
+			LiveFrontView front = FindAnyObjectByType<LiveFrontView>(FindObjectsInactive.Include);
+			GameObject prefab = Resources.Load<GameObject>(FrontPartsPath);
+			if (front == null || prefab == null)
+			{
+				Debug.LogWarning($"Co-op live: no live UI or no {FrontPartsPath}; the other players are not shown.", this);
+				return;
+			}
+			GameObject parts = Instantiate(prefab);
+			foreach (string anchor in new[] { "Center", "LeftTopAnchor" })
+			{
+				Transform target = front.transform.Find("LiveUI/" + anchor);
+				Transform holder = parts.transform.Find(anchor);
+				while (target != null && holder != null && holder.childCount > 0)
+				{
+					holder.GetChild(0).SetParent(target, false);
+				}
+			}
+			Destroy(parts);
+			if (front.ScoreView != null)
+			{
+				front.ScoreView.gameObject.SetActive(false);
+			}
+			_feverView = front.GetComponentInChildren<MultiFeverView>(true);
+			_teamScore = front.GetComponentInChildren<MultiScoreView>(true);
+			_thumbnails = front.GetComponentInChildren<MultiThumbnailViewGroup>(true);
+
+			_players.Clear();
+			Room room = CoopSession.Room;
+			if (room != null)
+			{
+				foreach (Member member in room.Members)
+				{
+					if (member.Playing)
+					{
+						_players.Add(member);
+					}
+				}
+			}
+			_players.Sort((a, b) => a.Slot.CompareTo(b.Slot));
+			_teamScores = new int[_players.Count];
+			Color[] colors = new Color[_players.Count];
+			for (int i = 0; i < _players.Count; i++)
+			{
+				colors[i] = CoopUi.SlotColor(_players[i].Slot);
+			}
+			_thumbnails?.Setup(_players, CoopSession.MyUserId, false);
+			_teamScore?.Setup(colors);
+			_feverView?.Show(CoopFeverPhase.None);
+		}
+
+		private void UpdateFrontParts(LiveScore mine)
+		{
+			for (int i = 0; i < _players.Count; i++)
+			{
+				string id = _players[i].UserId;
+				_teamScores[i] = id == CoopSession.MyUserId ? mine.totalScore
+					: _statuses.TryGetValue(id, out MemberStatus status) && status.Status != null ? status.Status.Score : 0;
+			}
+			_teamScore?.UpdateScores(_teamScores);
+			_thumbnails?.Find(CoopSession.MyUserId)?.UpdateStatus(mine.combo, mine.IsAllPerfect, mine.life, true);
+
+			long t = _controller.MusicTimeMs;
+			bool inChance = _chanceStartMs >= 0 && t >= _chanceStartMs && t < _chanceEndMs;
+			CoopFeverPhase phase = inChance ? CoopFeverPhase.Chance
+				: FeverActive ? (_fever == FeverKind.SuperFever ? CoopFeverPhase.SuperFever : CoopFeverPhase.Fever)
+				: CoopFeverPhase.None;
+			_feverView?.Show(phase);
+
+			// FEVER OK: no GOOD, BAD or MISS since FEVER CHANCE started, shown from then until FEVER starts.
+			bool showReady = _chanceStartMs >= 0 && t >= _chanceStartMs && t < _feverStartMs;
+			foreach (Member player in _players)
+			{
+				MultiThumbnailView view = _thumbnails?.Find(player.UserId);
+				if (view == null)
 				{
 					continue;
 				}
-				PlayerStatus s = status.Status ?? new PlayerStatus();
-				row.Score.text = s.Score.ToString("N0");
-				string detail = s.Combo > 0 ? $"{s.Combo} COMBO" : string.Empty;
-				if (!status.Connected)
+				bool ready = false;
+				if (showReady && TryMisses(player.UserId, mine, out int misses, out long theirTime) && theirTime >= _chanceStartMs)
 				{
-					detail = "切断";
+					if (!_chanceMissBase.TryGetValue(player.UserId, out int start))
+					{
+						start = player.UserId == CoopSession.MyUserId && _chanceOpen ? Misses(_chanceStartScore) : misses;
+						_chanceMissBase[player.UserId] = start;
+					}
+					ready = misses == start;
 				}
-				else if (status.Finished)
-				{
-					detail = "FINISH";
-				}
-				else if (s.Life <= 0 && s.MusicTimeMs > 0)
-				{
-					detail = "LIFE 0";
-				}
-				row.Detail.text = detail;
-				row.Detail.color = s.Life <= 0 || !status.Connected ? CoopUi.Danger : Color.white;
-				row.LifeFill.anchorMax = new Vector2(Mathf.Clamp01(s.Life / 1000f), 1f);
-				row.Group.alpha = status.Connected ? 1f : 0.5f;
+				view.SetFeverReady(ready);
 			}
 		}
+
+		private bool TryMisses(string userId, LiveScore mine, out int misses, out long musicTimeMs)
+		{
+			if (userId == CoopSession.MyUserId)
+			{
+				misses = Misses(mine);
+				musicTimeMs = _controller.MusicTimeMs;
+				return true;
+			}
+			if (_statuses.TryGetValue(userId, out MemberStatus status) && status.Status != null && status.Connected)
+			{
+				misses = status.Status.Good + status.Status.Bad + status.Status.Miss;
+				musicTimeMs = status.Status.MusicTimeMs;
+				return true;
+			}
+			misses = 0;
+			musicTimeMs = 0;
+			return false;
+		}
+
+		private static int Misses(LiveScore score) => score.goodCount + score.badCount + score.missCount;
 
 		/* ---------- end ---------- */
 
@@ -348,7 +431,7 @@ namespace Sekai.CoopLive
 			return a.Score == b.Score && a.Combo == b.Combo && a.Life == b.Life && a.Miss == b.Miss && a.Good == b.Good && a.Bad == b.Bad;
 		}
 
-		/* ---------- HUD ---------- */
+		/* ---------- the waiting text ---------- */
 
 		private void BuildHud()
 		{
@@ -363,62 +446,11 @@ namespace Sekai.CoopLive
 			scaler.matchWidthOrHeight = 1f;
 			_hud = (RectTransform)canvasGo.transform;
 
-			_players = CoopUi.Rect("Players", _hud).Place(new Vector2(0, 1), new Vector2(24, -150), new Vector2(330, 420));
-			CoopUi.Vertical(_players.gameObject, 10);
-
-			_banner = CoopUi.Text(_hud, "FeverBanner", string.Empty, 72, Color.white, true, TextAlignmentOptions.Center);
-			_banner.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0, -170), new Vector2(1200, 100));
-			_banner.outlineWidth = 0.25f;
-			_banner.outlineColor = new Color32(0x33, 0x22, 0x55, 0xFF);
-
 			_waiting = CoopUi.Text(_hud, "Waiting", "等待其他成员加载…", 40, Color.white, true, TextAlignmentOptions.Center);
 			_waiting.rectTransform.Place(new Vector2(0.5f, 0.5f), new Vector2(0, -260), new Vector2(1200, 80));
 			_waiting.outlineWidth = 0.2f;
 			_waiting.outlineColor = Color.black;
 			_waiting.gameObject.SetActive(false);
-
-			Room room = CoopSession.Room;
-			if (room != null)
-			{
-				foreach (Member member in room.Members)
-				{
-					if (member.UserId != CoopSession.MyUserId && member.Playing)
-					{
-						Row(member.UserId);
-					}
-				}
-			}
-		}
-
-		private PlayerRow Row(string userId)
-		{
-			if (_rows.TryGetValue(userId, out PlayerRow existing))
-			{
-				return existing;
-			}
-			Member member = CoopSession.Find(userId);
-			if (member == null || _players == null)
-			{
-				return null;
-			}
-			Image background = CoopUi.Image(_players, "Player " + member.Slot, new Color(0.08f, 0.06f, 0.18f, 0.6f));
-			CoopUi.Size(background, height: 74);
-			Image stripe = CoopUi.Image(background.transform, "Slot", CoopUi.SlotColor(member.Slot));
-			stripe.rectTransform.Place(new Vector2(0, 0.5f), new Vector2(8, 0), new Vector2(10, 58));
-			TextMeshProUGUI name = CoopUi.Text(background.transform, "Name", member.Nickname, 24, Color.white, true);
-			name.rectTransform.Place(new Vector2(0, 1), new Vector2(28, -6), new Vector2(180, 32), new Vector2(0, 1));
-			TextMeshProUGUI score = CoopUi.Text(background.transform, "Score", "0", 26, Color.white, true, TextAlignmentOptions.Right);
-			score.rectTransform.Place(new Vector2(1, 1), new Vector2(-14, -6), new Vector2(150, 32), new Vector2(1, 1));
-			TextMeshProUGUI detail = CoopUi.Text(background.transform, "Detail", string.Empty, 20, Color.white, false, TextAlignmentOptions.Right);
-			detail.rectTransform.Place(new Vector2(1, 0), new Vector2(-14, 8), new Vector2(200, 28), new Vector2(1, 0));
-			Image lifeBack = CoopUi.Image(background.transform, "Life", new Color(1, 1, 1, 0.2f), false);
-			lifeBack.rectTransform.Place(new Vector2(0, 0), new Vector2(28, 14), new Vector2(110, 8), new Vector2(0, 0));
-			Image lifeFill = CoopUi.Image(lifeBack.transform, "Fill", new Color32(0x77, 0xEE, 0x99, 0xFF), false);
-			lifeFill.rectTransform.Stretch();
-			CanvasGroup group = background.gameObject.AddComponent<CanvasGroup>();
-			PlayerRow row = new PlayerRow { Root = background.rectTransform, Name = name, Score = score, Detail = detail, LifeFill = lifeFill.rectTransform, Group = group };
-			_rows[userId] = row;
-			return row;
 		}
 	}
 }

@@ -127,10 +127,27 @@ screen data `Resources/screen/data/ScreenLayerCoopLive.asset` in `EntryScreenLay
   - `CoopLiveBridge` is added by the Core `EntryPoint` for `PlayMode.MultiLive`. It sets `SoloLiveController.IsCoop` (no pause,
     retire or retry; life 0 keeps playing), `StartGate` (after the music is ready it sends `loaded` and waits for `start_live`, via
     `BaseLiveController.WaitBeforeMusicStart`) and `ScoreLogicFactory` (`CoopScoreLogic`, 1.5× during FEVER). It streams the
-    score, draws the other players and the FEVER banner on its own overlay canvas, reports FEVER CHANCE and sends the final score
+    score, shows the other players and FEVER in the live UI (see the next item), reports FEVER CHANCE and sends the final score
     from `SoloLiveController.LiveEnded`. A finished live goes to the `Result` scene (see "Result scene" below). A live left before
     it started (`AbortToMenu`) goes straight back to the room. `CoopSession.LastResult` keeps the result if the connection drops;
     the room's 上一局结果 opens the Result scene again through `CoopResultSceneArgs`.
+  - The live UI is the solo `FrontUIView` with the original マルチライブ UI's parts added: `CoopLiveBridge.GraftFrontParts` loads
+    `Resources/live/view/CoopLiveFrontParts.prefab` and, before the live UI is set up (so they fade in with it), moves its
+    `Center` / `LeftTopAnchor` children under `FrontUIView`'s `LiveUI` anchors of those names and hides the solo `ScoreView`.
+    The parts are `FrontMultiUIView`'s (see "Removed original-game prefabs"), with their scripts rewritten in `CoopLive/Front/`
+    under the original's names and serialized fields:
+    - `MultiScoreView`: the team score (one player's 1,000,000 times the players, as `LiveResultData.GaugeOf`) and rank, the gauge
+      split into one segment per player in their slot color (`CoopUi.SlotColor`, the result screen's colors).
+    - `MultiThumbnailViewGroup` / `MultiThumbnailView`: up to five players in slot order: the SSO avatar (`Member.avatar_url`
+      through `CommunityImageCache`, or the slot color with the nickname's first letter), each player's combo, dying (life ≤ 30 %),
+      dead or cut off, FEVER OK and YOU. FEVER OK shows from FEVER CHANCE until FEVER while the player has had no GOOD, BAD or
+      MISS since FEVER CHANCE started (the SUPER FEVER condition), worked out from the statuses everyone sends.
+    - `MultiFeverView`: FEVER CHANCE, FEVER and SUPER FEVER on the lane and in the frames at both sides of the screen.
+    Many of `FrontMultiUIView`'s sprites were never in the project, so the prefab has placeholders: TextMeshPro texts for the
+    FEVER CHANCE / FEVER / SUPER FEVER marks, FEVER OK and YOU, tinted `white6x6` for the thumbnail frame, dying / dead, the
+    FEVER lines and the gauge segments (`MultiScoreView` places a segment by its sprite's pivot, so a left-pivoted original
+    sprite needs no code change). The lane gauge (`gage_fever_lane`) is turned off. To use the original sprites, put them on
+    those renderers and remove the texts.
   - `UI/ScreenLayerCoopLive` builds the room screen in code (it changes with every phase), with `CoopUi` helpers (`StampBar`,
     `Toast` and the builders are shared with the result screen); the two sprites of each screen are serialized on the scene object.
     Stamp texts are in `CoopStamps`.
@@ -203,7 +220,9 @@ e.g. `git show 8e678db^:Assets/OpenSekai/Prefabs/Live/Views/FrontRankUIView.pref
 | `Assets/OpenSekai/Resources/dialog/subwindow/SubWindowComponent.prefab`, `CenterSubWindowComponent.prefab`, `BottomSubWindowComponent.prefab`, `LeftSubWindowComponent.prefab`, `RightSubWindowComponent.prefab` | Empty sub-window frames (close area, white base, close button, `Content`), fading in (Center) or sliding in from one side. The sub-window dialogs OpenSekai uses have their own prefabs. |
 
 Many of `FrontMultiUIView`'s own sprites (FEVER lines and icons, the thumbnail frame, dying / dead, FEVER OK, YOU, the
-score gauge segment) were never in the project; their GUIDs resolve to nothing.
+score gauge segment) were never in the project; their GUIDs resolve to nothing. Its FEVER view, team score bar and thumbnails
+live on in `Resources/live/view/CoopLiveFrontParts.prefab` (see "Co-op live"), made from the old prefab with its missing
+scripts' GUIDs replaced by the ones in `CoopLive/Front/`.
 
 ## Scene names
 
