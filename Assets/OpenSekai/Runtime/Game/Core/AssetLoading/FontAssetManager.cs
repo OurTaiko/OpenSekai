@@ -113,12 +113,32 @@ namespace Sekai
 			// Keep the original prefab/font references intact, but make the base
 			// Rodin assets act as empty shells so text resolves through one
 			// dynamic fallback font instead of mixing Rodin and CJK glyphs.
-			fontAsset.ClearFontAssetData(false);
+			ClearFontAssetDataInEditor(fontAsset);
 		}
 
 		private void ClearDynamicFontAssetData(TMP_FontAsset fontAsset)
 		{
 			if (fontAsset == null)
+			{
+				return;
+			}
+
+			ClearFontAssetDataInEditor(fontAsset);
+		}
+
+		// Only the Editor needs these clears: there the assets keep what earlier
+		// Play sessions added. A player starts from the built assets, which are
+		// already empty (the Base assets are saved with no glyphs, the dynamic ones
+		// have Clear Dynamic Data On Build). Clearing them in a player breaks it twice:
+		// - ClearFontAssetData resets the atlas through FontEngine.ResetAtlasTexture,
+		//   which writes the texture's CPU copy. The Base atlases are not Read/Write,
+		//   so a player has no CPU copy and the app crashes with a null write on launch.
+		// - Texts laid out while the scene loaded (before this runs) keep glyphs that
+		//   the clear just removed from the dynamic atlas, and stay blank: TMP sends
+		//   the font-changed event that lays texts out again only in the Editor.
+		private static void ClearFontAssetDataInEditor(TMP_FontAsset fontAsset)
+		{
+			if (!Application.isEditor)
 			{
 				return;
 			}
