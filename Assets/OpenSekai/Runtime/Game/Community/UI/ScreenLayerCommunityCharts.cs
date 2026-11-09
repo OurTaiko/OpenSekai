@@ -463,11 +463,14 @@ namespace Sekai.Community
 		private async UniTaskVoid SearchByIdAsync()
 		{
 			string text = idSearchInput.text.Trim().TrimStart('#');
-			if (!long.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out long id) || id <= 0)
+			bool isNumber = long.TryParse(text, NumberStyles.None, CultureInfo.InvariantCulture, out long number) && number > 0;
+			bool isId = text.Length == 32 && System.Text.RegularExpressions.Regex.IsMatch(text, "^[0-9a-fA-F]{32}$");
+			if (!isNumber && !isId)
 			{
-				SetStatus("请输入谱面 ID（数字）。");
+				SetStatus("请输入谱面编号（数字）。");
 				return;
 			}
+			string id = isNumber ? number.ToString(CultureInfo.InvariantCulture) : text.ToLowerInvariant();
 			idSearchPopup.SetActive(false);
 			try
 			{
@@ -681,7 +684,7 @@ namespace Sekai.Community
 		private static string BadgesLine(CommunityChart chart)
 		{
 			string badges = string.Empty;
-			if (chart.ParentChartId.HasValue)
+			if (!string.IsNullOrEmpty(chart.ParentChartId))
 			{
 				badges += "   <color=#67DDCD>親譜面あり</color>";
 			}
@@ -805,7 +808,7 @@ namespace Sekai.Community
 		{
 			CommunityChart chart = _selected;
 			bool has = chart != null;
-			parentButton.interactable = has && chart.ParentChartId.HasValue && !_downloading;
+			parentButton.interactable = has && !string.IsNullOrEmpty(chart.ParentChartId) && !_downloading;
 			bookmarkButton.interactable = has && !_downloading;
 			bookmarkLabel.text = has && chart.Bookmarked == true ? "登録済み" : "登録";
 			playButton.interactable = has && !_downloading;
@@ -847,7 +850,7 @@ namespace Sekai.Community
 		{
 			foreach (Row row in _rows)
 			{
-				if (row.Chart.Id != chart.Id)
+				if (!string.Equals(row.Chart.Id, chart.Id, StringComparison.Ordinal))
 				{
 					continue;
 				}
@@ -924,20 +927,20 @@ namespace Sekai.Community
 		private async UniTaskVoid OpenParentAsync()
 		{
 			CommunityChart chart = _selected;
-			if (chart?.ParentChartId == null)
+			if (string.IsNullOrEmpty(chart?.ParentChartId))
 			{
 				return;
 			}
 			try
 			{
-				CommunityChart parent = await CommunityClient.GetAsync(chart.ParentChartId.Value, DestroyToken);
+				CommunityChart parent = await CommunityClient.GetAsync(chart.ParentChartId, DestroyToken);
 				if (parent == null)
 				{
 					SetStatus("親譜面已经不在了。");
 					return;
 				}
 				UpdateSelection(parent);
-				SetStatus("正在显示親譜面 #" + parent.Id + "。");
+				SetStatus("正在显示親譜面「" + parent.ScoreTitle + "」。");
 			}
 			catch (CommunityException exception)
 			{
@@ -956,7 +959,7 @@ namespace Sekai.Community
 			{
 				StopPreview();
 				string error = await CustomMusicScorePlayLauncher.PlayAsync(
-					CommunityLibrary.GetEntry(chart.Id), false, MenuScreenType.CommunityCharts, SetStatus, DestroyToken);
+					CommunityLibrary.GetEntry(chart), false, MenuScreenType.CommunityCharts, SetStatus, DestroyToken);
 				SetStatus(error ?? "正在开始游玩...");
 				return;
 			}

@@ -75,6 +75,10 @@ community chart browser is the `CommunityCharts` scene; its charts come from Sek
   Lives started from either screen go through `CustomMusicScorePlayLauncher`; `ReturnScreenType` decides whether the
   live goes back to the manager or to `CommunityCharts`. A finished, non-auto live of a downloaded chart reports one
   play to the site (`CustomMusicScorePlayHistoryStorage` calls `CommunityLibrary.OnLocalChartPlayed`).
+- Chart ids are 32 random hex digits (`CommunityChart.Id`); `NumberId` is the short number 譜面ID検索 takes. Install
+  records written when ids were numbers hold the number and are re-keyed to the id on first use.
+- The signed-in account remembers which community server it belongs to: pointed at another server (a local
+  SekaiFanmade) the game shows itself signed out and leaves `community_account.dat` alone.
 - Jackets must be PNG or JPEG (`Texture2D.LoadImage`); the site stores them as JPEG.
 - To point the game at a local SekaiFanmade, set `OPENSEKAI_COMMUNITY_URL` (e.g. `http://127.0.0.1:3000`) in the
   environment of the Editor or player. In an open Editor, `System.Environment.SetEnvironmentVariable` from a

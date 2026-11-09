@@ -6,7 +6,10 @@ namespace Sekai.Community
 	/// <summary>A chart on the community site (https://sekai.ourtaiko.org), as /api/v1/charts returns it.</summary>
 	public sealed class CommunityChart
 	{
-		public long Id;
+		/// <summary>32 random hex digits.</summary>
+		public string Id = string.Empty;
+		/// <summary>Short public number, what 譜面ID検索 takes.</summary>
+		public long NumberId;
 		public string Title = string.Empty;
 		public string ScoreTitle = string.Empty;
 		public string Composer = string.Empty;
@@ -30,7 +33,8 @@ namespace Sekai.Community
 		public int CommentCount;
 		public List<string> Tags = new List<string>();
 		public bool AllowDerivative;
-		public long? ParentChartId;
+		/// <summary>The 親譜面's id, or null.</summary>
+		public string ParentChartId;
 		public bool? Liked;
 		public bool? Bookmarked;
 		public DateTime CreatedAt;

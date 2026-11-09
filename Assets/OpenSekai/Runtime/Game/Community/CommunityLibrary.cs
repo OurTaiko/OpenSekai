@@ -33,14 +33,15 @@ namespace Sekai.Community
 
 		private sealed class Install
 		{
-			public long ChartId;
+			/// <summary>The chart's id. Records written before ids were random hold the old number here.</summary>
+			public string ChartId = string.Empty;
 			public int Revision;
 			/// <summary>Folder name under CustomMusicScores.</summary>
 			public string Directory = string.Empty;
 			public DateTime InstalledAt;
 		}
 
-		private static Dictionary<long, Install> _index;
+		private static Dictionary<string, Install> _index;
 
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
 		private static void ResetStatics() => _index = null;
@@ -51,7 +52,7 @@ namespace Sekai.Community
 
 		public static CommunityInstallState GetState(CommunityChart chart)
 		{
-			if (chart == null || !TryGetInstall(chart.Id, out Install install))
+			if (chart == null || !TryGetInstall(chart, out Install install))
 			{
 				return CommunityInstallState.NotInstalled;
 			}
@@ -59,9 +60,9 @@ namespace Sekai.Community
 		}
 
 		/// <summary>The installed local entry of a community chart, or null.</summary>
-		public static CustomMusicScoreEntry GetEntry(long chartId)
+		public static CustomMusicScoreEntry GetEntry(CommunityChart chart)
 		{
-			return TryGetInstall(chartId, out Install install)
+			return TryGetInstall(chart, out Install install)
 				? CustomMusicScoreStorage.LoadEntry(Path.Combine(CustomMusicScoreStorage.RootDirectory, install.Directory))
 				: null;
 		}
@@ -93,7 +94,7 @@ namespace Sekai.Community
 				}
 				progress?.Report(1f);
 
-				CustomMusicScoreEntry previous = GetEntry(chart.Id);
+				CustomMusicScoreEntry previous = GetEntry(chart);
 				CustomMusicScoreEntry entry = CustomMusicScoreManagerService.ImportZip(zipPath);
 				if (entry == null)
 				{
@@ -155,7 +156,7 @@ namespace Sekai.Community
 			ReportAsync(install.ChartId).Forget();
 		}
 
-		private static async UniTaskVoid ReportAsync(long chartId)
+		private static async UniTaskVoid ReportAsync(string chartId)
 		{
 			try
 			{
@@ -167,11 +168,21 @@ namespace Sekai.Community
 			}
 		}
 
-		private static bool TryGetInstall(long chartId, out Install install)
+		private static bool TryGetInstall(CommunityChart chart, out Install install)
 		{
+			string chartId = chart.Id;
 			if (!Index().TryGetValue(chartId, out install))
 			{
-				return false;
+				// Downloaded when chart ids were numbers: the record holds the number. Re-key it.
+				string legacyKey = chart.NumberId.ToString(System.Globalization.CultureInfo.InvariantCulture);
+				if (chart.NumberId <= 0 || !Index().TryGetValue(legacyKey, out install))
+				{
+					return false;
+				}
+				Index().Remove(legacyKey);
+				install.ChartId = chartId;
+				Index()[chartId] = install;
+				SaveIndex();
 			}
 			// The player may have deleted it in the manager.
 			if (!Directory.Exists(Path.Combine(CustomMusicScoreStorage.RootDirectory, install.Directory)))
@@ -184,13 +195,13 @@ namespace Sekai.Community
 			return true;
 		}
 
-		private static Dictionary<long, Install> Index()
+		private static Dictionary<string, Install> Index()
 		{
 			if (_index != null)
 			{
 				return _index;
 			}
-			_index = new Dictionary<long, Install>();
+			_index = new Dictionary<string, Install>(StringComparer.Ordinal);
 			try
 			{
 				if (File.Exists(IndexPath))
@@ -198,7 +209,7 @@ namespace Sekai.Community
 					List<Install> list = JsonConvert.DeserializeObject<List<Install>>(File.ReadAllText(IndexPath));
 					foreach (Install install in list ?? new List<Install>())
 					{
-						if (install != null && install.ChartId > 0 && !string.IsNullOrEmpty(install.Directory))
+						if (install != null && !string.IsNullOrEmpty(install.ChartId) && !string.IsNullOrEmpty(install.Directory))
 						{
 							_index[install.ChartId] = install;
 						}
@@ -218,7 +229,7 @@ namespace Sekai.Community
 			{
 				Directory.CreateDirectory(CustomMusicScoreStorage.RootDirectory);
 				string temporary = IndexPath + ".tmp";
-				File.WriteAllText(temporary, JsonConvert.SerializeObject(Index().Values.OrderBy(i => i.ChartId).ToList(), Formatting.Indented));
+				File.WriteAllText(temporary, JsonConvert.SerializeObject(Index().Values.OrderBy(i => i.InstalledAt).ToList(), Formatting.Indented));
 				if (File.Exists(IndexPath))
 				{
 					File.Delete(IndexPath);

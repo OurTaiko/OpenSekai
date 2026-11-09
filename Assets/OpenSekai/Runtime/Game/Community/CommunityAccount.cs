@@ -34,6 +34,8 @@ namespace Sekai.Community
 			public string SessionToken = string.Empty;
 			public DateTime SessionExpiresAt;
 			public string SessionService = string.Empty;
+			/// <summary>The community server it was signed in on (empty in files written before this field).</summary>
+			public string Server = string.Empty;
 		}
 
 		private sealed class AccountReply
@@ -47,16 +49,32 @@ namespace Sekai.Community
 
 		private static Stored _stored;
 
+		/// <summary>What a different server sees: signed out. Never saved.</summary>
+		private static readonly Stored SignedOut = new Stored();
+
 		/// <summary>Raised on the main thread when the player signs in or out.</summary>
 		public static event Action Changed;
 
-		public static bool IsSignedIn => Load().AccountToken.Length > 0;
+		public static bool IsSignedIn => Current().AccountToken.Length > 0;
 
-		public static string Nickname => Load().Nickname;
+		public static string Nickname => Current().Nickname;
 
-		public static string Username => Load().Username;
+		public static string Username => Current().Username;
 
-		public static string UserId => Load().UserId;
+		public static string UserId => Current().UserId;
+
+		/// <summary>
+		/// The remembered account if it belongs to the server the game talks to now. Pointing the game at another
+		/// server (a local SekaiFanmade in development) shows it as signed out but leaves the file alone.
+		/// </summary>
+		private static Stored Current()
+		{
+			Stored stored = Load();
+			string server = string.IsNullOrEmpty(stored.Server) ? CommunityClient.DefaultServer : stored.Server;
+			return stored.AccountToken.Length > 0 && string.Equals(server.TrimEnd('/'), CommunityClient.Server, StringComparison.OrdinalIgnoreCase)
+				? stored
+				: SignedOut;
+		}
 
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
 		private static void ResetStatics()
@@ -94,6 +112,7 @@ namespace Sekai.Community
 				UserId = reply.User.Id,
 				Nickname = reply.User.Nickname ?? string.Empty,
 				AvatarUrl = reply.User.AvatarUrl ?? string.Empty,
+				Server = CommunityClient.Server,
 			};
 			_stored.Username = username?.Trim() ?? string.Empty;
 			Save();
@@ -112,8 +131,12 @@ namespace Sekai.Community
 		/// <summary>Signs out here and at the account center (best effort).</summary>
 		public static async UniTask LogoutAsync(CancellationToken ct = default)
 		{
-			Stored stored = Load();
+			Stored stored = Current();
 			string token = stored.AccountToken;
+			if (string.IsNullOrEmpty(token))
+			{
+				return;
+			}
 			_stored = new Stored();
 			Save();
 			Changed?.Invoke();
@@ -135,7 +158,7 @@ namespace Sekai.Community
 		/// <summary>Checks the remembered account and refreshes the nickname. Signs out locally if the center forgot it.</summary>
 		public static async UniTask RefreshAsync(CancellationToken ct = default)
 		{
-			Stored stored = Load();
+			Stored stored = Current();
 			if (stored.AccountToken.Length == 0)
 			{
 				return;
@@ -164,7 +187,7 @@ namespace Sekai.Community
 		/// </summary>
 		public static async UniTask<string> GetSessionAsync(CancellationToken ct = default, bool forceNew = false)
 		{
-			Stored stored = Load();
+			Stored stored = Current();
 			if (stored.AccountToken.Length == 0)
 			{
 				return null;
@@ -208,7 +231,11 @@ namespace Sekai.Community
 		/// <summary>The site said the session is no longer valid: drop it so the next call trades again.</summary>
 		internal static void DropSession()
 		{
-			Stored stored = Load();
+			Stored stored = Current();
+			if (stored.AccountToken.Length == 0)
+			{
+				return;
+			}
 			stored.SessionToken = string.Empty;
 			stored.SessionExpiresAt = default;
 			Save();
@@ -220,6 +247,10 @@ namespace Sekai.Community
 
 		private static void ForgetLocally()
 		{
+			if (!IsSignedIn)
+			{
+				return;
+			}
 			_stored = new Stored();
 			Save();
 			Changed?.Invoke();

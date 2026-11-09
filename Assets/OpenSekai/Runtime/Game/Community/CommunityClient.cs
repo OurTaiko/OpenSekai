@@ -37,9 +37,9 @@ namespace Sekai.Community
 		}
 
 		/// <summary>The web page of a chart, for sharing or opening in a browser.</summary>
-		public static string ChartPageUrl(long id) => Server + "/charts/" + id;
+		public static string ChartPageUrl(string id) => Server + "/charts/" + Uri.EscapeDataString(id);
 
-		public static string DownloadUrl(long id) => Server + "/charts/" + id + "/download";
+		public static string DownloadUrl(string id) => Server + "/charts/" + Uri.EscapeDataString(id) + "/download";
 
 		public static async UniTask<CommunityMeta> GetMetaAsync(CancellationToken ct = default)
 		{
@@ -63,12 +63,12 @@ namespace Sekai.Community
 			return SendWithSessionAsync<CommunityChartPage>("GET", Server + "/api/v1/me/bookmarks" + QueryString(query), null, ct);
 		}
 
-		/// <summary>One chart, or null when it does not exist (also used by 譜面ID検索).</summary>
-		public static async UniTask<CommunityChart> GetAsync(long id, CancellationToken ct = default)
+		/// <summary>One chart by its id or its number (譜面ID検索), or null when it does not exist.</summary>
+		public static async UniTask<CommunityChart> GetAsync(string idOrNumber, CancellationToken ct = default)
 		{
 			try
 			{
-				return await SendWithOptionalSessionAsync<CommunityChart>("GET", Server + "/api/v1/charts/" + id, ct);
+				return await SendWithOptionalSessionAsync<CommunityChart>("GET", Server + "/api/v1/charts/" + Uri.EscapeDataString(idOrNumber), ct);
 			}
 			catch (CommunityException exception) when (exception.Status == 404)
 			{
@@ -82,19 +82,19 @@ namespace Sekai.Community
 			return reply?.Tags ?? new List<CommunityTagCount>();
 		}
 
-		public static async UniTask<int> SetLikeAsync(long id, bool liked, CancellationToken ct = default)
+		public static async UniTask<int> SetLikeAsync(string id, bool liked, CancellationToken ct = default)
 		{
 			LikeReply reply = await SendWithSessionAsync<LikeReply>(liked ? "PUT" : "DELETE", Server + "/api/v1/charts/" + id + "/like", null, ct);
 			return reply?.LikeCount ?? 0;
 		}
 
-		public static async UniTask SetBookmarkAsync(long id, bool saved, CancellationToken ct = default)
+		public static async UniTask SetBookmarkAsync(string id, bool saved, CancellationToken ct = default)
 		{
 			await SendWithSessionAsync<object>(saved ? "PUT" : "DELETE", Server + "/api/v1/charts/" + id + "/bookmark", null, ct);
 		}
 
 		/// <summary>Reports a finished play. Counted once per player (or address) per chart per hour.</summary>
-		public static async UniTask ReportPlayAsync(long id, CancellationToken ct = default)
+		public static async UniTask ReportPlayAsync(string id, CancellationToken ct = default)
 		{
 			string session = null;
 			try
