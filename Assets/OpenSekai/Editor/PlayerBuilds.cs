@@ -20,7 +20,7 @@ namespace OpenSekai.Editor
 	[InitializeOnLoad]
 	public static class PlayerBuilds
 	{
-		public const string ApplicationIdentifier = "com.cube.opensekai";
+		public const string ApplicationIdentifier = "com.sparkbarry.sekai";
 		public const string BuildName = "OpenSekai";
 
 		private const string PendingKey = "OpenSekai.PlayerBuilds.Pending";

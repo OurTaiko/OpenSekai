@@ -173,9 +173,9 @@ PlayerSettings:
   androidMaxAspectRatio: 2.1
   androidMinAspectRatio: 1
   applicationIdentifier:
-    Android: com.cube.opensekai
-    Standalone: com.cube.opensekai
-    iPhone: com.cube.opensekai
+    Android: com.sparkbarry.sekai
+    Standalone: com.sparkbarry.sekai
+    iPhone: com.sparkbarry.sekai
   buildNumber:
     Standalone: 0
     VisionOS: 0
