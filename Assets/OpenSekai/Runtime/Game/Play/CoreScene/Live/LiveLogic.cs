@@ -110,6 +110,31 @@ namespace Sekai.Core.Live
 
 		public bool IsNotesAllFinished => spawnIndex >= spawnOrder.Length && activeNoteIndices.Count == 0;
 
+		/// <summary>
+		/// How many judgments the chart has between two chart times (seconds, end excluded), counted like
+		/// <see cref="LiveUtility.CalculateTotalComboCount"/> (every judged part, long-note holds included).
+		/// </summary>
+		public int CountJudgments(float fromTime, float toTime)
+		{
+			int count = 0;
+			foreach (NoteBase rootNote in noteArray)
+			{
+				if (rootNote?.NoteList == null)
+				{
+					continue;
+				}
+				foreach (NoteBase note in rootNote.NoteList)
+				{
+					float time = note != null ? note.MusicScoreInfo.time : -1f;
+					if (note != null && note.HasJudgment && time >= fromTime && time < toTime)
+					{
+						count++;
+					}
+				}
+			}
+			return count;
+		}
+
 		public bool IsPerfectCombo => scoreLogic?.IsPerfectCombo ?? false;
 
 		public bool IsAllPerfectCombo => scoreLogic?.IsAllPerfectCombo ?? false;

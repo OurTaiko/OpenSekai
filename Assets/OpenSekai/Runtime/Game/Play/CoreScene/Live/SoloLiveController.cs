@@ -46,6 +46,13 @@ namespace Sekai.Core.Live
 		/// <summary>The score so far.</summary>
 		public LiveScore CurrentScore => liveLogic?.Score ?? default;
 
+		/// <summary>How many judgments fall between two music times (<see cref="BaseLiveController.MusicTimeMs"/>, end excluded).</summary>
+		public int CountJudgments(long fromMusicMs, long toMusicMs)
+		{
+			float fillerSec = BootData?.MusicData?.Music?.fillerSec ?? 0f;
+			return liveLogic?.CountJudgments(fromMusicMs / 1000f - fillerSec, toMusicMs / 1000f - fillerSec) ?? 0;
+		}
+
 		/// <summary>Raised once when the live ends (the last note, or leaving it), with the final score.</summary>
 		public event System.Action<LiveScore> LiveEnded;
 

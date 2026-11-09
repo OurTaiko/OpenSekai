@@ -64,6 +64,10 @@ namespace Sekai.CoopLive
 		private readonly Dictionary<string, MemberStatus> _statuses = new Dictionary<string, MemberStatus>();
 		// Each player's GOOD + BAD + MISS when FEVER CHANCE started; FEVER OK while it has not grown.
 		private readonly Dictionary<string, int> _chanceMissBase = new Dictionary<string, int>();
+		// Each player's PERFECT + GREAT when FEVER CHANCE started, for the FEVER gauge.
+		private readonly Dictionary<string, int> _chanceHitBase = new Dictionary<string, int>();
+		// Judgments in this player's chart during FEVER CHANCE (-1: not counted yet).
+		private int _chanceJudgments = -1;
 		private int[] _teamScores = System.Array.Empty<int>();
 
 		/// <summary>Whether FEVER is on now: decided FEVER or SUPER FEVER, within the FEVER span.</summary>
@@ -348,48 +352,67 @@ namespace Sekai.CoopLive
 			_feverView?.Show(phase);
 
 			// FEVER OK: no GOOD, BAD or MISS since FEVER CHANCE started, shown from then until FEVER starts.
+			// The gauge: the team's PERFECT + GREAT since then, as a share of everyone's notes in FEVER CHANCE (each
+			// player is counted with this player's chart, which is the same song).
 			bool showReady = _chanceStartMs >= 0 && t >= _chanceStartMs && t < _feverStartMs;
+			if (inChance && _chanceJudgments < 0)
+			{
+				_chanceJudgments = _controller.CountJudgments(_chanceStartMs, _chanceEndMs);
+			}
+			int teamHits = 0;
 			foreach (Member player in _players)
 			{
 				MultiThumbnailView view = _thumbnails?.Find(player.UserId);
-				if (view == null)
-				{
-					continue;
-				}
 				bool ready = false;
-				if (showReady && TryMisses(player.UserId, mine, out int misses, out long theirTime) && theirTime >= _chanceStartMs)
+				if (showReady && TryCounts(player.UserId, mine, out int misses, out int hits, out long theirTime) && theirTime >= _chanceStartMs)
 				{
-					if (!_chanceMissBase.TryGetValue(player.UserId, out int start))
+					bool mineWithStart = player.UserId == CoopSession.MyUserId && _chanceOpen;
+					if (!_chanceMissBase.TryGetValue(player.UserId, out int missStart))
 					{
-						start = player.UserId == CoopSession.MyUserId && _chanceOpen ? Misses(_chanceStartScore) : misses;
-						_chanceMissBase[player.UserId] = start;
+						missStart = mineWithStart ? Misses(_chanceStartScore) : misses;
+						_chanceMissBase[player.UserId] = missStart;
 					}
-					ready = misses == start;
+					if (!_chanceHitBase.TryGetValue(player.UserId, out int hitStart))
+					{
+						hitStart = mineWithStart ? Hits(_chanceStartScore) : hits;
+						_chanceHitBase[player.UserId] = hitStart;
+					}
+					ready = misses == missStart;
+					teamHits += Mathf.Max(0, hits - hitStart);
 				}
-				view.SetFeverReady(ready);
+				view?.SetFeverReady(ready);
+			}
+			if (inChance && _chanceJudgments > 0 && _players.Count > 0)
+			{
+				_feverView?.SetGauge(teamHits / (float)(_chanceJudgments * _players.Count));
 			}
 		}
 
-		private bool TryMisses(string userId, LiveScore mine, out int misses, out long musicTimeMs)
+		private bool TryCounts(string userId, LiveScore mine, out int misses, out int hits, out long musicTimeMs)
 		{
 			if (userId == CoopSession.MyUserId)
 			{
 				misses = Misses(mine);
+				hits = Hits(mine);
 				musicTimeMs = _controller.MusicTimeMs;
 				return true;
 			}
 			if (_statuses.TryGetValue(userId, out MemberStatus status) && status.Status != null && status.Connected)
 			{
 				misses = status.Status.Good + status.Status.Bad + status.Status.Miss;
+				hits = status.Status.Perfect + status.Status.Great;
 				musicTimeMs = status.Status.MusicTimeMs;
 				return true;
 			}
 			misses = 0;
+			hits = 0;
 			musicTimeMs = 0;
 			return false;
 		}
 
 		private static int Misses(LiveScore score) => score.goodCount + score.badCount + score.missCount;
+
+		private static int Hits(LiveScore score) => score.perfectCount + score.greatCount;
 
 		/* ---------- end ---------- */
 

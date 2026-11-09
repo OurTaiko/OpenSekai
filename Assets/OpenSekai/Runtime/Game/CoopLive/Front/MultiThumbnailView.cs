@@ -84,6 +84,12 @@ namespace Sekai.CoopLive
 			{
 				youIcon.gameObject.SetActive(isMe);
 			}
+			// FEVER OK covers the picture with the player's color and "OK!".
+			SpriteRenderer okCover = feverReady != null ? feverReady.GetComponent<SpriteRenderer>() : null;
+			if (okCover != null)
+			{
+				okCover.color = new Color(slot.r, slot.g, slot.b, okCover.color.a);
+			}
 			comboView?.Setup(useAllPerfectEffect);
 			SetPicture(null, slot);
 			if (initial != null)

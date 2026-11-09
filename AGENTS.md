@@ -140,14 +140,23 @@ screen data `Resources/screen/data/ScreenLayerCoopLive.asset` in `EntryScreenLay
       split into one segment per player in their slot color (`CoopUi.SlotColor`, the result screen's colors).
     - `MultiThumbnailViewGroup` / `MultiThumbnailView`: up to five players in slot order: the SSO avatar (`Member.avatar_url`
       through `CommunityImageCache`, or the slot color with the nickname's first letter), each player's combo, dying (life ≤ 30 %),
-      dead or cut off, FEVER OK and YOU. FEVER OK shows from FEVER CHANCE until FEVER while the player has had no GOOD, BAD or
-      MISS since FEVER CHANCE started (the SUPER FEVER condition), worked out from the statuses everyone sends.
-    - `MultiFeverView`: FEVER CHANCE, FEVER and SUPER FEVER on the lane and in the frames at both sides of the screen.
+      dead or cut off, and YOU. From FEVER CHANCE until FEVER, a player who has had no GOOD, BAD or MISS since FEVER CHANCE
+      started (the SUPER FEVER condition, worked out from the statuses everyone sends) has the picture covered by "OK!" in
+      their slot color.
+    - `MultiFeverView`, as in the original:
+      - FEVER CHANCE: everything outside the lane is greyed (`feverChanceFrames`, two big rectangles along the lane's sides).
+        A gauge rises on both sides of the lane, crossed by the FEVER and SUPER FEVER lines (`line_fever`, `line_superFever`)
+        with their labels (`feverLaneText`, `superFeverLaneText`). It shows the team's PERFECT + GREAT since FEVER CHANCE
+        started over everyone's judgments in it (this player's chart, `SoloLiveController.CountJudgments`, times the
+        players): the FEVER line is the server's FEVER rate (70 %) and the SUPER FEVER line the top. It is yellow below the
+        FEVER line and rainbow above it.
+      - FEVER / SUPER FEVER: a rainbow border flows round the screen and the lane shows FEVER! or a rainbow SUPER FEVER!!.
+      The gauge and border are meshes built in `MultiFeverView`; the lane geometry they follow is serialized on it.
     Many of `FrontMultiUIView`'s sprites were never in the project, so the prefab has placeholders: TextMeshPro texts for the
-    FEVER CHANCE / FEVER / SUPER FEVER marks, FEVER OK and YOU, tinted `white6x6` for the thumbnail frame, dying / dead, the
-    FEVER lines and the gauge segments (`MultiScoreView` places a segment by its sprite's pivot, so a left-pivoted original
-    sprite needs no code change). The lane gauge (`gage_fever_lane`) is turned off. To use the original sprites, put them on
-    those renderers and remove the texts.
+    line labels, the FEVER! / SUPER FEVER!! marks, OK! and YOU, tinted `white6x6` for the thumbnail frame, OK! cover,
+    dying / dead, the FEVER lines and the gauge segments (`MultiScoreView` places a segment by its sprite's pivot, so a
+    left-pivoted original sprite needs no code change). The original lane gauge sprite (`gage_fever_lane`) is turned off in
+    favor of the mesh. To use the original sprites, put them on those renderers and remove the texts.
   - `UI/ScreenLayerCoopLive` builds the room screen in code (it changes with every phase), with `CoopUi` helpers (`StampBar`,
     `Toast` and the builders are shared with the result screen); the two sprites of each screen are serialized on the scene object.
     Stamp texts are in `CoopStamps`.
