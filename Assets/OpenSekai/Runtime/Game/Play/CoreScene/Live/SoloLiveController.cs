@@ -51,6 +51,8 @@ namespace Sekai.Core.Live
 
 		private bool liveEndedRaised;
 
+		private bool coopAborted;
+
 		/// <summary>Starts the live described by <paramref name="bootData"/>. Called by <see cref="EntryPoint"/>.</summary>
 		public void Boot(LiveBootDataBase bootData)
 		{
@@ -437,6 +439,7 @@ namespace Sekai.Core.Live
 				return;
 			}
 			RaiseLiveEnded();
+			coopAborted = true;
 			state = LiveControllerState.Finish;
 			result = 0;
 			Exit();
@@ -484,8 +487,9 @@ namespace Sekai.Core.Live
 				}
 				else if (returnScreenType.Value == MenuScreenType.CoopLive)
 				{
+					// A finished co-op live goes to its result; one left before it started goes back to the room.
 					MusicScoreMakerEntryPoint.BootData = null;
-					SceneManager.Instance.RequestScene(SceneManager.Scene.CoopLive);
+					SceneManager.Instance.RequestScene(coopAborted ? SceneManager.Scene.CoopLive : SceneManager.Scene.CoopLiveResult);
 				}
 				else if (returnScreenType.Value == MenuScreenType.CommunityCharts)
 				{

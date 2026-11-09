@@ -227,6 +227,70 @@ namespace Sekai.CoopLive
 			return input;
 		}
 
+		/// <summary>The co-op screens' frame: Home's background with its tint, and the header band with a back button.</summary>
+		public static RectTransform Frame(Transform parent, Sprite backgroundSprite, UnityAction onBack, out TextMeshProUGUI title, out TextMeshProUGUI subtitle)
+		{
+			RectTransform root = Rect("CoopRoot", parent).Stretch();
+			Image background = Image(root, "Background", Color.white, rounded: false);
+			background.rectTransform.Stretch();
+			background.sprite = backgroundSprite;
+			background.color = backgroundSprite != null ? Color.white : new Color32(0x3A, 0x33, 0x6E, 0xFF);
+			background.raycastTarget = true;
+			if (backgroundSprite != null)
+			{
+				AspectRatioFitter fitter = background.gameObject.AddComponent<AspectRatioFitter>();
+				fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+				fitter.aspectRatio = backgroundSprite.rect.width / Mathf.Max(1f, backgroundSprite.rect.height);
+			}
+			Image tint = Image(root, "Tint", new Color32(0x22, 0x1C, 0x48, 0xA8), rounded: false);
+			tint.rectTransform.Stretch();
+
+			Image header = Image(root, "Header", new Color32(0x34, 0x2E, 0x5C, 0x96), rounded: false);
+			header.rectTransform.anchorMin = new Vector2(0, 1);
+			header.rectTransform.anchorMax = new Vector2(1, 1);
+			header.rectTransform.pivot = new Vector2(0.5f, 1);
+			header.rectTransform.offsetMin = new Vector2(0, -132);
+			header.rectTransform.offsetMax = Vector2.zero;
+			Button back = Button(header.transform, "Back", "‹ 返回", onBack, Color.white, Ink, 28);
+			back.GetComponent<RectTransform>().Place(new Vector2(0, 0.5f), new Vector2(34, 0), new Vector2(170, 72));
+			title = Text(header.transform, "Title", "協力ライブ", 40, Color.white, true);
+			title.rectTransform.Place(new Vector2(0, 0.5f), new Vector2(234, 0), new Vector2(900, 70));
+			subtitle = Text(header.transform, "RoomCode", string.Empty, 32, new Color32(0x67, 0xDD, 0xCD, 0xFF), true, TextAlignmentOptions.Right);
+			subtitle.rectTransform.Place(new Vector2(1, 0.5f), new Vector2(-34, 0), new Vector2(800, 70));
+			return root;
+		}
+
+		/// <summary>The row of スタンプ buttons along the bottom.</summary>
+		public static RectTransform StampBar(Transform parent)
+		{
+			RectTransform bar = Rect("Stamps", parent);
+			bar.anchorMin = new Vector2(0, 0);
+			bar.anchorMax = new Vector2(1, 0);
+			bar.pivot = new Vector2(0.5f, 0);
+			bar.offsetMin = new Vector2(24, 20);
+			bar.offsetMax = new Vector2(-24, 100);
+			HorizontalLayoutGroup stamps = Horizontal(bar.gameObject, 12);
+			stamps.childForceExpandWidth = true;
+			for (int i = 0; i < CoopStamps.Texts.Length; i++)
+			{
+				int id = i;
+				Button stamp = Button(bar, "Stamp" + i, CoopStamps.Texts[i], () => CoopSession.SendStamp(id), Panel, Ink, 24);
+				Size(stamp, height: 80);
+			}
+			return bar;
+		}
+
+		/// <summary>A message box at the top; hide it again with SetActive(false) on the returned label's parent.</summary>
+		public static TextMeshProUGUI Toast(Transform parent)
+		{
+			Image back = Image(parent, "ToastBack", new Color(0.15f, 0.13f, 0.28f, 0.92f));
+			back.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0, -130), new Vector2(1000, 70));
+			TextMeshProUGUI label = Text(back.transform, "Toast", string.Empty, 30, Color.white, true, TextAlignmentOptions.Center);
+			label.rectTransform.Stretch(20, 0, 20, 0);
+			back.gameObject.SetActive(false);
+			return label;
+		}
+
 		public static void Clear(Transform t)
 		{
 			for (int i = t.childCount - 1; i >= 0; i--)

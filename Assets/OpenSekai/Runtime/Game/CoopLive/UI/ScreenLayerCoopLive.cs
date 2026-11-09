@@ -15,6 +15,7 @@ namespace Sekai.CoopLive
 	/// ルーム作成 (a private room) and joining by the 5-digit ルームID. In a room it shows the five member slots
 	/// and the current phase: waiting (the host's メンバー決定), song select (a community chart or おまかせ, 20 s),
 	/// the draw, difficulty (10 s, 準備完了), loading, and the result after the live. スタンプ are the chat.
+	/// The result of a live is its own scene (<see cref="ScreenLayerCoopResult"/>).
 	/// The layout is built in code because it changes with every phase; colors and sprites follow the menus.
 	/// </summary>
 	public sealed class ScreenLayerCoopLive : ScreenLayer
@@ -33,7 +34,6 @@ namespace Sekai.CoopLive
 		private RectTransform _stampBar;
 		private TextMeshProUGUI _toast;
 		private float _toastUntil;
-		private RectTransform _resultOverlay;
 
 		private TextMeshProUGUI _countdown;
 		private TextMeshProUGUI _status;
@@ -43,7 +43,6 @@ namespace Sekai.CoopLive
 		private int _builtRound = -1;
 		private bool _busy;
 		private bool _leaving;
-		private int _dismissedResultRound;
 		private string _myPick;
 
 		// Song select.
@@ -92,35 +91,7 @@ namespace Sekai.CoopLive
 
 		private void BuildFrame()
 		{
-			_root = CoopUi.Rect("CoopRoot", transform).Stretch();
-			Image background = CoopUi.Image(_root, "Background", Color.white, rounded: false);
-			background.rectTransform.Stretch();
-			background.sprite = backgroundSprite;
-			background.color = backgroundSprite != null ? Color.white : new Color32(0x3A, 0x33, 0x6E, 0xFF);
-			background.raycastTarget = true;
-			if (backgroundSprite != null)
-			{
-				AspectRatioFitter fitter = background.gameObject.AddComponent<AspectRatioFitter>();
-				fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
-				fitter.aspectRatio = backgroundSprite.rect.width / Mathf.Max(1f, backgroundSprite.rect.height);
-			}
-			// The Home screen's tint and header band.
-			Image tint = CoopUi.Image(_root, "Tint", new Color32(0x22, 0x1C, 0x48, 0xA8), rounded: false);
-			tint.rectTransform.Stretch();
-
-			Image header = CoopUi.Image(_root, "Header", new Color32(0x34, 0x2E, 0x5C, 0x96), rounded: false);
-			header.rectTransform.anchorMin = new Vector2(0, 1);
-			header.rectTransform.anchorMax = new Vector2(1, 1);
-			header.rectTransform.pivot = new Vector2(0.5f, 1);
-			header.rectTransform.offsetMin = new Vector2(0, -132);
-			header.rectTransform.offsetMax = Vector2.zero;
-
-			Button back = CoopUi.Button(header.transform, "Back", "‹ 返回", OnBack, Color.white, CoopUi.Ink, 28);
-			back.GetComponent<RectTransform>().Place(new Vector2(0, 0.5f), new Vector2(34, 0), new Vector2(170, 72));
-			_title = CoopUi.Text(header.transform, "Title", "協力ライブ", 40, Color.white, true);
-			_title.rectTransform.Place(new Vector2(0, 0.5f), new Vector2(234, 0), new Vector2(900, 70));
-			_roomCode = CoopUi.Text(header.transform, "RoomCode", string.Empty, 32, new Color32(0x67, 0xDD, 0xCD, 0xFF), true, TextAlignmentOptions.Right);
-			_roomCode.rectTransform.Place(new Vector2(1, 0.5f), new Vector2(-34, 0), new Vector2(800, 70));
+			_root = CoopUi.Frame(transform, backgroundSprite, OnBack, out _title, out _roomCode);
 
 			_members = CoopUi.Rect("Members", _root);
 			_members.anchorMin = new Vector2(0, 1);
@@ -137,27 +108,8 @@ namespace Sekai.CoopLive
 			_main.offsetMin = new Vector2(24, 120);
 			_main.offsetMax = new Vector2(-24, -392);
 
-			_stampBar = CoopUi.Rect("Stamps", _root);
-			_stampBar.anchorMin = new Vector2(0, 0);
-			_stampBar.anchorMax = new Vector2(1, 0);
-			_stampBar.pivot = new Vector2(0.5f, 0);
-			_stampBar.offsetMin = new Vector2(24, 20);
-			_stampBar.offsetMax = new Vector2(-24, 100);
-			HorizontalLayoutGroup stamps = CoopUi.Horizontal(_stampBar.gameObject, 12);
-			stamps.childForceExpandWidth = true;
-			for (int i = 0; i < CoopStamps.Texts.Length; i++)
-			{
-				int id = i;
-				Button stamp = CoopUi.Button(_stampBar, "Stamp" + i, CoopStamps.Texts[i], () => CoopSession.SendStamp(id), CoopUi.Panel, CoopUi.Ink, 24);
-				CoopUi.Size(stamp, height: 80);
-			}
-
-			_toast = CoopUi.Text(_root, "Toast", string.Empty, 30, Color.white, true, TextAlignmentOptions.Center);
-			Image toastBack = CoopUi.Image(_root, "ToastBack", new Color(0.15f, 0.13f, 0.28f, 0.92f));
-			toastBack.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0, -130), new Vector2(1000, 70));
-			_toast.transform.SetParent(toastBack.transform, false);
-			_toast.rectTransform.Stretch(20, 0, 20, 0);
-			toastBack.gameObject.SetActive(false);
+			_stampBar = CoopUi.StampBar(_root);
+			_toast = CoopUi.Toast(_root);
 		}
 
 		/* ---------- rendering ---------- */
@@ -185,7 +137,6 @@ namespace Sekai.CoopLive
 					_builtPhase = Phase.Unspecified;
 					BuildEntrance();
 				}
-				ShowResultIfNew();
 				return;
 			}
 
@@ -200,7 +151,6 @@ namespace Sekai.CoopLive
 			{
 				RefreshPhase(room);
 			}
-			ShowResultIfNew();
 		}
 
 		private void Update()
@@ -521,11 +471,7 @@ namespace Sekai.CoopLive
 			if (room.Result != null && room.Result.Round > 0)
 			{
 				int round = room.Result.Round;
-				Button last = CoopUi.Button(card, "LastResult", "上一局结果", () =>
-				{
-					_dismissedResultRound = round - 1;
-					ShowResult(CoopSession.Room?.Result);
-				}, CoopUi.PanelSoft, CoopUi.Ink, 26);
+				Button last = CoopUi.Button(card, "LastResult", "上一局结果", () => CoopResultSceneArgs.Open(round), CoopUi.PanelSoft, CoopUi.Ink, 26);
 				last.GetComponent<RectTransform>().Place(new Vector2(0, 0), new Vector2(40, 50), new Vector2(260, 80), new Vector2(0, 0));
 			}
 		}
@@ -742,87 +688,6 @@ namespace Sekai.CoopLive
 			{
 				_status.text = text;
 			}
-		}
-
-		/* ---------- result ---------- */
-
-		private void ShowResultIfNew()
-		{
-			LiveResult result = CoopSession.Room?.Result;
-			if (result == null || result.Round <= 0 || result.Round != CoopSession.LastPlayedRound || result.Round <= _dismissedResultRound)
-			{
-				return;
-			}
-			if (_resultOverlay == null)
-			{
-				ShowResult(result);
-			}
-		}
-
-		private void ShowResult(LiveResult result)
-		{
-			if (result == null)
-			{
-				return;
-			}
-			if (_resultOverlay != null)
-			{
-				Destroy(_resultOverlay.gameObject);
-			}
-			Image dim = CoopUi.Image(_root, "Result", new Color(0.1f, 0.08f, 0.2f, 0.75f), rounded: false);
-			dim.rectTransform.Stretch();
-			dim.raycastTarget = true;
-			_resultOverlay = dim.rectTransform;
-			_stampBar.SetAsLastSibling();
-			_toast.transform.parent.SetAsLastSibling();
-
-			RectTransform card = Card("Card", dim.transform);
-			card.Stretch(160, 90, 160, 130);
-			TextMeshProUGUI head = CoopUi.Text(card, "Head", "LIVE RESULT", 54, CoopUi.Ink, true);
-			head.rectTransform.Place(new Vector2(0, 1), new Vector2(50, -30), new Vector2(700, 70), new Vector2(0, 1));
-			string fever = result.Fever == FeverKind.SuperFever ? "<color=#FF66CC>SUPER FEVER</color>" : result.Fever == FeverKind.Fever ? "<color=#FFAA22>FEVER</color>" : "<color=#9999AA>NO FEVER</color>";
-			TextMeshProUGUI team = CoopUi.Text(card, "Team", $"{fever}　　TEAM SCORE <size=56>{result.TeamScore:N0}</size>", 32, CoopUi.Ink, true, TextAlignmentOptions.Right);
-			team.rectTransform.Place(new Vector2(1, 1), new Vector2(-50, -30), new Vector2(1100, 70), new Vector2(1, 1));
-
-			RectTransform rows = CoopUi.Rect("Rows", card);
-			rows.Stretch(40, 130, 40, 140);
-			CoopUi.Vertical(rows.gameObject, 10);
-			foreach (PlayerResult p in result.Players)
-			{
-				Member member = CoopSession.Find(p.UserId);
-				Image row = CoopUi.Image(rows, "Row " + p.Rank, p.UserId == CoopSession.MyUserId ? new Color32(0xE2, 0xF7, 0xF3, 0xFF) : CoopUi.PanelSoft);
-				CoopUi.Size(row, height: 96);
-				Image stripe = CoopUi.Image(row.transform, "Slot", CoopUi.SlotColor(member?.Slot ?? p.Rank - 1));
-				stripe.rectTransform.Place(new Vector2(0, 0.5f), new Vector2(10, 0), new Vector2(12, 76));
-				TextMeshProUGUI rank = CoopUi.Text(row.transform, "Rank", p.Rank.ToString(), 46, CoopUi.Ink, true, TextAlignmentOptions.Center);
-				rank.rectTransform.Place(new Vector2(0, 0.5f), new Vector2(30, 0), new Vector2(70, 80));
-				string award = p.Award == Award.SuperStar ? "<color=#FF66CC>SUPER STAR</color>" : p.Award == Award.Mvp ? "<color=#FFAA22>MVP</color>" : string.Empty;
-				string tags = p.Disconnected ? "<color=#EE5577>切断</color>" : p.AllPerfect ? "<color=#FF66CC>ALL PERFECT</color>" : p.FullCombo ? "<color=#33BBAA>FULL COMBO</color>" : p.Failed ? "<color=#EE5577>LIFE 0</color>" : string.Empty;
-				TextMeshProUGUI name = CoopUi.Text(row.transform, "Name", $"{p.Nickname}  <size=26>{award}</size>", 34, CoopUi.Ink, true);
-				name.rectTransform.Place(new Vector2(0, 1), new Vector2(120, -8), new Vector2(620, 46), new Vector2(0, 1));
-				TextMeshProUGUI sub = CoopUi.Text(row.transform, "Tags", tags, 22, CoopUi.SubInk, true);
-				sub.rectTransform.Place(new Vector2(0, 0), new Vector2(120, 8), new Vector2(620, 34), new Vector2(0, 0));
-				PlayerStatus s = p.Status ?? new PlayerStatus();
-				TextMeshProUGUI detail = CoopUi.Text(row.transform, "Detail",
-					$"<color=#FF77CC>P</color> {s.Perfect}  <color=#FF9933>G</color> {s.Great}  <color=#33BBEE>G</color> {s.Good}  <color=#66CC66>B</color> {s.Bad}  <color=#999999>M</color> {s.Miss}　COMBO {s.MaxCombo}",
-					24, CoopUi.SubInk, false, TextAlignmentOptions.Right);
-				detail.rectTransform.Place(new Vector2(1, 0), new Vector2(-30, 10), new Vector2(760, 34), new Vector2(1, 0));
-				TextMeshProUGUI score = CoopUi.Text(row.transform, "Score", s.Score.ToString("N0"), 42, CoopUi.Ink, true, TextAlignmentOptions.Right);
-				score.rectTransform.Place(new Vector2(1, 1), new Vector2(-30, -6), new Vector2(400, 52), new Vector2(1, 1));
-			}
-
-			int round = result.Round;
-			Button close = CoopUi.Button(card, "Close", "返回房间", () =>
-			{
-				_dismissedResultRound = Math.Max(_dismissedResultRound, round);
-				if (_resultOverlay != null)
-				{
-					Destroy(_resultOverlay.gameObject);
-				}
-				_resultOverlay = null;
-			}, CoopUi.Accent, Color.white, 34);
-			// Bottom-right, never over the lobby's メンバー決定 underneath: a double tap must not start the next round.
-			close.GetComponent<RectTransform>().Place(new Vector2(1, 0), new Vector2(-40, 30), new Vector2(420, 96), new Vector2(1, 0));
 		}
 
 		/* ---------- stamps, notices, leaving ---------- */

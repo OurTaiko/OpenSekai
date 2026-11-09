@@ -9,14 +9,17 @@ EditorBuildSettings:
     path: Assets/Scenes/Home.unity
     guid: 2ddaa38e841d14ae988e22bbe826538d
   - enabled: 1
-    path: Assets/Scenes/CustomMusicScoreManager.unity
+    path: Assets/Scenes/Charts.Local.unity
     guid: a3721a5365704939b178927ad8756ce5
   - enabled: 1
-    path: Assets/Scenes/CommunityCharts.unity
+    path: Assets/Scenes/Charts.Online.unity
     guid: a1430a05fff7d45bd984847c84bdcdad
   - enabled: 1
     path: Assets/Scenes/CoopLive.unity
     guid: ff07a6034768b47f2b068549da2c4132
+  - enabled: 1
+    path: Assets/Scenes/CoopLive.Result.unity
+    guid: c3545305309da42cb8eacfb0f5676881
   - enabled: 1
     path: Assets/Scenes/MusicScoreMaker.unity
     guid: bd518756a52b7b7448de122af61058a7

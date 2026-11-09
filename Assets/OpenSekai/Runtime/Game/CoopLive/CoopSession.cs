@@ -47,6 +47,9 @@ namespace Sekai.CoopLive
 		/// <summary>The latest statuses of the players in the live.</summary>
 		public static LiveStatuses Statuses { get; private set; }
 
+		/// <summary>The newest result the room has sent; kept after the session ends.</summary>
+		public static LiveResult LastResult { get; private set; }
+
 		/// <summary>The round this player last started a live in (0: none).</summary>
 		public static int LastPlayedRound { get; internal set; }
 
@@ -72,6 +75,7 @@ namespace Sekai.CoopLive
 			Statuses = null;
 			MyUserId = string.Empty;
 			LastPlayedRound = 0;
+			LastResult = null;
 			RoomChanged = null;
 			LiveStarted = null;
 			StatusesChanged = null;
@@ -309,6 +313,10 @@ namespace Sekai.CoopLive
 					break;
 				case ServerMessage.KindOneofCase.Room:
 					Room = message.Room;
+					if (Room.Result != null && Room.Result.Round > 0)
+					{
+						LastResult = Room.Result;
+					}
 					ClockOffsetMs = Room.ServerTimeMs - DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 					RoomChanged?.Invoke(Room);
 					break;

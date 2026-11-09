@@ -28,15 +28,17 @@ namespace Sekai
 			// OpenSekai's own scenes.
 			Home = 11,
 			CommunityCharts = 12,
-			CoopLive = 13
+			CoopLive = 13,
+			CoopLiveResult = 14
 		}
 
-		private const string CustomMusicScoreManagerSceneName = "CustomMusicScoreManager";
+		private const string CustomMusicScoreManagerSceneName = "Charts.Local";
 		private const string MusicScoreMakerSceneName = "MusicScoreMaker";
 		private const string CoreSceneName = "Core";
 		private const string HomeSceneName = "Home";
-		private const string CommunityChartsSceneName = "CommunityCharts";
+		private const string CommunityChartsSceneName = "Charts.Online";
 		private const string CoopLiveSceneName = "CoopLive";
+		private const string CoopLiveResultSceneName = "CoopLive.Result";
 
 		private static SceneManager instance;
 
@@ -142,6 +144,8 @@ namespace Sekai
 					return CommunityChartsSceneName;
 				case Scene.CoopLive:
 					return CoopLiveSceneName;
+				case Scene.CoopLiveResult:
+					return CoopLiveResultSceneName;
 				case Scene.MusicScoreMaker:
 					return MusicScoreMakerSceneName;
 				default:
@@ -149,12 +153,22 @@ namespace Sekai
 			}
 		}
 
+		/// <summary>Scenes that have a file, in lookup order (Title and OutGame also open Home).</summary>
+		private static readonly Scene[] NamedScenes =
+		{
+			Scene.Home, Scene.Core, Scene.CustomMusicScoreManager, Scene.CommunityCharts, Scene.CoopLive, Scene.CoopLiveResult, Scene.MusicScoreMaker,
+		};
+
 		private static Scene GetActiveScene()
 		{
+			// Scene file names (Charts.Local, Charts.Online, ...) are not the enum names; look them up.
 			string sceneName = UnitySceneManager.GetActiveScene().name;
-			if (System.Enum.TryParse(sceneName, out Scene scene))
+			foreach (Scene scene in NamedScenes)
 			{
-				return scene;
+				if (GetSceneName(scene) == sceneName)
+				{
+					return scene;
+				}
 			}
 
 			return Scene.None;

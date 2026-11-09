@@ -56,7 +56,7 @@ Also note:
 ## Home and community charts
 
 The first scene is `Home` (navigation: 在线谱面, 自制谱管理, and ☰ for the option dialog). The
-community chart browser is the `CommunityCharts` scene; its charts come from SekaiFanmade
+community chart browser is the `Charts.Online` scene (`SceneManager.Scene.CommunityCharts`); its charts come from SekaiFanmade
 (https://sekai.ourtaiko.org, separate repository `~/Repos/SekaiFanmade`, whose README lists the API).
 
 - Code is in `Assets/OpenSekai/Runtime/Game/Community/`: `CommunityClient` (site API), `CommunityAccount` (sign-in),
@@ -68,7 +68,7 @@ community chart browser is the `CommunityCharts` scene; its charts come from Sek
   prefabs (so the rail and list cells look the same in both), the rest is its own. The list rows are
   `CustomMusicScoreEntryCell`. `CommunityLoginPanel` is nested in `ScreenLayerCommunityCharts`.
 - Signing in lives in the option dialog: Additionals > アカウント has an OurTaiko 账号 button (the nickname when signed
-  in) that opens `CommunityLoginPanel` over the dialog (`OptionDialog.loginPanelPrefab`). Home and `CommunityCharts` have
+  in) that opens `CommunityLoginPanel` over the dialog (`OptionDialog.loginPanelPrefab`). Home and `Charts.Online` have
   no account button, only the manager's ☰; the charts screen's nested panel still pops up when voting or マイリスト needs
   a sign-in.
 - Sign-in works like OurTaikoPlay: the password goes only to OurTaiko SSO (`/api/v1/game/account/login`); the
@@ -77,7 +77,7 @@ community chart browser is the `CommunityCharts` scene; its charts come from Sek
   The SSO Application needs 允许游戏登录和会话接口 and 允许游戏账号换取本应用的游戏会话 turned on.
 - Downloads are imported with `CustomMusicScoreManagerService.ImportZip`, so they also show up in the manager.
   Lives started from either screen go through `CustomMusicScorePlayLauncher`; `ReturnScreenType` decides whether the
-  live goes back to the manager or to `CommunityCharts`. A finished, non-auto live of a downloaded chart reports one
+  live goes back to the manager (`Charts.Local`) or to `Charts.Online`. A finished, non-auto live of a downloaded chart reports one
   play to the site (`CustomMusicScorePlayHistoryStorage` calls `CommunityLibrary.OnLocalChartPlayed`).
 - The site keeps no chart ZIPs. A single-chart read (`CommunityClient.GetAsync`) carries `Package`: the manifest and
   the files it names, each with a URL on the CDN, size and SHA-256. `CommunityLibrary.DownloadAsync` writes
@@ -122,9 +122,13 @@ screen data `Resources/screen/data/ScreenLayerCoopLive.asset` in `EntryScreenLay
     retire or retry; life 0 keeps playing), `StartGate` (after the music is ready it sends `loaded` and waits for `start_live`, via
     `BaseLiveController.WaitBeforeMusicStart`) and `ScoreLogicFactory` (`CoopScoreLogic`, 1.5× during FEVER). It streams the
     score, draws the other players and the FEVER banner on its own overlay canvas, reports FEVER CHANCE and sends the final score
-    from `SoloLiveController.LiveEnded`. The live returns to the CoopLive scene, whose screen shows the result.
-  - `UI/ScreenLayerCoopLive` builds the room screen in code (it changes with every phase), with `CoopUi` helpers; its two sprites are
-    serialized on the scene object. Stamp texts are in `CoopStamps`.
+    from `SoloLiveController.LiveEnded`. A finished live goes to the `CoopLive.Result` scene (`SceneManager.Scene.CoopLiveResult` 14, screen type `CoopLiveResult` 9003,
+    `UI/ScreenLayerCoopResult`): it shows the others' scores until everyone has finished, then the result, and goes back to the
+    room on 返回房间 or by itself when the room starts its next round. A live left before it started (`AbortToMenu`) goes straight
+    back to the room. `CoopSession.LastResult` keeps the result if the connection drops; the room's 上一局结果 opens the scene
+    again through `CoopResultSceneArgs`.
+  - `UI/ScreenLayerCoopLive` builds the room screen in code (it changes with every phase), with `CoopUi` helpers (`Frame`,
+    `StampBar`, `Toast` are shared with the result screen); the two sprites of each screen are serialized on the scene object. Stamp texts are in `CoopStamps`.
 - gRPC: NuGet `Grpc.Net.Client` 2.85 and `Google.Protobuf` 3.36 (`Assets/packages.config`). Unity's HttpClient has no HTTP/2, so
   the transport is **YetAnotherHttpHandler** (UPM `com.cysharp.yetanotherhttphandler`, native, all five platforms). Its code is in
   the separate assembly `Runtime/CoopLiveHttp2` (define constraint `OPENSEKAI_YAHH`, set by a version define when the package is
@@ -132,6 +136,13 @@ screen data `Resources/screen/data/ScreenLayerCoopLive.asset` in `EntryScreenLay
   HTTP/2 is missing. `link.xml` files keep IL2CPP from stripping gRPC and protobuf.
 - The server address comes from `/api/v1/meta` (`multiplay.url`); `OPENSEKAI_MULTIPLAY_URL` overrides it (e.g.
   `http://127.0.0.1:50051`, plain h2c).
+
+## Scene names
+
+Scene files are named by area, not by class: `Home`, `Charts.Local` (自制谱管理, `SceneManager.Scene.CustomMusicScoreManager`),
+`Charts.Online` (在线谱面, `Scene.CommunityCharts`), `CoopLive`, `CoopLive.Result`, `MusicScoreMaker`, `Core`. The enum keeps
+its old member names; `SceneManager.GetSceneName` maps each to its file, and `GetActiveScene` looks the active scene up through the
+same table (a dotted name is not an enum name). A new scene needs a case there, an entry in `NamedScenes`, and a build-settings entry.
 
 ## Platforms and builds
 

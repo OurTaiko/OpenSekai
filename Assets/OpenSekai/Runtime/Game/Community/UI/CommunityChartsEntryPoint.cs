@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Sekai.Community
 {
-	/// <summary>Starts the CommunityCharts scene: shows the online chart browser authored in CommunityCharts.unity.</summary>
+	/// <summary>Starts the Charts.Online scene: shows the online chart browser authored in Charts.Online.unity.</summary>
 	public sealed class CommunityChartsEntryPoint : MenuSceneEntryPoint
 	{
 		[SerializeField]

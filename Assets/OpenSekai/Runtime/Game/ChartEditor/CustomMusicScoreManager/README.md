@@ -5,7 +5,7 @@ Local-only custom music score manager. Its code is part of the `OpenSekai.Game` 
 - `Models`: manifest and custom score entry data types.
 - `Services`: filesystem scanning, import/export, and entry loading.
 - `UI`: the manager screen and its list cell.
-- `CustomMusicScoreManagerEntryPoint`: starts `Assets/Scenes/CustomMusicScoreManager.unity` (reached from the Home scene;
+- `CustomMusicScoreManagerEntryPoint`: starts `Assets/Scenes/Charts.Local.unity` (reached from the Home scene;
   the header's back button returns there).
 - `Services/CustomMusicScorePlayLauncher`: starts a live of a local chart; the community chart browser uses it too.
 
