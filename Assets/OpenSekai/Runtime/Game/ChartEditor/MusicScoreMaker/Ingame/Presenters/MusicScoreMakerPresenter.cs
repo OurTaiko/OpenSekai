@@ -7031,7 +7031,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 				bootData.CustomMusicScoreId = entry.Manifest.id;
 				bootData.CustomMusicScorePath = entry.RootDirectory;
 				bootData.CustomMusicScoreTitle = entry.Manifest.scoreTitle;
-				bootData.CustomMusicScoreAuthorName = entry.Manifest.userName;
+				bootData.CustomMusicScoreAuthorName = entry.Manifest.noteDesigner;
 				bootData.CustomMusicScoreCollaborationLabel = entry.Manifest.collaborationLabel;
 			}
 

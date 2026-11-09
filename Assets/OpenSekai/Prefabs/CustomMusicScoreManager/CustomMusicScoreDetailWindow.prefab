@@ -6779,7 +6779,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: userName
+  m_text: noteDesigner
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4c06c5e5e1e31664d98af21fd8160527, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: e2cfeb3854756cf4086f3b24441152e7, type: 2}
@@ -11584,7 +11584,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1077380766825259414}
   m_Layer: 5
-  m_Name: Field_userName
+  m_Name: Field_noteDesigner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14661,7 +14661,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u4F5C\u8005"
+  m_text: "\u8C31\u5E08\u7F72\u540D"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4c06c5e5e1e31664d98af21fd8160527, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: e2cfeb3854756cf4086f3b24441152e7, type: 2}

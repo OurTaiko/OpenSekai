@@ -17,6 +17,8 @@ namespace Sekai.Community
 		public string Arranger = string.Empty;
 		public string Singer = string.Empty;
 		public string CollaborationLabel = string.Empty;
+		/// <summary>谱师署名 (the manifest's noteDesigner); empty when the chart has none.</summary>
+		public string NoteDesigner = string.Empty;
 		public string Description = string.Empty;
 		public string Difficulty = "master";
 		public int PlayLevel;

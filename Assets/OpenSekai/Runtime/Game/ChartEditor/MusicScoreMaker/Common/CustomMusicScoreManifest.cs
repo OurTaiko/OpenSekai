@@ -38,7 +38,8 @@ namespace Sekai.MusicScoreMaker.Common
 
 		public float previewStartTimeSec;
 
-		public string userName;
+		/// <summary>谱师署名: the charter's credit, shown in the chart manager and the live and exported as SUS #DESIGNER. The community site stores it as its own column.</summary>
+		public string noteDesigner;
 
 		public string musicDifficultyType;
 
@@ -90,7 +91,7 @@ namespace Sekai.MusicScoreMaker.Common
 			{
 				previewStartTimeSec = 0f;
 			}
-			userName ??= string.Empty;
+			noteDesigner ??= string.Empty;
 			if (string.IsNullOrWhiteSpace(musicDifficultyType))
 			{
 				musicDifficultyType = "master";

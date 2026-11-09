@@ -907,7 +907,7 @@ MonoBehaviour:
   _videoSelectButton: {fileID: 4423650468521834572}
   _titleInput: {fileID: 6143442934620780989}
   _scoreTitleInput: {fileID: 4727992811051735303}
-  _userInput: {fileID: 1758287172680770360}
+  _noteDesignerInput: {fileID: 1758287172680770360}
   _composerInput: {fileID: 8194584386270612550}
   _lyricistInput: {fileID: 7413546794307923410}
   _arrangerInput: {fileID: 8006389583882052254}

@@ -65,6 +65,13 @@ namespace Sekai.CustomMusicScoreManager
 				.ToArray();
 		}
 
+		/// <summary>A new chart's 谱师署名: the community nickname when signed in, otherwise the system user name.</summary>
+		private static string DefaultNoteDesigner()
+		{
+			string nickname = Sekai.Community.CommunityAccount.IsSignedIn ? Sekai.Community.CommunityAccount.Nickname : null;
+			return !string.IsNullOrWhiteSpace(nickname) ? nickname : Environment.UserName;
+		}
+
 		public static CustomMusicScoreEntry CreateNewEntry()
 		{
 			Directory.CreateDirectory(CustomMusicScoreStorage.RootDirectory);
@@ -73,7 +80,7 @@ namespace Sekai.CustomMusicScoreManager
 				id = CustomMusicScoreStorage.GenerateShortId(),
 				title = "未命名",
 				scoreTitle = "未命名谱面",
-				userName = Environment.UserName,
+				noteDesigner = DefaultNoteDesigner(),
 				composer = string.Empty,
 				lyricist = string.Empty,
 				arranger = string.Empty,
@@ -226,7 +233,7 @@ namespace Sekai.CustomMusicScoreManager
 			{
 				Title = manifest?.title,
 				Artist = manifest?.composer,
-				Designer = manifest?.userName,
+				Designer = manifest?.noteDesigner,
 				Wave = manifest?.audioFileName,
 				Jacket = manifest?.jacketFileName,
 				PlayLevel = manifest?.playLevel ?? 0

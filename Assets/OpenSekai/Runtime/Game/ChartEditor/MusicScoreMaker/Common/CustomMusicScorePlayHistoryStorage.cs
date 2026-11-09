@@ -138,7 +138,7 @@ namespace Sekai.MusicScoreMaker.Common
 				customMusicScorePath = bootData.CustomMusicScorePath ?? string.Empty,
 				title = bootData.MusicData?.Music?.title ?? manifest?.title ?? string.Empty,
 				scoreTitle = bootData.CustomMusicScoreTitle ?? manifest?.scoreTitle ?? string.Empty,
-				authorName = bootData.CustomMusicScoreAuthorName ?? manifest?.userName ?? string.Empty,
+				authorName = bootData.CustomMusicScoreAuthorName ?? manifest?.noteDesigner ?? string.Empty,
 				difficulty = bootData.MusicData?.DifficultyString ?? manifest?.musicDifficultyType ?? string.Empty,
 				playLevel = bootData.MusicData?.PlayLevel ?? manifest?.playLevel ?? 0,
 				scoreFileName = manifest?.scoreFileName ?? string.Empty,

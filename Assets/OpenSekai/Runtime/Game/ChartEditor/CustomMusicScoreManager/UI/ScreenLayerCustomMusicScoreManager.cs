@@ -165,7 +165,7 @@ namespace Sekai.CustomMusicScoreManager
 		[SerializeField]
 		private TMP_InputField _scoreTitleInput;
 		[SerializeField]
-		private TMP_InputField _userInput;
+		private TMP_InputField _noteDesignerInput;
 		[SerializeField]
 		private TMP_InputField _composerInput;
 		[SerializeField]
@@ -516,9 +516,9 @@ namespace Sekai.CustomMusicScoreManager
 
 			CustomMusicScoreManifest manifest = item.Entry.Manifest;
 			string metaText = string.IsNullOrEmpty(manifest.title) ? "-" : manifest.title;
-			if (!string.IsNullOrEmpty(manifest.userName))
+			if (!string.IsNullOrEmpty(manifest.noteDesigner))
 			{
-				metaText += "  /  " + manifest.userName;
+				metaText += "  /  " + manifest.noteDesigner;
 			}
 
 			cell.TitleText.text = string.IsNullOrWhiteSpace(manifest.scoreTitle) ? manifest.title : manifest.scoreTitle;
@@ -642,7 +642,7 @@ namespace Sekai.CustomMusicScoreManager
 			_detailMeta.text = string.Format(
 				CultureInfo.InvariantCulture,
 				"<color=#9C98C8>谱师</color>  {0}\n<color=#9C98C8>更新</color>  {1:yyyy-MM-dd HH:mm}",
-				string.IsNullOrWhiteSpace(manifest.userName) ? "-" : manifest.userName,
+				string.IsNullOrWhiteSpace(manifest.noteDesigner) ? "-" : manifest.noteDesigner,
 				item.LastWriteTime);
 			_detailStatus.text = item.StatusText;
 			_detailStatus.color = GetStatusColor(item);
@@ -811,7 +811,7 @@ namespace Sekai.CustomMusicScoreManager
 			bootData.CustomMusicScoreId = entry.Manifest.id;
 			bootData.CustomMusicScorePath = entry.RootDirectory;
 			bootData.CustomMusicScoreTitle = entry.Manifest.scoreTitle;
-			bootData.CustomMusicScoreAuthorName = entry.Manifest.userName;
+			bootData.CustomMusicScoreAuthorName = entry.Manifest.noteDesigner;
 			bootData.CustomMusicScoreCollaborationLabel = entry.Manifest.collaborationLabel;
 
 			if (bootData.MusicData != null)
@@ -1351,7 +1351,7 @@ namespace Sekai.CustomMusicScoreManager
 			CustomMusicScoreManifest manifest = _selected.Entry.Manifest;
 			manifest.title = _titleInput.text;
 			manifest.scoreTitle = _scoreTitleInput.text;
-			manifest.userName = _userInput.text;
+			manifest.noteDesigner = _noteDesignerInput.text;
 			manifest.composer = _composerInput.text;
 			manifest.lyricist = _lyricistInput.text;
 			manifest.arranger = _arrangerInput.text;
@@ -1398,7 +1398,7 @@ namespace Sekai.CustomMusicScoreManager
 		{
 			_titleInput.SetTextWithoutNotify(manifest.title);
 			_scoreTitleInput.SetTextWithoutNotify(manifest.scoreTitle);
-			_userInput.SetTextWithoutNotify(manifest.userName);
+			_noteDesignerInput.SetTextWithoutNotify(manifest.noteDesigner);
 			_composerInput.SetTextWithoutNotify(manifest.composer);
 			_lyricistInput.SetTextWithoutNotify(manifest.lyricist);
 			_arrangerInput.SetTextWithoutNotify(manifest.arranger);
@@ -1419,7 +1419,7 @@ namespace Sekai.CustomMusicScoreManager
 		{
 			TMP_InputField[] inputs =
 			{
-				_titleInput, _scoreTitleInput, _userInput, _composerInput, _lyricistInput, _arrangerInput, _singerInput, _collaborationLabelInput, _descriptionInput, _levelInput,
+				_titleInput, _scoreTitleInput, _noteDesignerInput, _composerInput, _lyricistInput, _arrangerInput, _singerInput, _collaborationLabelInput, _descriptionInput, _levelInput,
 				_durationInput, _fillerInput, _audioInput, _jacketInput, _scoreInput, _videoInput
 			};
 			foreach (TMP_InputField input in inputs)
@@ -1433,7 +1433,7 @@ namespace Sekai.CustomMusicScoreManager
 		{
 			TMP_InputField[] inputs =
 			{
-				_titleInput, _scoreTitleInput, _userInput, _composerInput, _lyricistInput, _arrangerInput, _singerInput, _collaborationLabelInput, _descriptionInput, _levelInput,
+				_titleInput, _scoreTitleInput, _noteDesignerInput, _composerInput, _lyricistInput, _arrangerInput, _singerInput, _collaborationLabelInput, _descriptionInput, _levelInput,
 				_durationInput, _fillerInput, _audioInput, _jacketInput, _scoreInput, _videoInput
 			};
 			foreach (TMP_InputField input in inputs)

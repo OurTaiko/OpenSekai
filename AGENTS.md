@@ -93,6 +93,9 @@ community chart browser is the `Charts.Online` scene (`SceneManager.Scene.Commun
   so a later 上传 of a chart linked to the player's own site chart replaces it (`?chart=<id>`); a chart downloaded from
   someone else goes up as a new chart. The button is an added object in `ScreenLayerMusicScoreMakerTop.prefab`, like
   导出SUS.
+- A chart's 谱师署名 is `noteDesigner` in manifest.json: the chart manager's 谱师署名 field, the 谱师 shown in the manager and
+  the live, and SUS `#DESIGNER`. A new chart takes the signed-in nickname, otherwise the system user name. The site keeps it
+  in `charts.note_designer`, and its chart management page can change it. The old `userName` field is no longer read.
 - Chart ids are 32 random hex digits (`CommunityChart.Id`); `NumberId` is the short number 譜面ID検索 takes. Install
   records written when ids were numbers hold the number and are re-keyed to the id on first use.
 - The signed-in account remembers which community server it belongs to: pointed at another server (a local
