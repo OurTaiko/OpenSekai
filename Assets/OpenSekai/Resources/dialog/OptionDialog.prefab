@@ -2067,6 +2067,7 @@ MonoBehaviour:
   - {fileID: 4995711398799494642}
   - {fileID: 8834242260653588299}
   - {fileID: 5217819126524544111}
+  loginPanelPrefab: {fileID: 2871909053712295578, guid: 62aa0829deb974d07b7271f9ac537dd1, type: 3}
 --- !u!1 &1709867586078768
 GameObject:
   m_ObjectHideFlags: 0

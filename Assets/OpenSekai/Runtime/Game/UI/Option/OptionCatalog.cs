@@ -73,6 +73,8 @@ namespace Sekai
 		public string Art { get; private set; }
 		/// <summary>Text: drawn in the pink hint colour.</summary>
 		public bool IsHint { get; private set; }
+		/// <summary>Button: text that changes while the dialog is open (the account button); read on every refresh.</summary>
+		public Func<string> ButtonText { get; private set; }
 
 		/// <summary>Split: goes to the right column.</summary>
 		public bool IsSide { get; private set; }
@@ -212,6 +214,12 @@ namespace Sekai
 			return this;
 		}
 
+		public OptionRow ButtonTextFrom(Func<string> text)
+		{
+			ButtonText = text;
+			return this;
+		}
+
 	}
 
 	public sealed class OptionBlock
@@ -264,6 +272,7 @@ namespace Sekai
 		public const string ActionSeFlick = "se-flick";
 		public const string ActionSeLong = "se-long";
 		public const string ActionSeTrace = "se-trace";
+		public const string ActionCommunityAccount = "community-account";
 		public const string ActionNone = "none";
 
 		public const int NoteSkinCount = 2;
@@ -395,7 +404,12 @@ namespace Sekai
 								: LiveSettingData.CustomMusicScoreBackgroundMode2DMV).Slots(250f),
 						OptionRow.Toggle("fullscreen", "フルスクリーン",
 							s => s.Local.FullscreenEnabled ?? Screen.fullScreen, (s, on) => s.Local.FullscreenEnabled = on)
-							.Slots(229f).HiddenWhen(!OptionSettings.SupportsFullscreen))));
+							.Slots(229f).HiddenWhen(!OptionSettings.SupportsFullscreen))),
+				// Sign-in for the online charts (CommunityCharts); the button opens CommunityLoginPanel.
+				new OptionSection("アカウント",
+					new OptionBlock(OptionBlockLayout.Halves,
+						OptionRow.Button("community-account", "OurTaiko 账号", "登录", ActionCommunityAccount)
+							.ButtonTextFrom(() => Community.CommunityAccount.IsSignedIn ? Community.CommunityAccount.Nickname : "登录"))));
 		}
 
 		/// <summary>The プレビューで詳細設定 dialog: note speed and timing down to 0.01, and ノーツの開始位置.</summary>

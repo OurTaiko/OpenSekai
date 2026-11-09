@@ -115,7 +115,7 @@ namespace Sekai.Community
 					? CommunityAccount.Nickname
 					: CommunityAccount.Nickname + "\n<size=70%><color=#9C98C8>@" + username + "</color></size>";
 			}
-			SetStatus(message ?? (signedIn ? string.Empty : "登录后可以给谱面点喜欢，并把谱面加入マイリスト。"));
+			SetStatus(message ?? (signedIn ? string.Empty : "登录后可以给谱面赞踩，并把谱面加入マイリスト。"));
 			SetBusy(false);
 		}
 

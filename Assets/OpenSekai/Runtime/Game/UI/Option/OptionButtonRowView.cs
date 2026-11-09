@@ -27,6 +27,10 @@ namespace Sekai
 
 		public override void Refresh(OptionSettings settings)
 		{
+			if (Row.ButtonText != null)
+			{
+				buttonText.text = Row.ButtonText();
+			}
 		}
 	}
 }

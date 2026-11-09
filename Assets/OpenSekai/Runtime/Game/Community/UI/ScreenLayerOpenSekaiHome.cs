@@ -79,7 +79,7 @@ namespace Sekai.Community
 			else
 			{
 				accountTitle.text = "登录";
-				accountDetail.text = "登录 OurTaiko 账号后，可以在在线谱面里点喜欢、使用マイリスト。";
+				accountDetail.text = "登录 OurTaiko 账号后，可以在在线谱面里赞踩、使用マイリスト。";
 			}
 		}
 

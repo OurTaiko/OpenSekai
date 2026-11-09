@@ -67,6 +67,9 @@ community chart browser is the `CommunityCharts` scene; its charts come from Sek
   `ScreenLayerCommunityCharts` the `DifficultyRail` and `ListArea` are still nested instances of the manager's part
   prefabs (so the rail and list cells look the same in both), the rest is its own. The list rows are
   `CustomMusicScoreEntryCell`. `CommunityLoginPanel` is nested in both screens.
+- Signing in lives in the option dialog: Additionals > アカウント has an OurTaiko 账号 button (the nickname when signed
+  in) that opens `CommunityLoginPanel` over the dialog (`OptionDialog.loginPanelPrefab`). `CommunityCharts` has the
+  manager's ☰ button in place of a login button; its nested panel still pops up when voting or マイリスト needs a sign-in.
 - Sign-in works like OurTaikoPlay: the password goes only to OurTaiko SSO (`/api/v1/game/account/login`); the
   account token is kept in `community_account.dat` under `GamePaths.Root`, encrypted with a key of this device, and
   traded for a game session of the site (`/api/v1/game/tokens`, service from `/api/v1/meta`), sent as a Bearer token.

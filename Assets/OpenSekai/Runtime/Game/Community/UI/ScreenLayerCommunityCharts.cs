@@ -57,10 +57,9 @@ namespace Sekai.Community
 		private Button myListButton;
 		[SerializeField]
 		private Image myListFace;
+		/// <summary>☰, as in the local chart manager: opens the option dialog, where Additionals holds the sign-in.</summary>
 		[SerializeField]
-		private Button accountButton;
-		[SerializeField]
-		private TextMeshProUGUI accountLabel;
+		private Button settingsButton;
 
 		[Header("Filters")]
 		[SerializeField]
@@ -233,7 +232,7 @@ namespace Sekai.Community
 				tabButtons[i].onClick.AddListener(() => SelectTab(tab));
 			}
 			myListButton.onClick.AddListener(() => SelectTab(Tab.MyList));
-			accountButton.onClick.AddListener(() => loginPanel.Show());
+			settingsButton.onClick.AddListener(() => ScreenManager.Instance?.ShowDialog<OptionDialog>(DialogType.OptionDialog));
 			for (int i = 0; i < difficultyButtons.Length; i++)
 			{
 				int index = i;
@@ -294,7 +293,6 @@ namespace Sekai.Community
 			loginPanel.gameObject.SetActive(false);
 			idSearchPopup.SetActive(false);
 			CommunityAccount.Changed += OnAccountChanged;
-			UpdateAccountButton();
 			UpdateSearchFormVisuals();
 			ApplyTabLayout();
 			UpdateSelection(null);
@@ -309,7 +307,6 @@ namespace Sekai.Community
 
 		protected override void OnScreenStart()
 		{
-			UpdateAccountButton();
 			if (!_started)
 			{
 				_started = true;
@@ -1047,7 +1044,6 @@ namespace Sekai.Community
 
 		private void OnAccountChanged()
 		{
-			UpdateAccountButton();
 			if (!CommunityAccount.IsSignedIn && _tab == Tab.MyList)
 			{
 				SelectTab(Tab.Recommended);
@@ -1057,11 +1053,6 @@ namespace Sekai.Community
 				// Vote / 登録済み flags depend on who is signed in.
 				Reload();
 			}
-		}
-
-		private void UpdateAccountButton()
-		{
-			accountLabel.text = CommunityAccount.IsSignedIn ? CommunityAccount.Nickname : "登录";
 		}
 
 		private void SetStatus(string message)

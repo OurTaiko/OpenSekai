@@ -45,6 +45,11 @@ namespace Sekai
 		[SerializeField]
 		private RectTransform[] pageContents;
 
+		[SerializeField]
+		private Community.CommunityLoginPanel loginPanelPrefab;
+
+		private Community.CommunityLoginPanel loginPanel;
+
 		private OptionSettings settings;
 		private readonly Dictionary<string, OptionRow> rows = new Dictionary<string, OptionRow>();
 		private readonly List<OptionRowView> views = new List<OptionRowView>();
@@ -63,6 +68,8 @@ namespace Sekai
 			BuildPages(OptionCatalog.Pages());
 			RefreshRows();
 			SetupTabs();
+			Community.CommunityAccount.Changed -= RefreshRows;
+			Community.CommunityAccount.Changed += RefreshRows;
 		}
 
 		private void BuildPages(IReadOnlyList<OptionPage> pages)
@@ -125,6 +132,9 @@ namespace Sekai
 				case OptionCatalog.ActionSeTrace:
 					PlaySeTest(LiveSoundDefine.SE_LIVE_TRACE);
 					break;
+				case OptionCatalog.ActionCommunityAccount:
+					ShowLoginPanel();
+					break;
 			}
 		}
 
@@ -178,6 +188,26 @@ namespace Sekai
 					scroll.content.anchoredPosition = Vector2.zero;
 				}
 			}
+		}
+
+		/// <summary>The OurTaiko sign-in page (the same panel the online charts use), over the whole screen.</summary>
+		private void ShowLoginPanel()
+		{
+			if (loginPanel == null)
+			{
+				if (loginPanelPrefab == null)
+				{
+					return;
+				}
+				// The dialog fills the screen on the dialog layer, so a child covers everything, the dialog included.
+				loginPanel = Instantiate(loginPanelPrefab, transform, false);
+				var rect = (RectTransform)loginPanel.transform;
+				rect.anchorMin = Vector2.zero;
+				rect.anchorMax = Vector2.one;
+				rect.offsetMin = Vector2.zero;
+				rect.offsetMax = Vector2.zero;
+			}
+			loginPanel.Show();
 		}
 
 		private void OpenNoteDetail()
@@ -235,6 +265,12 @@ namespace Sekai
 		protected override void OnDisable()
 		{
 			StopLongSeTest();
+			Community.CommunityAccount.Changed -= RefreshRows;
+			if (loginPanel != null)
+			{
+				Destroy(loginPanel.gameObject);
+				loginPanel = null;
+			}
 			base.OnDisable();
 		}
 	}
