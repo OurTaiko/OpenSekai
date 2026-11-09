@@ -346,7 +346,10 @@ namespace Sekai.CoopLive
 
 			long t = _controller.MusicTimeMs;
 			bool inChance = _chanceStartMs >= 0 && t >= _chanceStartMs && t < _chanceEndMs;
-			CoopFeverPhase phase = inChance ? CoopFeverPhase.Chance
+			// The FEVER CHANCE look (curtain, gauge, lines) stays through the gap until FEVER starts; the gauge stops
+			// counting when FEVER CHANCE ends.
+			bool preparing = _chanceStartMs >= 0 && t >= _chanceStartMs && t < _feverStartMs;
+			CoopFeverPhase phase = preparing ? CoopFeverPhase.Chance
 				: FeverActive ? (_fever == FeverKind.SuperFever ? CoopFeverPhase.SuperFever : CoopFeverPhase.Fever)
 				: CoopFeverPhase.None;
 			_feverView?.Show(phase);

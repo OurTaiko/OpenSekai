@@ -144,7 +144,8 @@ screen data `Resources/screen/data/ScreenLayerCoopLive.asset` in `EntryScreenLay
       started (the SUPER FEVER condition, worked out from the statuses everyone sends) has the picture covered by "OK!" in
       their slot color.
     - `MultiFeverView`, as in the original:
-      - FEVER CHANCE: everything outside the lane is greyed (`feverChanceFrames`, two big rectangles along the lane's sides).
+      - FEVER CHANCE, and the 3 s after it until FEVER starts: everything outside the lane is under a grey curtain
+        (`feverChanceFrames`, two big rectangles along the lane's sides); FEVER itself has no curtain.
         A gauge rises on both sides of the lane, crossed by the FEVER and SUPER FEVER lines (`line_fever`, `line_superFever`)
         with their labels (`feverLaneText`, `superFeverLaneText`). It shows the team's PERFECT + GREAT since FEVER CHANCE
         started over everyone's judgments in it (this player's chart, `SoloLiveController.CountJudgments`, times the
