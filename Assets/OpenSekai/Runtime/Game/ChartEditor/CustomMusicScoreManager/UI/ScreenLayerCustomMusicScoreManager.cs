@@ -192,8 +192,6 @@ namespace Sekai.CustomMusicScoreManager
 		[SerializeField]
 		private TMP_InputField _videoInput;
 		[SerializeField]
-		private TextMeshProUGUI _titleText;
-		[SerializeField]
 		private Button _settingsButton;
 		[SerializeField]
 		private Button _refreshButton;
@@ -214,7 +212,6 @@ namespace Sekai.CustomMusicScoreManager
 		{
 			base.Awake();
 			SetupOriginalFontAssets();
-			_titleText.text = $"Open Sekai {Application.version}";
 			BindEvents();
 			UpdateSelection(null);
 		}
