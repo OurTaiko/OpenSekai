@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa62a94b9c7e4c7ebca7775237c1c6b3, type: 3}
   m_Name: AfterPostProcess
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   m_Active: 1
   _targetLayer:
     serializedVersion: 2

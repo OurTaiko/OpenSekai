@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4c644d5a402a4eca9a9caafe91487bb4, type: 3}
   m_Name: PlanarReflectionFeature
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   m_Active: 1
   _drawStencilShader: {fileID: 0}
   _planarReflectionInfo:

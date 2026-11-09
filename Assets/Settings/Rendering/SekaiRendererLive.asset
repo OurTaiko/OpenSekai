@@ -39,7 +39,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b51c0dcebf557794ab87b54159930dc3, type: 2}
   - {fileID: 11400000, guid: 8e2c4b4777efc1d469b36db050eab7ef, type: 2}
   m_RendererFeatureMap: 64305df1dddfb94636e63923a01ccfdc6bec8544b8b78ef51f916837dfffa931ed1d42122b579d462b71440c82e3db3dcd2f42ba7ffbc1d15c747f66514b96fdd716647bc67659d89d11674dd21119876f7b4e5cf550c61fd5b616543a0dc8562b4aaa8a24d4deb4l
-  xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
+  xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   m_AssetVersion: 3
   m_PrepassLayerMask:
