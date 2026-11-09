@@ -626,10 +626,9 @@ namespace Sekai.CustomMusicScoreManager
 			_detailTitle.text = string.IsNullOrWhiteSpace(manifest.scoreTitle) ? manifest.title : manifest.scoreTitle;
 			_detailMeta.text = string.Format(
 				CultureInfo.InvariantCulture,
-				"<color=#9C98C8>谱师</color>  {0}\n<color=#9C98C8>更新</color>  {1:yyyy-MM-dd HH:mm}\n<color=#9C98C8>路径</color>  {2}",
+				"<color=#9C98C8>谱师</color>  {0}\n<color=#9C98C8>更新</color>  {1:yyyy-MM-dd HH:mm}",
 				string.IsNullOrWhiteSpace(manifest.userName) ? "-" : manifest.userName,
-				item.LastWriteTime,
-				item.Entry.RootDirectory);
+				item.LastWriteTime);
 			_detailStatus.text = item.StatusText;
 			_detailStatus.color = GetStatusColor(item);
 			if (_detailBadge != null)
