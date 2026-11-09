@@ -1861,6 +1861,13 @@ namespace Sekai
 
 		private void SetUpScreenResolution()
 		{
+			// ScreenManager runs in edit mode too. Picking the match from the Game view's aspect there would change the
+			// scene's CanvasScaler with the window shape and show up in the scene diff on every save.
+			if (!Application.isPlaying)
+			{
+				return;
+			}
+
 			if (rootCanvasScaler != null)
 			{
 				var screenAspect = Screen.width > 0 ? (float)Screen.height / Screen.width : BASE_SCREEN_SIZE.y / BASE_SCREEN_SIZE.x;

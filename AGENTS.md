@@ -52,3 +52,17 @@ Also note:
   (`live/tap_se/custom01`, `custom02`) that ship in the project. The original has more.
 - The ノーツスキン page for custom01 is put together from that skin's note sprites. custom02 uses the official
   `note_preview/custom02` strip.
+
+## Scene and prefab saves
+
+UI that a layout component drives (HorizontalLayoutGroup, ContentSizeFitter, AspectRatioFitter, Scrollbar) makes Unity
+record the driven anchors, sizes and positions as prefab instance overrides whenever the layout re-runs, for example after
+the Canvas changes size. They are saved as `value: 0` and recomputed on load. `Assets/OpenSekai/Editor/DrivenOverrideStripper.cs`
+deletes them before each scene or Prefab Mode save, so a save only diffs what you changed. If a save still adds
+RectTransform overrides, check whether those properties are driven before changing values in the prefab.
+
+`ScreenManager` runs in edit mode but leaves the CanvasScaler's match alone there; it picks it from the screen aspect only
+in play mode.
+
+The project has the Pipeline package (`com.unity.pipeline`), so the Unity CLI can drive an open Editor
+(`unity command eval --file <script.cs>`).
