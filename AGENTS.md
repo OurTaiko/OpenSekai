@@ -31,7 +31,6 @@ change them and they are saved, but **they have no effect**. Each one is marked 
 | ライブ | カットイン演出 | `LiveSettingData.UseCutIn` | Nothing reads it. |
 | ライブ | FEVER演出 (標準 / 軽量) | `LiveSettingData.FeverEffectTypeIndex` | `LiveConfig.SetFeverEffectName` sets a bundle name, but no `effect_asset/live/fever/*` bundle exists and nothing loads one. |
 | ライブ | スキル・活躍表示 | `LiveSettingData.HiddenSkillAndPraise` (inverted) | Nothing reads it. |
-| ライブ | 滑らかさ(FPS) (高品質 / 標準) | `LiveSettingData.Use120FPS` | Nothing reads it. The frame rate comes from `FramerateUtility.GetFeasibleFramerate`. |
 | ライブ | MV設定 > モード (3DMV / 2DMV / 原曲MV / 軽量) | `LiveSettingData.LiveMode` | Custom-chart lives take their background from Additionals > ライブ背景 (`CustomMusicScoreLiveBackgroundMode`). `LiveMode` only feeds the official-song paths (`LiveUtility`, `LiveModeButton`). |
 | ライブ | プレビューで詳細設定: the lane preview and tap-to-check timing | none | The detail dialog (`LiveNoteSettingDialog`) only has the steppers. The preview box in the main tab is a static picture, and the dialog's 「音に合わせてタップし…」 hint refers to a tap check that does not exist yet. |
 | システム | デフォルト楽曲 (セカイver. / バーチャル・シンガーver.) | `ApplicationLocalSettings.SystemOptions.DefaultVocalType` | Nothing reads it. |
@@ -43,6 +42,11 @@ change them and they are saved, but **they have no effect**. Each one is marked 
 | システム | 一括ダウンロード (基本ボイス, 楽曲, 3D・2D・原曲MV) | none | The buttons have no handler. |
 
 Also note:
+
+- 滑らかさ(FPS) offers 60 / 120 / Unlimited instead of the original's 高品質 / 標準. It is stored in
+  `LiveSettingData.FrameRateMode` (old saves fall back to `Use120FPS`). `BaseLiveController` applies it with
+  `FramerateUtility.SetLiveFrameRate`, which turns vSync off for the live; the menu scenes' `SetFrameRate()` puts the
+  quality level's vSync back.
 
 - ノーツスキン and ノーツのSE list only the two skins (`live/note/custom01`, `custom02`) and the two tap-SE sets
   (`live/tap_se/custom01`, `custom02`) that ship in the project. The original has more.

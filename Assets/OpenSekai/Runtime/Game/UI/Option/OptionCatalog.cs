@@ -312,8 +312,9 @@ namespace Sekai
 							.Placeholder("No effect_asset/live/fever bundle exists."),
 						OptionRow.Toggle("skill-display", "スキル・活躍表示", s => !s.Live.HiddenSkillAndPraise, (s, on) => s.Live.HiddenSkillAndPraise = !on)
 							.Placeholder("Nothing reads LiveSettingData.HiddenSkillAndPraise."),
-						OptionRow.Radio("fps", "滑らかさ(FPS)", new[] { "高品質", "標準" }, s => s.Live.Use120FPS ? 0 : 1, (s, i) => s.Live.Use120FPS = i == 0)
-							.Slots(0f).Placeholder("Nothing reads LiveSettingData.Use120FPS."))),
+						// OpenSekai offers 60 / 120 / Unlimited in place of the original's 高品質 / 標準.
+						OptionRow.Radio("fps", "滑らかさ(FPS)", new[] { "60", "120", "Unlimited" },
+							s => s.Live.LiveFrameRateMode, (s, i) => s.Live.FrameRateMode = i).Slots(0f))),
 				new OptionSection("ライブ補助設定",
 					new OptionBlock(OptionBlockLayout.Columns,
 						OptionRow.Toggle("simultaneous-line", "同時押しライン", s => s.Live.UseSimultaneousPushingLine, (s, on) => s.Live.UseSimultaneousPushingLine = on),

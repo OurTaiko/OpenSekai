@@ -62,7 +62,7 @@ namespace Sekai.Core.Live
 
 		protected virtual void Setup()
 		{
-			FramerateUtility.SetFrameRate(-1);
+			FramerateUtility.SetLiveFrameRate((Settings ?? LiveSettingData.LoadFromStorage()).GetLiveTargetFrameRate());
 			Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
 			LiveBootDataBase bootData = BootData;

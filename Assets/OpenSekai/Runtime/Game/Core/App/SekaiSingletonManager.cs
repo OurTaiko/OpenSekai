@@ -32,7 +32,9 @@ namespace Sekai
 
 		private void Update()
 		{
-			deltaK = Time.timeScale * Time.deltaTime * Application.targetFrameRate;
+			// An unlimited live sets targetFrameRate to -1; measure against the default rate then.
+			int targetFrameRate = Application.targetFrameRate > 0 ? Application.targetFrameRate : FramerateUtility.DefaultFrameRate;
+			deltaK = Time.timeScale * Time.deltaTime * targetFrameRate;
 		}
 
 		public virtual void OnFinalize()

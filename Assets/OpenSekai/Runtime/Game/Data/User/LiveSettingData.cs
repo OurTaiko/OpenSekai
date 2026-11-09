@@ -28,6 +28,12 @@ namespace Sekai
 
 		public const int CustomMusicScoreBackgroundMode2DMV = 1;
 
+		public const int FrameRateMode60 = 0;
+
+		public const int FrameRateMode120 = 1;
+
+		public const int FrameRateModeUnlimited = 2;
+
 		private const string StorageFileName = "LiveSettingData.json";
 
 		private static LiveSettingData cachedStorage;
@@ -97,8 +103,26 @@ namespace Sekai
 		[Key("IsFastLateFlick")]
 		public bool IsFastLateFlick { get; set; }
 
+		/// <summary>Legacy two-way 滑らかさ(FPS); only read when <see cref="FrameRateMode"/> is missing from a save.</summary>
 		[Key("Use120FPS")]
 		public bool Use120FPS { get; set; }
+
+		/// <summary>
+		/// 滑らかさ(FPS) during a live: <see cref="FrameRateMode60"/>, <see cref="FrameRateMode120"/> or
+		/// <see cref="FrameRateModeUnlimited"/>. Null in saves made before it existed.
+		/// </summary>
+		[Key("FrameRateMode")]
+		public int? FrameRateMode { get; set; }
+
+		[IgnoreMember]
+		[JsonIgnore]
+		public int LiveFrameRateMode
+		{
+			get
+			{
+				return FrameRateMode ?? (Use120FPS ? FrameRateMode120 : FrameRateMode60);
+			}
+		}
 
 		[Key("UsedVSync")]
 		public bool? UseVSync { get; set; }
@@ -278,6 +302,20 @@ namespace Sekai
 		public float GetGuideAlpha()
 		{
 			return GuideAlpha == 0f ? 0.6f : GuideAlpha;
+		}
+
+		/// <summary>The live's target frame rate for <see cref="LiveFrameRateMode"/>; 0 means unlimited.</summary>
+		public int GetLiveTargetFrameRate()
+		{
+			switch (LiveFrameRateMode)
+			{
+				case FrameRateMode120:
+					return 120;
+				case FrameRateModeUnlimited:
+					return 0;
+				default:
+					return 60;
+			}
 		}
 
 		public void SetNoteShowRate(float optionValue)
