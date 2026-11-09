@@ -193,6 +193,8 @@ namespace Sekai.CustomMusicScoreManager
 		[SerializeField]
 		private TMP_InputField _videoInput;
 		[SerializeField]
+		private Button _homeButton;
+		[SerializeField]
 		private Button _settingsButton;
 		[SerializeField]
 		private Button _refreshButton;
@@ -219,6 +221,10 @@ namespace Sekai.CustomMusicScoreManager
 
 		private void BindEvents()
 		{
+			if (_homeButton != null)
+			{
+				_homeButton.onClick.AddListener(() => SceneManager.Instance.RequestScene(SceneManager.Scene.Home));
+			}
 			_settingsButton.onClick.AddListener(OpenSettings);
 			_refreshButton.onClick.AddListener(RefreshList);
 			_newButton.onClick.AddListener(() =>
@@ -739,57 +745,22 @@ namespace Sekai.CustomMusicScoreManager
 				return;
 			}
 
-			if (!File.Exists(entry.ScorePath))
+			string error = await CustomMusicScorePlayLauncher.PlayAsync(
+				entry, isAuto, MenuScreenType.MusicScoreMakerTop, SetStatus, this.GetCancellationTokenOnDestroy());
+			if (error != null)
 			{
-				SetStatus("找不到谱面文件。");
+				SetStatus(error);
 				return;
 			}
-			if (!File.Exists(entry.AudioPath))
-			{
-				SetStatus("找不到音频文件。");
-				return;
-			}
-
-			MusicScoreMakerData scoreData = entry.LoadScore();
-			if (scoreData == null)
-			{
-				SetStatus("无法加载谱面文件。");
-				return;
-			}
-			if (!HasPlayableNotes(scoreData))
-			{
-				SetStatus("没有可游玩的音符。");
-				return;
-			}
-
-			SetStatus("正在加载音频...");
-			bool audioReady = await entry.RegisterAudioAsync(this.GetCancellationTokenOnDestroy());
-			if (!audioReady)
-			{
-				SetStatus("无法加载音频文件。");
-				return;
-			}
-
-			FreeLiveBootData bootData = CreateDirectPlayBootData(entry, scoreData, isAuto);
-			if (bootData == null)
-			{
-				SetStatus("无法创建游玩启动数据。");
-				return;
-			}
-
-			Sekai.Core.CoreSceneArgs.Prepare(Sekai.Core.PlayMode.SoloLive, bootData);
-			LiveTransitioner.SafeForceFinish(null);
-			ScreenManager.Instance?.PushUIScreen(MenuScreenType.LiveLoading, false);
 			SetStatus(isAuto ? "正在开始自动游玩..." : "正在开始游玩...");
 		}
 
-		private static bool HasPlayableNotes(MusicScoreMakerData data)
-		{
-			return data?.NoteList != null && data.NoteList.Exists(note => note != null);
-		}
-
 		/// <summary>Builds the boot data for playing a custom chart from the manager (also used by direct Core runs).</summary>
-		public static FreeLiveBootData CreateDirectPlayBootData(CustomMusicScoreEntry entry, MusicScoreMakerData scoreData, bool isAuto)
+		public static FreeLiveBootData CreateDirectPlayBootData(
+			CustomMusicScoreEntry entry,
+			MusicScoreMakerData scoreData,
+			bool isAuto,
+			MenuScreenType returnScreenType = MenuScreenType.MusicScoreMakerTop)
 		{
 			if (entry == null || scoreData == null)
 			{
@@ -821,7 +792,7 @@ namespace Sekai.CustomMusicScoreManager
 			bootData.IsAuto = isAuto;
 			bootData.IsCustomMusicScore = true;
 			bootData.IsOfficialMusicScore = false;
-			bootData.ReturnScreenType = MenuScreenType.MusicScoreMakerTop;
+			bootData.ReturnScreenType = returnScreenType;
 			bootData.canSkipDisplayMusicInfo = false;
 			bootData.ReleaseTransitionBeforeMusicStart = true;
 			bootData.CustomMusicScoreId = entry.Manifest.id;

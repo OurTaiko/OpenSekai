@@ -19,6 +19,8 @@ It was relicensed from MIT to GPLv3 because it incorporates code from the GPLv3 
   `BackgroundAudioDecode`), song clock (`SongClock`, `GameTimeline`), `SceneSwitcher`, the
   BASS build settings editor hook, the multi-platform build script (`PlayerBuilds`), its GitHub Actions
   workflow, `GamePaths` and the iOS Info.plist postprocess (from `IosProjectBranding`). Ported files carry a header naming their origin.
+- Also used for: the OurTaiko account store and account-center calls (`Runtime/Online/OurTaikoAccounts.cs`
+  at `5a077a7`, adapted in `Community/CommunityAccount.cs`).
 
 ## ManagedBass
 - Source: https://github.com/TeamMajdata/ManagedBass (fork of https://github.com/ManagedBass/ManagedBass)

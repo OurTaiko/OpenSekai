@@ -253,6 +253,9 @@ namespace Sekai
 		MusicScoreMakerMyMusicScoreForCreate = 3010,
 		MusicScoreMakerMusicSelectForCreate = 3011,
 		MusicScoreMakerDifficultySelectForCreate = 3012,
-		MusicScoreMakerBookMarkForCreate = 3013
+		MusicScoreMakerBookMarkForCreate = 3013,
+		// OpenSekai's own screens.
+		OpenSekaiHome = 9000,
+		CommunityCharts = 9001
 	}
 }

@@ -53,6 +53,33 @@ Also note:
 - The ノーツスキン page for custom01 is put together from that skin's note sprites. custom02 uses the official
   `note_preview/custom02` strip.
 
+## Home and community charts
+
+The first scene is `Home` (navigation: 在线谱面, 自制谱管理, the OurTaiko account page, the option dialog). The
+community chart browser is the `CommunityCharts` scene; its charts come from SekaiFanmade
+(https://sekai.ourtaiko.org, separate repository `~/Repos/SekaiFanmade`, whose README lists the API).
+
+- Code is in `Assets/OpenSekai/Runtime/Game/Community/`: `CommunityClient` (site API), `CommunityAccount` (sign-in),
+  `CommunityLibrary` (download, import, `CustomMusicScores/CommunityInstalls.json`, play reports),
+  `CommunityImageCache`, and `UI/` (`ScreenLayerOpenSekaiHome`, `ScreenLayerCommunityCharts`, `CommunityLoginPanel`
+  and the two scene entry points). Screen types `OpenSekaiHome` (9000) and `CommunityCharts` (9001).
+- Prefabs are in `Assets/OpenSekai/Prefabs/Community/`. They were made from the manager screen's parts: in
+  `ScreenLayerCommunityCharts` the `DifficultyRail` and `ListArea` are still nested instances of the manager's part
+  prefabs (so the rail and list cells look the same in both), the rest is its own. The list rows are
+  `CustomMusicScoreEntryCell`. `CommunityLoginPanel` is nested in both screens.
+- Sign-in works like OurTaikoPlay: the password goes only to OurTaiko SSO (`/api/v1/game/account/login`); the
+  account token is kept in `community_account.dat` under `GamePaths.Root`, encrypted with a key of this device, and
+  traded for a game session of the site (`/api/v1/game/tokens`, service from `/api/v1/meta`), sent as a Bearer token.
+  The SSO Application needs 允许游戏登录和会话接口 and 允许游戏账号换取本应用的游戏会话 turned on.
+- Downloads are imported with `CustomMusicScoreManagerService.ImportZip`, so they also show up in the manager.
+  Lives started from either screen go through `CustomMusicScorePlayLauncher`; `ReturnScreenType` decides whether the
+  live goes back to the manager or to `CommunityCharts`. A finished, non-auto live of a downloaded chart reports one
+  play to the site (`CustomMusicScorePlayHistoryStorage` calls `CommunityLibrary.OnLocalChartPlayed`).
+- Jackets must be PNG or JPEG (`Texture2D.LoadImage`); the site stores them as JPEG.
+- To point the game at a local SekaiFanmade, set `OPENSEKAI_COMMUNITY_URL` (e.g. `http://127.0.0.1:3000`) in the
+  environment of the Editor or player. In an open Editor, `System.Environment.SetEnvironmentVariable` from a
+  `unity command eval` works until the Editor restarts.
+
 ## Platforms and builds
 
 OpenSekai ships on Windows x64, macOS universal, Linux x64, Android and iOS, the way OurTaikoPlay and MajdataPlay do:

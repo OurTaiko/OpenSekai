@@ -319,7 +319,8 @@ namespace Sekai.Core.Live
 			}
 
 			return BootData is FreeLiveBootData freeLiveBootData
-				&& freeLiveBootData.ReturnScreenType == MenuScreenType.MusicScoreMakerTop;
+				&& (freeLiveBootData.ReturnScreenType == MenuScreenType.MusicScoreMakerTop
+					|| freeLiveBootData.ReturnScreenType == MenuScreenType.CommunityCharts);
 		}
 
 		protected virtual void OnBackKey()

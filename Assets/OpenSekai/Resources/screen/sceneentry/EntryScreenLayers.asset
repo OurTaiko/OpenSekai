@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b1a46eb00f25a16155013e5bf8694cb7, type: 3}
   m_Name: EntryScreenLayers
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   Entries:
   - {fileID: 11400000, guid: 5d7ccbfccbf6b894eaaef7fa764ff19f, type: 2}
   - {fileID: 11400000, guid: 7001403130239fa48a9d364d3945f9ff, type: 2}
@@ -243,3 +243,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: db4cadfaa1c1f0c43a84d5435e63cb9a, type: 2}
   - {fileID: 11400000, guid: 39b308009e0da6345b761a0595eff4f8, type: 2}
   - {fileID: 11400000, guid: e7cab8defd539094e8b82b325a11bc27, type: 2}
+  - {fileID: 11400000, guid: 27caadcb588ee46e78eda028ba430f5a, type: 2}
+  - {fileID: 11400000, guid: 752455c0fc5d64f5a94d317930ac56c6, type: 2}

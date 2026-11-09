@@ -32,6 +32,9 @@ namespace Sekai.MusicScoreMaker.Common
 			{
 				Debug.LogWarningFormat("Failed to append custom music score play history. path:{0} error:{1}", CustomMusicScoreStorage.PlayHistoryPath, exception.Message);
 			}
+
+			// Charts downloaded from the community site report the play there (in the background).
+			Sekai.Community.CommunityLibrary.OnLocalChartPlayed(bootData.CustomMusicScorePath);
 		}
 
 		public static bool TryLoadBestResult(string customMusicScoreId, out CustomMusicScorePlayHistoryRecord bestRecord)

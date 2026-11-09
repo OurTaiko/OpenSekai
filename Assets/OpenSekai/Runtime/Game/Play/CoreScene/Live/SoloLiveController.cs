@@ -422,6 +422,11 @@ namespace Sekai.Core.Live
 					MusicScoreMakerEntryPoint.BootData = null;
 					SceneManager.Instance.RequestScene(SceneManager.Scene.CustomMusicScoreManager);
 				}
+				else if (returnScreenType.Value == MenuScreenType.CommunityCharts)
+				{
+					MusicScoreMakerEntryPoint.BootData = null;
+					SceneManager.Instance.RequestScene(SceneManager.Scene.CommunityCharts);
+				}
 				else
 				{
 					ReturnToChartEditor();
