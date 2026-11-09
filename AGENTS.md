@@ -164,6 +164,29 @@ Home). A co-op round starting meanwhile takes the player back to the room by its
 for a finished or failed live and for every co-op live that started; a retired live (pause → リタイア) and editor test plays go
 back without a result. Score ranks and the gauge use `ScoreGaugeCalculator`'s rates of 1,000,000 (`LiveResultData.RankOf`, `GaugeOf`).
 
+## Unported renderer features
+
+Four URP renderer features in `Assets/OpenSekai/Runtime/Game/Rendering/` are stubs: their render passes have not been
+ported from the original game yet (see the TODO in each class), so they draw nothing. Their shaders were GLSL ES programs
+extracted from the original Android build. Metal (iOS, macOS) cannot compile them, and every iOS build warned "shader is
+not supported on this GPU", so commit `c7278ae` removed them, together with the scenario font's outline shader and its
+two materials, which nothing used.
+
+To port one of these features, read the old shader from the commit before that one and write it again in HLSL. Do not
+bring the GLSL file back. For example:
+
+```bash
+git show c7278ae^:Assets/OpenSekai/Resources/shaders/areapost.shader
+```
+
+| Renderer feature | Shader | File in `c7278ae^` |
+| --- | --- | --- |
+| `PlanarReflectionFeature` | `Sekai/Live/DrawStencil` | `Assets/OpenSekai/Resources/shaders/planarreflection/drawstencil.shader` |
+| `SekaiAfterPostProcessRendererFeature` | `Hidden/AfterPostProcess/FadeOutBlend` | `Assets/OpenSekai/Resources/shaders/fadeoutblend.shader` |
+| `ScenarioPostProcessRendererFeature` | `Hidden/Sekai/Scenario/Post` | `Assets/OpenSekai/Resources/shaders/scenariopost.shader` |
+| `AreaPostProcessRendererFeature` | `Area/Post` | `Assets/OpenSekai/Resources/shaders/areapost.shader` |
+| none (scenario text) | `Sekai/TextMeshPro/Mobile/Distance Field` | `Assets/OpenSekai/Resources/font/scenario/tmp_scenario_distancefield_outline.shader`, materials `FOT-RodinNTLGPro-DB SDF_Base_Scenario_Outline.mat` and `FOT-RodinNTLGPro-EB SDF_Base_Scenario_Outline.mat` in the same folder |
+
 ## Scene names
 
 Scene files are named by area, not by class: `Home`, `Charts.Local` (自制谱管理, `SceneManager.Scene.CustomMusicScoreManager`),
