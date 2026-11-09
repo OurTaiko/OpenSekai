@@ -97,7 +97,10 @@ community chart browser is the `Charts.Online` scene (`SceneManager.Scene.Commun
   records written when ids were numbers hold the number and are re-keyed to the id on first use.
 - The signed-in account remembers which community server it belongs to: pointed at another server (a local
   SekaiFanmade) the game shows itself signed out and leaves `community_account.dat` alone.
-- Jackets must be PNG or JPEG (`Texture2D.LoadImage`); the site stores them as JPEG.
+- `CommunityImageCache` loads jackets and avatars through `ImageDecoder`: PNG and JPEG with `Texture2D.LoadImage`, WebP (the
+  SSO's avatars) with libwebp from the UPM package `com.netpyoung.webp` (unity.webp, git tag 0.3.22; native libraries for all five
+  platforms, iOS linked statically through `__Internal`). An animated WebP shows its first frame. `OpenSekai.Game` allows unsafe
+  code for the libwebp calls. The site stores jackets as JPEG; a chart's own jacket file must still be PNG or JPEG.
 - To point the game at a local SekaiFanmade, set `OPENSEKAI_COMMUNITY_URL` (e.g. `http://127.0.0.1:3000`) in the
   environment of the Editor or player. In an open Editor, `System.Environment.SetEnvironmentVariable` from a
   `unity command eval` works until the Editor restarts.
@@ -145,8 +148,8 @@ header (jacket, difficulty, the C/B/A/S gauge, SCORERANK), built in code by `Scr
 - Members (co-op only): one card per player, all the same size (no larger MVP card), in a row that scrolls sideways. Until
   everyone has finished it shows the scores as they come in; then MVP / SUPER STAR, TEAM SCORE and FEVER. The header gauge is the
   team's (thresholds times the number of players), one segment per player in their slot color. メンバーの成績 opens a table of
-  everyone's judgements; スタンプ work here. There are no フレンド申請 buttons and no character art: the card shows the avatar,
-  or the slot color with the nickname's first letter.
+  everyone's judgements; スタンプ work here. There are no フレンド申請 buttons and no character art: the card shows the SSO avatar
+  (`Member.avatar_url`, usually WebP), or the slot color with the nickname's first letter.
 - Detail: this player's score, ハイスコア (NEW RECORD when beaten), judgements, COMBO and LATE / FAST / FLICK. The original's
   character is replaced by the jacket and how the live ended. There is no 達成報酬 button.
 

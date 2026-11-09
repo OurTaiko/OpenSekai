@@ -26,11 +26,12 @@
         "Unity.RenderPipelines.Universal.Runtime",
         "Unity.Timeline",
         "Unity.Mathematics",
-        "Unity.Collections"
+        "Unity.Collections",
+        "unity.webp"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
+    "allowUnsafeCode": true,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,

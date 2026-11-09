@@ -7,7 +7,10 @@ using UnityEngine.Networking;
 
 namespace Sekai.Community
 {
-	/// <summary>Jacket images from the CDN as sprites, kept in memory for the last few dozen charts.</summary>
+	/// <summary>
+	/// Jackets from the CDN and avatars from the SSO as sprites, kept in memory for the last few dozen URLs.
+	/// PNG, JPEG and WebP (<see cref="ImageDecoder"/>).
+	/// </summary>
 	public static class CommunityImageCache
 	{
 		private const int Capacity = 64;
@@ -26,7 +29,7 @@ namespace Sekai.Community
 			Pending.Clear();
 		}
 
-		/// <summary>The jacket as a sprite, or null if it has none or it cannot be loaded.</summary>
+		/// <summary>The image as a sprite, or null if there is none or it cannot be loaded.</summary>
 		public static async UniTask<Sprite> LoadAsync(string url, CancellationToken ct)
 		{
 			if (string.IsNullOrEmpty(url))
@@ -60,11 +63,10 @@ namespace Sekai.Community
 				{
 					return null;
 				}
-				Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
-				if (!texture.LoadImage(request.downloadHandler.data, true))
+				Texture2D texture = ImageDecoder.Decode(request.downloadHandler.data);
+				if (texture == null)
 				{
-					UnityEngine.Object.Destroy(texture);
-					Debug.LogWarning("[Community] Jacket is not PNG or JPEG: " + url);
+					Debug.LogWarning("[Community] Image is not PNG, JPEG or WebP: " + url);
 					return null;
 				}
 				Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
@@ -73,7 +75,7 @@ namespace Sekai.Community
 			}
 			catch (Exception exception)
 			{
-				Debug.LogWarning("[Community] Jacket failed to load: " + exception.Message);
+				Debug.LogWarning("[Community] Image failed to load: " + exception.Message);
 				return null;
 			}
 			finally
