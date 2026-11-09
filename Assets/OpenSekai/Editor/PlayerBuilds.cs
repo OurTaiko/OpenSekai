@@ -21,7 +21,11 @@ namespace OpenSekai.Editor
 	public static class PlayerBuilds
 	{
 		public const string ApplicationIdentifier = "com.sparkbarry.sekai";
-		public const string BuildName = "OpenSekai";
+		public const string ProductName = "OpenSekai";
+		public const string CompanyName = "SparkBarry";
+		/// <summary>The Apple developer team that signs iOS builds, the same as OurTaikoPlay's.</summary>
+		public const string AppleTeamId = "253AX6B3P2";
+		public const string BuildName = ProductName;
 
 		private const string PendingKey = "OpenSekai.PlayerBuilds.Pending";
 		private const string MenuRoot = "OpenSekai/Build/";
@@ -55,6 +59,10 @@ namespace OpenSekai.Editor
 		[MenuItem(MenuRoot + "Configure Platforms", false, 0)]
 		public static void ConfigurePlatforms()
 		{
+			// The Editor's persistentDataPath (GamePaths.Root there) is named after these two.
+			PlayerSettings.companyName = CompanyName;
+			PlayerSettings.productName = ProductName;
+			PlayerSettings.iOS.applicationDisplayName = ProductName;
 			PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Standalone, ApplicationIdentifier);
 			PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, ApplicationIdentifier);
 			PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.iOS, ApplicationIdentifier);
@@ -70,6 +78,9 @@ namespace OpenSekai.Editor
 			PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64 | AndroidArchitecture.ARMv7;
 			PlayerSettings.Android.forceInternetPermission = true;
 			PlayerSettings.iOS.sdkVersion = iOSSdkVersion.DeviceSDK;
+			// Xcode picks the certificate and provisioning profile for the team.
+			PlayerSettings.iOS.appleDeveloperTeamID = AppleTeamId;
+			PlayerSettings.iOS.appleEnableAutomaticSigning = true;
 
 			PlayerSettings.defaultInterfaceOrientation = UIOrientation.AutoRotation;
 			PlayerSettings.allowedAutorotateToPortrait = false;
@@ -247,12 +258,20 @@ namespace OpenSekai.Editor
 			UnityEngine.Object[] preloaded = PlayerSettings.GetPreloadedAssets();
 			try
 			{
+				BuildOptions options = BuildOptions.CompressWithLz4HC;
+#if UNITY_IOS
+				// Unity validates Append before any preprocess callback, so name an earlier export back first.
+				if (target == BuildTarget.iOS && IosBuildPostprocess.PrepareForExport(output))
+				{
+					options |= BuildOptions.AcceptExternalModificationsToPlayer;
+				}
+#endif
 				BuildReport report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
 				{
 					scenes = scenes,
 					target = target,
 					locationPathName = output,
-					options = BuildOptions.CompressWithLz4HC,
+					options = options,
 				});
 				BuildSummary summary = report.summary;
 				Result result = new Result

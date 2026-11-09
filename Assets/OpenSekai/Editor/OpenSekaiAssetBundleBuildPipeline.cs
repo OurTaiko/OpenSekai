@@ -251,6 +251,13 @@ namespace Sekai.EditorTools
 				: EditorUserBuildSettings.activeBuildTarget;
 
 			OpenSekaiAssetBundleBuildPipeline.BuildForTarget(target, false);
+#if UNITY_IOS
+			// Unity validates Append before any preprocess callback, so name an earlier export back first.
+			if (target == BuildTarget.iOS && OpenSekai.Editor.IosBuildPostprocess.PrepareForExport(options.locationPathName))
+			{
+				options.options |= BuildOptions.AcceptExternalModificationsToPlayer;
+			}
+#endif
 			BuildPlayerWindow.DefaultBuildMethods.BuildPlayer(options);
 		}
 	}
