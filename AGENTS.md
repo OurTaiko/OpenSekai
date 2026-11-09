@@ -151,7 +151,9 @@ screen data `Resources/screen/data/ScreenLayerCoopLive.asset` in `EntryScreenLay
         started over everyone's judgments in it (this player's chart, `SoloLiveController.CountJudgments`, times the
         players): the FEVER line is the server's FEVER rate (70 %) and the SUPER FEVER line the top. It is yellow below the
         FEVER line and rainbow above it.
-      - FEVER / SUPER FEVER: a rainbow border flows round the screen and the lane shows FEVER! or a rainbow SUPER FEVER!!.
+      - FEVER / SUPER FEVER: a rainbow border flows round the screen and the lane shows FEVER! or a rainbow SUPER FEVER!!,
+        drawn in the lane's perspective (`LayOnLane` pulls each vertex towards the lane's centre line by how much the lane
+        narrows at its height, so the letters' strokes run towards the apex).
       The gauge and border are meshes built in `MultiFeverView`; the lane geometry they follow is serialized on it.
     Many of `FrontMultiUIView`'s sprites were never in the project, so the prefab has placeholders: TextMeshPro texts for the
     line labels, the FEVER! / SUPER FEVER!! marks, OK! and YOU, tinted `white6x6` for the thumbnail frame, OK! cover,

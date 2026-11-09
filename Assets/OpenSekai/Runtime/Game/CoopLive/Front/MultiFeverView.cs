@@ -175,6 +175,57 @@ namespace Sekai.CoopLive
 			}
 		}
 
+		// TextMeshPro rebuilds its mesh when it changes; bend it onto the lane after that, every frame it shows.
+		private void LateUpdate()
+		{
+			if (_phase == CoopFeverPhase.Fever)
+			{
+				LayOnLane(feverMark);
+			}
+			else if (_phase == CoopFeverPhase.SuperFever)
+			{
+				LayOnLane(superFeverMark);
+			}
+		}
+
+		/// <summary>
+		/// Draws a lane mark as if it lay on the lane: every point is pulled towards the lane's centre line by how much
+		/// narrower the lane is at its height, so the letters' strokes run towards the lane's apex like its edges.
+		/// </summary>
+		private void LayOnLane(TextMeshPro mark)
+		{
+			if (mark == null || !mark.gameObject.activeInHierarchy)
+			{
+				return;
+			}
+			mark.ForceMeshUpdate();
+			Vector3 origin = mark.transform.localPosition;
+			float reference = laneApex.y - origin.y;
+			if (reference <= 0f)
+			{
+				return;
+			}
+			TMP_TextInfo info = mark.textInfo;
+			for (int m = 0; m < info.meshInfo.Length; m++)
+			{
+				Vector3[] vertices = info.meshInfo[m].vertices;
+				if (vertices == null)
+				{
+					continue;
+				}
+				for (int i = 0; i < vertices.Length; i++)
+				{
+					Vector3 v = vertices[i];
+					float y = origin.y + v.y;
+					float x = origin.x + v.x;
+					float scale = Mathf.Max(0f, laneApex.y - y) / reference;
+					v.x = laneApex.x + (x - laneApex.x) * scale - origin.x;
+					vertices[i] = v;
+				}
+			}
+			mark.UpdateVertexData(TMP_VertexDataUpdateFlags.Vertices);
+		}
+
 		/* ---------- gauge ---------- */
 
 		private void BuildGauge()
