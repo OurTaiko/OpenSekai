@@ -184,7 +184,9 @@ OpenSekai ships on Windows x64, macOS universal, Linux x64, Android and iOS, the
 - `PlayerBuilds` holds the names: package `com.sparkbarry.sekai`, product `OpenSekai`, company `SparkBarry`
   (`ConfigurePlatforms()` sets them). iOS builds are signed automatically by team `253AX6B3P2`, the same as OurTaikoPlay. The Editor's `persistentDataPath`, and so its `GamePaths.Root`, is named after
   the company and product.
-- `IosBuildPostprocess` writes the iOS Info.plist keys (Files app sharing, ProMotion, export compliance) and, like
+- `IosBuildPostprocess` writes the iOS Info.plist keys (Files app sharing, ProMotion, export compliance), sets the
+  build number (`CFBundleVersion`) to the commit count (`PlayerBuilds.CommitCount()`, `git rev-list HEAD --count`, so
+  every upload to App Store Connect is larger than the last; CI checks out with `fetch-depth: 0`) and, like
   OurTaikoPlay's `IosProjectBranding`, renames the Xcode export from `Unity-iPhone` to `OpenSekai`: the project, app
   target, scheme, product (`OpenSekai.app`) and the `Unity-iPhone` / `Unity-iPhone Tests` folders. UnityFramework keeps
   its name. Before exporting into a folder that already holds a renamed export, `PrepareForExport` names it back

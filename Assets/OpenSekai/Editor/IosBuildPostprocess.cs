@@ -12,9 +12,9 @@ using UnityEditor.iOS.Xcode;
 namespace OpenSekai.Editor
 {
 	/// <summary>
-	/// Finishes the iOS export: the Info.plist keys it needs (on Append builds too, which keep the old Info.plist), and
-	/// the Xcode project, app target, scheme and folders named OpenSekai instead of Unity-iPhone. UnityFramework keeps
-	/// its name.
+	/// Finishes the iOS export: the build number and the Info.plist keys it needs (on Append builds too, which keep the
+	/// old Info.plist), and the Xcode project, app target, scheme and folders named OpenSekai instead of Unity-iPhone.
+	/// UnityFramework keeps its name.
 	/// </summary>
 	public static class IosBuildPostprocess
 	{
@@ -56,6 +56,8 @@ namespace OpenSekai.Editor
 			string plistPath = Path.Combine(root, "Info.plist");
 			PlistDocument plist = new PlistDocument();
 			plist.ReadFromFile(plistPath);
+			// The build number is the commit count, so each upload to App Store Connect is larger than the last.
+			plist.root.SetString("CFBundleVersion", PlayerBuilds.CommitCount());
 			plist.root.SetBoolean("ITSAppUsesNonExemptEncryption", false);
 			// Let ProMotion displays run at 120 Hz (滑らかさ(FPS) offers 120 and Unlimited).
 			plist.root.SetBoolean("CADisableMinimumFrameDuration", true);

@@ -335,6 +335,41 @@ namespace OpenSekai.Editor
 			}
 		}
 
+		/// <summary>
+		/// The iOS build number (CFBundleVersion): the number of commits on HEAD, so every build of a later commit
+		/// uploads with a larger number. CI checks out the full history for this.
+		/// </summary>
+		public static string CommitCount()
+		{
+			System.Diagnostics.ProcessStartInfo info = new System.Diagnostics.ProcessStartInfo("git", "rev-list HEAD --count")
+			{
+				WorkingDirectory = Path.GetFullPath("."),
+				UseShellExecute = false,
+				RedirectStandardOutput = true,
+				RedirectStandardError = true,
+				CreateNoWindow = true,
+			};
+			// An Editor launched from the Dock or Unity Hub does not inherit the shell's PATH.
+			info.EnvironmentVariables["PATH"] = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:" + Environment.GetEnvironmentVariable("PATH");
+			try
+			{
+				using System.Diagnostics.Process git = System.Diagnostics.Process.Start(info);
+				string output = git.StandardOutput.ReadToEnd().Trim();
+				string error = git.StandardError.ReadToEnd().Trim();
+				git.WaitForExit();
+				if (git.ExitCode == 0 && int.TryParse(output, out int count) && count > 0)
+				{
+					return count.ToString();
+				}
+
+				throw new BuildFailedException("git rev-list HEAD --count failed: " + (error != string.Empty ? error : output));
+			}
+			catch (System.ComponentModel.Win32Exception error)
+			{
+				throw new BuildFailedException("git is needed for the iOS build number: " + error.Message);
+			}
+		}
+
 		private static string Argument(string name)
 		{
 			string[] args = Environment.GetCommandLineArgs();

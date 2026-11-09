@@ -162,7 +162,8 @@ jobs:
           restore-keys: |
             Library-iOS-
 
-      # CFBundleShortVersionString must be plain dotted numbers, so iOS takes the bare version.
+      # CFBundleShortVersionString must be plain dotted numbers, so iOS takes the bare version;
+      # the build number (CFBundleVersion) is the commit count, set by IosBuildPostprocess.
       - uses: game-ci/unity-builder@v4
         with:
           targetPlatform: iOS
