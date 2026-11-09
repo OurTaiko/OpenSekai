@@ -190,7 +190,8 @@ OpenSekai ships on Windows x64, macOS universal, Linux x64, Android and iOS, the
   OurTaikoPlay's `IosProjectBranding`, renames the Xcode export from `Unity-iPhone` to `OpenSekai`: the project, app
   target, scheme, product (`OpenSekai.app`) and the `Unity-iPhone` / `Unity-iPhone Tests` folders. UnityFramework keeps
   its name. Before exporting into a folder that already holds a renamed export, `PrepareForExport` names it back
-  (Unity's Append expects its own names) and the build appends; this runs in `PlayerBuilds`, the Build window handler
+  (Unity's Append expects its own names) and the build appends. Only whole names are renamed: the IL2CPP sources of
+  OpenSekai's assemblies (`OpenSekai.Game.cpp`, ...) are in the same project and keep their names; this runs in `PlayerBuilds`, the Build window handler
   and a preprocess callback. `AudioBuildSettings` handles the BASS frameworks and the `__STATIC_LINKING__` define.
 - Save user data under `OpenSekai.Platform.GamePaths.Root`, never `Application.persistentDataPath` directly.
   On desktop players it is `UserData` beside the executable (`<name>.app/UserData` on macOS), so a copied game folder keeps its data.

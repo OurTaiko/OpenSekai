@@ -200,9 +200,16 @@ namespace OpenSekai.Editor
 			}
 		}
 
-		private static string RenameText(string text, string from, string to) => text
-			.Replace(from.Replace('-', '_') + "_Tests", to.Replace('-', '_') + "_Tests")
-			.Replace(from, to);
+		// Only whole names change. The app name is also the prefix of OpenSekai's assemblies, whose IL2CPP sources
+		// (OpenSekai.Game.cpp, OpenSekai.AcbDecoder.cpp, ...) are in the same project and must keep their names when an
+		// export is named back to Unity-iPhone; a name followed by a dot is renamed only before these extensions.
+		private static string RenameText(string text, string from, string to)
+		{
+			string name = @"(?<![A-Za-z0-9_.])" + Regex.Escape(from) +
+			              @"(?![A-Za-z0-9_])(?!\.(?!(?:app|xcodeproj|xcscheme|xctest)\b)[A-Za-z0-9_])";
+			return Regex.Replace(text.Replace(from.Replace('-', '_') + "_Tests", to.Replace('-', '_') + "_Tests"), name,
+				to.Replace("$", "$$"));
+		}
 
 		private static void ValidateDirectoryRename(string path, string from, string to)
 		{
