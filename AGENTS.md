@@ -182,8 +182,13 @@ OpenSekai ships on Windows x64, macOS universal, Linux x64, Android and iOS, the
   Each build packs that target's AssetBundles first (`OpenSekaiAssetBundleBuildPipeline.BuildForTarget`).
 - `.github/workflows/build.yml` runs those methods through game-ci (manual runs and `v*` tags).
 - `PlayerBuilds` holds the names: package `com.sparkbarry.sekai`, product `OpenSekai`, company `SparkBarry`
-  (`ConfigurePlatforms()` sets them). iOS builds are signed automatically by team `253AX6B3P2`, the same as OurTaikoPlay. The Editor's `persistentDataPath`, and so its `GamePaths.Root`, is named after
+  (`ConfigurePlatforms()` sets them, and the app icon through `PlayerBranding`). iOS builds are signed automatically by team `253AX6B3P2`, the same as OurTaikoPlay. The Editor's `persistentDataPath`, and so its `GamePaths.Root`, is named after
   the company and product.
+- `PlayerBranding` sets the icon of every platform from `Assets/OpenSekai/Branding/AppIcon.png` (1024×1024, no
+  transparency, as the App Store needs). It also writes Android's adaptive layers beside it: the picture fills the middle
+  84 of the 108 dp background (launchers show the middle 72), the rest is its average color, and the foreground is empty.
+  To change the icon, replace `AppIcon.png` and run `OpenSekai/Build/Configure Icons` (every build does it too). An Editor
+  without the Android module has no Android icon slots; the build that has the module fills them.
 - `IosBuildPostprocess` writes the iOS Info.plist keys (Files app sharing, ProMotion, export compliance), sets the
   build number (`CFBundleVersion`) to the commit count (`PlayerBuilds.CommitCount()`, `git rev-list HEAD --count`, so
   every upload to App Store Connect is larger than the last; CI checks out with `fetch-depth: 0`) and, like

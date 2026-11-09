@@ -88,6 +88,9 @@ namespace OpenSekai.Editor
 			PlayerSettings.allowedAutorotateToLandscapeLeft = true;
 			PlayerSettings.allowedAutorotateToLandscapeRight = true;
 
+			// The app icon on every platform, from Branding/AppIcon.png.
+			PlayerBranding.Configure();
+
 			// BASS import settings and the iOS __STATIC_LINKING__ define.
 			AudioBuildSettings.Configure();
 			AssetDatabase.SaveAssets();
