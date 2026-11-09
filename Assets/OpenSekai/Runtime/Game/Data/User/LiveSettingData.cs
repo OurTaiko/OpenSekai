@@ -274,7 +274,7 @@ namespace Sekai
 			SUS.Converter.InvalidateLiveSettingCache();
 		}
 
-		private static string StoragePath => Path.Combine(Application.persistentDataPath, StorageFileName);
+		private static string StoragePath => Path.Combine(OpenSekai.Platform.GamePaths.Root, StorageFileName);
 
 		public static string GetLiveModeTextKey(LiveModeType mode)
 		{

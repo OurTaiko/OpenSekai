@@ -8,15 +8,17 @@ It was relicensed from MIT to GPLv3 because it incorporates code from the GPLv3 
 - License: GPLv3
 - Reference revision: `33250cf75ba2d3256d48583797b31b45fcf9e987`
 - Used for: BASS audio design (WASAPI native mixer pull, single mixer thread, output latency handling),
-  SceneSwitcher design.
+  SceneSwitcher design, the portable data root (`MajEnv.RootPath`, adapted in `GamePaths`) and the iOS
+  Info.plist file-sharing keys (`iOSPostprocessBuild`, adapted in `IosBuildPostprocess`).
 
 ## OurTaikoPlay
 - Source: https://github.com/OurTaiko/OurTaikoPlay (OurTaiko)
 - License: GPLv3
 - Reference revision: `25f3feb2f89b15f8a0a81742e96f8226906814ce`
 - Used for: audio engine (`AudioEngine`, `AudioOptions`, `SoundSettings`, `NativeAudioSample`,
-  `BackgroundAudioDecode`), song clock (`SongClock`, `GameTimeline`), `SceneSwitcher`, and the
-  BASS build settings editor hook. Ported files carry a header naming their origin.
+  `BackgroundAudioDecode`), song clock (`SongClock`, `GameTimeline`), `SceneSwitcher`, the
+  BASS build settings editor hook, the multi-platform build script (`PlayerBuilds`), its GitHub Actions
+  workflow, `GamePaths` and the iOS Info.plist postprocess (from `IosProjectBranding`). Ported files carry a header naming their origin.
 
 ## ManagedBass
 - Source: https://github.com/TeamMajdata/ManagedBass (fork of https://github.com/ManagedBass/ManagedBass)

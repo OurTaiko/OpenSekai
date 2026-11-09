@@ -101,7 +101,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Utilities
 
 		private void Save()
 		{
-			string folderPath = Path.Combine(Application.persistentDataPath, SaveFolderName);
+			string folderPath = Path.Combine(OpenSekai.Platform.GamePaths.Root, SaveFolderName);
 			Directory.CreateDirectory(folderPath);
 			File.WriteAllText(Path.Combine(folderPath, SaveFileName), JsonConvert.SerializeObject(new ClipboardCacheListData
 			{
@@ -111,7 +111,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Utilities
 
 		private void Load()
 		{
-			string filePath = Path.Combine(Application.persistentDataPath, SaveFolderName, SaveFileName);
+			string filePath = Path.Combine(OpenSekai.Platform.GamePaths.Root, SaveFolderName, SaveFileName);
 			if (!File.Exists(filePath))
 			{
 				_caches = new List<ClipboardCacheData>();

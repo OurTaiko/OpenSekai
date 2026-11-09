@@ -397,7 +397,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Utilities
 
 		private static MusicScoreMakerSettingData SettingData => _settingData ??= new MusicScoreMakerSettingData();
 
-		private static string SavePath => Path.Combine(Application.persistentDataPath, SaveFolderName, SaveFileName);
+		private static string SavePath => Path.Combine(OpenSekai.Platform.GamePaths.Root, SaveFolderName, SaveFileName);
 
 		private static void LoadSettingData()
 		{

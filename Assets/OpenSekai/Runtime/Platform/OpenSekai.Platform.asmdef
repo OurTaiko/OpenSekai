@@ -1,0 +1,14 @@
+{
+    "name": "OpenSekai.Platform",
+    "rootNamespace": "OpenSekai.Platform",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

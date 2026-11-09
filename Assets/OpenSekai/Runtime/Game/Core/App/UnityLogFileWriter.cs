@@ -25,7 +25,7 @@ namespace Sekai
 			initialized = true;
 			try
 			{
-				string directory = Path.Combine(Application.persistentDataPath, LogDirectoryName);
+				string directory = Path.Combine(OpenSekai.Platform.GamePaths.Root, LogDirectoryName);
 				Directory.CreateDirectory(directory);
 				CurrentLogFilePath = Path.Combine(directory, $"unity_{DateTime.Now:yyyyMMdd_HHmmss}.log");
 				writer = new StreamWriter(CurrentLogFilePath, append: false, Encoding.UTF8)

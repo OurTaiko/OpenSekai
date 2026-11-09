@@ -89,7 +89,7 @@ namespace Sekai
 			return LiveVolume;
 		}
 
-		private static string StoragePath => Path.Combine(Application.persistentDataPath, StorageFileName);
+		private static string StoragePath => Path.Combine(OpenSekai.Platform.GamePaths.Root, StorageFileName);
 
 		private void EnsureDefaults()
 		{

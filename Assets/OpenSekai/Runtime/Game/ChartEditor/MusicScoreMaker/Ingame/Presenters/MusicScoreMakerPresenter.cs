@@ -7339,7 +7339,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 
 		private static string ResolveLocalMusicScoreDirectory()
 		{
-			return System.IO.Path.Combine(Application.persistentDataPath, "music_score_maker");
+			return System.IO.Path.Combine(OpenSekai.Platform.GamePaths.Root, "music_score_maker");
 		}
 
 		private static string ResolveLocalMusicScorePath(string fileName)

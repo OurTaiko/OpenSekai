@@ -53,6 +53,26 @@ Also note:
 - The ノーツスキン page for custom01 is put together from that skin's note sprites. custom02 uses the official
   `note_preview/custom02` strip.
 
+## Platforms and builds
+
+OpenSekai ships on Windows x64, macOS universal, Linux x64, Android and iOS, the way OurTaikoPlay and MajdataPlay do:
+
+- `Assets/OpenSekai/Editor/PlayerBuilds.cs` is the only build entry point. `ConfigurePlatforms()` sets the
+  per-platform Player settings (Mono on desktop so one host can build all three, IL2CPP on mobile, Android
+  ARM64 + ARMv7, landscape only) and reapplies the BASS plugin import settings. The `OpenSekai/Build/` menu
+  queues targets and switches platforms between them; CI calls `Build<Platform>()` with `-executeMethod`.
+  Each build packs that target's AssetBundles first (`OpenSekaiAssetBundleBuildPipeline.BuildForTarget`).
+- `.github/workflows/build.yml` runs those methods through game-ci (manual runs and `v*` tags).
+- `IosBuildPostprocess` writes the iOS Info.plist keys (Files app sharing, ProMotion, export compliance).
+  `AudioBuildSettings` handles the BASS frameworks and the `__STATIC_LINKING__` define.
+- Save user data under `OpenSekai.Platform.GamePaths.Root`, never `Application.persistentDataPath` directly.
+  On desktop players it is `UserData` beside the executable (`<name>.app/UserData` on macOS), so a copied game folder keeps its data.
+- Open and save user files with `Sekai.PlatformFileDialog` (StandaloneFileBrowser on desktop and in the
+  Editor, NativeFilePicker on Android and iOS) instead of calling either plugin.
+- The Editor compiles only the active target's `#if` branches. To check the others without switching
+  platform, compile with `PlayerBuildInterface.CompilePlayerScripts` for each target; it works even when
+  the target's build module is not installed.
+
 ## Scene and prefab saves
 
 UI that a layout component drives (HorizontalLayoutGroup, ContentSizeFitter, AspectRatioFitter, Scrollbar) makes Unity

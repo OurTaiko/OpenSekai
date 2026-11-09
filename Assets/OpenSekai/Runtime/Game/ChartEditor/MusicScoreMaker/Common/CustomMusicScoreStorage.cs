@@ -18,7 +18,7 @@ namespace Sekai.MusicScoreMaker.Common
 
 		private const string ShortIdChars = "0123456789abcdefghijklmnopqrstuvwxyz";
 
-		public static string RootDirectory => Path.Combine(Application.persistentDataPath, DirectoryName);
+		public static string RootDirectory => Path.Combine(OpenSekai.Platform.GamePaths.Root, DirectoryName);
 
 		public static string PlayHistoryPath => Path.Combine(RootDirectory, PlayHistoryFileName);
 

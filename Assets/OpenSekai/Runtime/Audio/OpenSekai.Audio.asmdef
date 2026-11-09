@@ -2,6 +2,7 @@
     "name": "OpenSekai.Audio",
     "rootNamespace": "OpenSekai.Audio",
     "references": [
+        "OpenSekai.Platform",
         "GUID:cc2da3b9d8ecf0b459095e52cd9b18b4",
         "GUID:f57538872477c844f9d0f51d80b7cd88",
         "GUID:351e56f1b6ecd0c4eb4c7308c102641d",

@@ -7,7 +7,6 @@ using Sekai.Live;
 using Sekai.MusicScoreMaker.Common;
 using Sekai.MusicScoreMaker.Ingame.Models;
 using Sekai.MusicScoreMaker.Ingame.Presenters;
-using SFB;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -971,22 +970,15 @@ namespace Sekai.CustomMusicScoreManager
 				return;
 			}
 
-#if UNITY_EDITOR || UNITY_STANDALONE
-			string defaultName = _selected.Entry.Manifest.scoreTitle + "_" + _selected.Entry.Manifest.id;
-			string destination = SaveStandaloneFile("导出自制谱", CustomMusicScoreStorage.RootDirectory, defaultName, "zip");
-			if (string.IsNullOrEmpty(destination))
-			{
-				return;
-			}
-
-			string path = CustomMusicScoreManagerService.ExportZip(_selected.Entry, destination);
-			SetStatus(string.IsNullOrEmpty(path) ? "导出失败。" : "已导出：" + path);
-#elif UNITY_ANDROID || UNITY_IOS
-			ExportSelectedNative(() => CustomMusicScoreManagerService.ExportZip(_selected.Entry), null);
-#else
-			string path = CustomMusicScoreManagerService.ExportZip(_selected.Entry);
-			SetStatus(string.IsNullOrEmpty(path) ? "导出失败。" : "已导出：" + path);
-#endif
+			CustomMusicScoreEntry entry = _selected.Entry;
+			SetStatus("请选择导出位置...");
+			PlatformFileDialog.Export(
+				"导出自制谱",
+				CustomMusicScoreStorage.RootDirectory,
+				entry.Manifest.scoreTitle + "_" + entry.Manifest.id,
+				"zip",
+				destination => CustomMusicScoreManagerService.ExportZip(entry, destination),
+				(result, path) => ShowExportResult(result, path, string.Empty));
 		}
 
 		private void ExportSelectedSus()
@@ -996,28 +988,43 @@ namespace Sekai.CustomMusicScoreManager
 				return;
 			}
 
+			CustomMusicScoreEntry entry = _selected.Entry;
 			List<string> warnings = null;
-#if UNITY_EDITOR || UNITY_STANDALONE
-			string defaultName = _selected.Entry.Manifest.scoreTitle + "_" + _selected.Entry.Manifest.id;
-			string destination = SaveStandaloneFile("导出SUS谱面", CustomMusicScoreStorage.RootDirectory, defaultName, "sus");
-			if (string.IsNullOrEmpty(destination))
+			SetStatus("请选择导出位置...");
+			PlatformFileDialog.Export(
+				"导出SUS谱面",
+				CustomMusicScoreStorage.RootDirectory,
+				entry.Manifest.scoreTitle + "_" + entry.Manifest.id,
+				"sus",
+				destination => CustomMusicScoreManagerService.ExportSus(entry, out warnings, destination),
+				(result, path) => ShowExportResult(result, path, FormatSusWarnings(warnings), "导出失败：没有谱面。"));
+		}
+
+		private void ShowExportResult(PlatformFileDialog.ExportResult result, string path, string suffix, string writeFailedStatus = "导出失败。")
+		{
+			if (this == null)
 			{
 				return;
 			}
 
-			string path = CustomMusicScoreManagerService.ExportSus(_selected.Entry, out warnings, destination);
-			SetStatus(FormatSusExportStatus(path, warnings));
-#elif UNITY_ANDROID || UNITY_IOS
-			ExportSelectedNative(() => CustomMusicScoreManagerService.ExportSus(_selected.Entry, out warnings), () => FormatSusWarnings(warnings));
-#else
-			string path = CustomMusicScoreManagerService.ExportSus(_selected.Entry, out warnings);
-			SetStatus(FormatSusExportStatus(path, warnings));
-#endif
-		}
-
-		private static string FormatSusExportStatus(string path, List<string> warnings)
-		{
-			return string.IsNullOrEmpty(path) ? "导出失败：没有谱面。" : "已导出：" + path + FormatSusWarnings(warnings);
+			switch (result)
+			{
+				case PlatformFileDialog.ExportResult.Exported:
+					SetStatus("已导出：" + path + suffix);
+					break;
+				case PlatformFileDialog.ExportResult.SavedInAppFolder:
+					SetStatus("当前平台不支持文件导出，已导出到：" + path + suffix);
+					break;
+				case PlatformFileDialog.ExportResult.Busy:
+					SetStatus("文件选择器已经打开。");
+					break;
+				case PlatformFileDialog.ExportResult.WriteFailed:
+					SetStatus(writeFailedStatus);
+					break;
+				default:
+					SetStatus(string.IsNullOrEmpty(path) ? "已取消导出。" : "导出已取消或失败。");
+					break;
+			}
 		}
 
 		private static string FormatSusWarnings(List<string> warnings)
@@ -1027,39 +1034,27 @@ namespace Sekai.CustomMusicScoreManager
 
 		private void ImportEntry()
 		{
-#if UNITY_EDITOR || UNITY_STANDALONE
-			CustomMusicScoreEntry entry = null;
-			string path = PickStandaloneFile(
-				"导入自制谱ZIP",
-				string.Empty,
-				new ExtensionFilter("自制谱ZIP", "zip"));
-			if (!string.IsNullOrEmpty(path))
+			PickFile("导入自制谱ZIP", "导入已取消或失败。", "自制谱ZIP", new[] { "zip" }, path =>
 			{
-				entry = CustomMusicScoreManagerService.ImportZip(path);
-			}
-			else
-			{
-				string folder = PickStandaloneFolder("导入自制谱文件夹", string.Empty);
-				if (!string.IsNullOrEmpty(folder))
+				if (!string.IsNullOrEmpty(path))
 				{
-					entry = CustomMusicScoreManagerService.ImportFolder(folder);
+					ApplyImportedEntry(CustomMusicScoreManagerService.ImportZip(path));
+					return true;
 				}
-			}
-			ApplyImportedEntry(entry);
-#elif UNITY_ANDROID || UNITY_IOS
-			PickNativeFile(
-				"导入自制谱ZIP",
-				"导入已取消或失败。",
-				path => ApplyImportedEntry(CustomMusicScoreManagerService.ImportZip(path)),
-				"zip");
-			return;
-#else
-			SetStatus("当前平台暂不支持运行时导入，请手动复制谱面。");
-			return;
-#endif
-        }
 
-        private void ApplyImportedEntry(CustomMusicScoreEntry entry)
+				// No ZIP picked: desktop dialogs offer a chart folder instead.
+				if (!PlatformFileDialog.CanPickFolder)
+				{
+					return false;
+				}
+
+				string folder = PlatformFileDialog.PickFolder("导入自制谱文件夹");
+				ApplyImportedEntry(string.IsNullOrEmpty(folder) ? null : CustomMusicScoreManagerService.ImportFolder(folder));
+				return true;
+			}, "当前平台暂不支持运行时导入，请手动复制谱面。");
+		}
+
+		private void ApplyImportedEntry(CustomMusicScoreEntry entry)
 		{
 			if (entry != null)
 			{
@@ -1075,268 +1070,83 @@ namespace Sekai.CustomMusicScoreManager
 
 		private void ReplaceSelectedAudio()
 		{
-			if (_selected?.Entry == null)
-			{
-				return;
-			}
-
-#if UNITY_EDITOR || UNITY_STANDALONE
-			string path = PickStandaloneFile(
-				"导入音频文件",
-				string.Empty,
-				new ExtensionFilter("音频文件", "ogg", "mp3", "wav"));
-			if (string.IsNullOrEmpty(path))
-			{
-				SetStatus("已取消导入音频。");
-				return;
-			}
-
-			ReplaceSelectedFile(path, CustomMusicScoreManagerService.ReplaceAudioFile, "已导入音频");
-#elif UNITY_ANDROID || UNITY_IOS
-			PickNativeFile(
-				"导入音频文件",
-				"已取消导入音频。",
-				path => ReplaceSelectedFile(path, CustomMusicScoreManagerService.ReplaceAudioFile, "已导入音频"),
-				"ogg",
-				"mp3",
-				"wav");
-#else
-			SetStatus("当前平台暂不支持导入音频文件，请手动复制。");
-#endif
+			ReplaceSelectedFromPicker("导入音频文件", "已取消导入音频。", "音频文件", new[] { "ogg", "mp3", "wav" },
+				CustomMusicScoreManagerService.ReplaceAudioFile, "已导入音频", "当前平台暂不支持导入音频文件，请手动复制。");
 		}
 
 		private void ReplaceSelectedJacket()
 		{
-			if (_selected?.Entry == null)
-			{
-				return;
-			}
-
-#if UNITY_EDITOR || UNITY_STANDALONE
-			string path = PickStandaloneFile(
-				"导入封面文件",
-				string.Empty,
-				new ExtensionFilter("图片文件", "png", "jpg", "jpeg"));
-			if (string.IsNullOrEmpty(path))
-			{
-				SetStatus("已取消导入封面。");
-				return;
-			}
-
-			ReplaceSelectedFile(path, CustomMusicScoreManagerService.ReplaceJacketFile, "已导入封面");
-#elif UNITY_ANDROID || UNITY_IOS
-			PickNativeFile(
-				"导入封面文件",
-				"已取消导入封面。",
-				path => ReplaceSelectedFile(path, CustomMusicScoreManagerService.ReplaceJacketFile, "已导入封面"),
-				"png",
-				"jpg",
-				"jpeg");
-#else
-			SetStatus("当前平台暂不支持导入封面文件，请手动复制。");
-#endif
+			ReplaceSelectedFromPicker("导入封面文件", "已取消导入封面。", "图片文件", new[] { "png", "jpg", "jpeg" },
+				CustomMusicScoreManagerService.ReplaceJacketFile, "已导入封面", "当前平台暂不支持导入封面文件，请手动复制。");
 		}
 
 		private void ReplaceSelectedScore()
 		{
-			if (_selected?.Entry == null)
-			{
-				return;
-			}
-
-#if UNITY_EDITOR || UNITY_STANDALONE
-			string path = PickStandaloneFile(
-				"导入谱面文件",
-				string.Empty,
-				new ExtensionFilter("谱面文件", "json", "txt", "sus"));
-			if (string.IsNullOrEmpty(path))
-			{
-				SetStatus("已取消导入谱面。");
-				return;
-			}
-
-			ReplaceSelectedFile(path, CustomMusicScoreManagerService.ReplaceScoreFile, "已导入谱面");
-#elif UNITY_ANDROID || UNITY_IOS
-			PickNativeFile(
-				"导入谱面文件",
-				"已取消导入谱面。",
-				path => ReplaceSelectedFile(path, CustomMusicScoreManagerService.ReplaceScoreFile, "已导入谱面"),
-				"json",
-				"txt",
-				"sus");
-#else
-			SetStatus("当前平台暂不支持导入谱面文件，请手动复制。");
-#endif
+			ReplaceSelectedFromPicker("导入谱面文件", "已取消导入谱面。", "谱面文件", new[] { "json", "txt", "sus" },
+				CustomMusicScoreManagerService.ReplaceScoreFile, "已导入谱面", "当前平台暂不支持导入谱面文件，请手动复制。");
 		}
 
 		private void ReplaceSelectedVideo()
 		{
+			ReplaceSelectedFromPicker("导入2DMV视频", "已取消导入2DMV。", "MP4视频", new[] { "mp4" },
+				CustomMusicScoreManagerService.ReplaceVideoFile, "已导入2DMV", "当前平台暂不支持导入2DMV视频，请手动复制。");
+		}
+
+		private void ReplaceSelectedFromPicker(
+			string title,
+			string cancelStatus,
+			string filterName,
+			string[] extensions,
+			Func<CustomMusicScoreEntry, string, CustomMusicScoreEntry> replaceFile,
+			string successStatus,
+			string unsupportedStatus)
+		{
 			if (_selected?.Entry == null)
 			{
 				return;
 			}
 
-#if UNITY_EDITOR || UNITY_STANDALONE
-			string path = PickStandaloneFile(
-				"导入2DMV视频",
-				string.Empty,
-				new ExtensionFilter("MP4视频", "mp4"));
-			if (string.IsNullOrEmpty(path))
+			PickFile(title, cancelStatus, filterName, extensions, path =>
 			{
-				SetStatus("已取消导入2DMV。");
-				return;
-			}
-
-			ReplaceSelectedFile(path, CustomMusicScoreManagerService.ReplaceVideoFile, "已导入2DMV");
-#elif UNITY_ANDROID || UNITY_IOS
-			PickNativeFile(
-				"导入2DMV视频",
-				"已取消导入2DMV。",
-				path => ReplaceSelectedFile(path, CustomMusicScoreManagerService.ReplaceVideoFile, "已导入2DMV"),
-				"mp4");
-#else
-			SetStatus("当前平台暂不支持导入2DMV视频，请手动复制。");
-#endif
-		}
-
-#if UNITY_EDITOR || UNITY_STANDALONE
-		private static string PickStandaloneFile(string title, string directory, params ExtensionFilter[] filters)
-		{
-			string[] paths = StandaloneFileBrowser.OpenFilePanel(title, directory ?? string.Empty, filters, false);
-			return paths != null && paths.Length > 0 ? paths[0] : string.Empty;
-		}
-
-		private static string PickStandaloneFolder(string title, string directory)
-		{
-			string[] paths = StandaloneFileBrowser.OpenFolderPanel(title, directory ?? string.Empty, false);
-			return paths != null && paths.Length > 0 ? paths[0] : string.Empty;
-		}
-
-		private static string SaveStandaloneFile(string title, string directory, string defaultName, string extension)
-		{
-			return StandaloneFileBrowser.SaveFilePanel(title, directory ?? string.Empty, defaultName ?? string.Empty, extension);
-		}
-#endif
-
-#if UNITY_ANDROID || UNITY_IOS
-		/// <summary>Writes the export to the app folder, then hands it to the system share/export sheet.</summary>
-		private void ExportSelectedNative(Func<string> export, Func<string> getStatusSuffix)
-		{
-			if (NativeFilePicker.IsFilePickerBusy())
-			{
-				SetStatus("文件选择器已经打开。");
-				return;
-			}
-
-			string path = export();
-			string suffix = getStatusSuffix?.Invoke() ?? string.Empty;
-			if (string.IsNullOrEmpty(path))
-			{
-				SetStatus("导出失败。");
-				return;
-			}
-
-			if (!NativeFilePicker.CanExportFiles())
-			{
-				SetStatus("当前平台不支持文件导出，已导出到：" + path + suffix);
-				return;
-			}
-
-			SetStatus("请选择导出位置...");
-			NativeFilePicker.ExportFile(path, success =>
-			{
-				if (this == null)
+				if (string.IsNullOrEmpty(path) || _selected?.Entry == null)
 				{
-					return;
+					return false;
 				}
 
-				SetStatus(success ? "已导出：" + path + suffix : "导出已取消或失败。");
-			});
+				ReplaceSelectedFile(path, replaceFile, successStatus);
+				return true;
+			}, unsupportedStatus);
 		}
 
-		private void PickNativeFile(string title, string cancelStatus, Action<string> onPicked, params string[] extensions)
+		/// <summary>
+		/// Opens the platform file picker. <paramref name="onPicked"/> gets the path (empty when cancelled) and
+		/// returns false to show <paramref name="cancelStatus"/>.
+		/// </summary>
+		private void PickFile(string title, string cancelStatus, string filterName, string[] extensions, Func<string, bool> onPicked, string unsupportedStatus)
 		{
-			if (NativeFilePicker.IsFilePickerBusy())
-			{
-				SetStatus("文件选择器已经打开。");
-				return;
-			}
-
 			SetStatus(title + "...");
-			NativeFilePicker.PickFile(path =>
+			PlatformFileDialog.PickResult result = PlatformFileDialog.PickFile(title, filterName, extensions, path =>
 			{
 				if (this == null)
 				{
 					return;
 				}
 
-				if (string.IsNullOrEmpty(path))
+				if (!onPicked(path))
 				{
 					SetStatus(cancelStatus);
-					return;
 				}
+			});
 
-				onPicked?.Invoke(path);
-			}, CreateNativeFileTypes(extensions));
-		}
-
-		private static string[] CreateNativeFileTypes(params string[] extensions)
-		{
-#if UNITY_ANDROID
-			// Android SAF filters by MIME rather than extension, and custom extensions
-			// such as .sus are often greyed out. Let the picker show all files and
-			// validate the selected extension in the import/replace service instead.
-			return Array.Empty<string>();
-#else
-			if (extensions == null || extensions.Length == 0)
+			if (result == PlatformFileDialog.PickResult.Busy)
 			{
-				return Array.Empty<string>();
+				SetStatus("文件选择器已经打开。");
 			}
-
-			List<string> fileTypes = new List<string>();
-			for (int i = 0; i < extensions.Length; i++)
+			else if (result == PlatformFileDialog.PickResult.Unsupported)
 			{
-				string extension = extensions[i];
-				if (string.IsNullOrWhiteSpace(extension))
-				{
-					continue;
-				}
-
-				extension = extension.Trim().TrimStart('.');
-				AddNativeFileTypesForExtension(fileTypes, extension);
-			}
-
-			return fileTypes.ToArray();
-#endif
-		}
-
-#if !UNITY_ANDROID
-		private static void AddNativeFileTypesForExtension(List<string> fileTypes, string extension)
-		{
-			if (string.IsNullOrEmpty(extension))
-			{
-				return;
-			}
-
-			if (extension.IndexOf("/", StringComparison.Ordinal) >= 0)
-			{
-				AddNativeFileType(fileTypes, extension);
-				return;
-			}
-
-			string fileType = NativeFilePicker.ConvertExtensionToFileType(extension);
-			AddNativeFileType(fileTypes, fileType);
-		}
-
-		private static void AddNativeFileType(List<string> fileTypes, string fileType)
-		{
-			if (!string.IsNullOrEmpty(fileType) && !fileTypes.Contains(fileType))
-			{
-				fileTypes.Add(fileType);
+				SetStatus(unsupportedStatus);
 			}
 		}
-#endif
-#endif
 
 		private void ReplaceSelectedFile(
 			string sourcePath,

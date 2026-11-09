@@ -2,6 +2,7 @@
     "name": "OpenSekai.Game",
     "rootNamespace": "Sekai",
     "references": [
+        "OpenSekai.Platform",
         "GUID:6715b173bc394be8993fb03e09d3802f",
         "GUID:311a3457caf443c2a04d9d4bd9c38fd9",
         "GUID:be8cebfeeeba49d98599fea9865aea23",

@@ -37,7 +37,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 		private void DeleteAllMusicScore()
 		{
 			// TODO(original): restore the exact original save-file glob before enabling bulk deletion.
-			string[] files = Directory.GetFiles(Application.persistentDataPath, "*.musicScore", SearchOption.TopDirectoryOnly);
+			string[] files = Directory.GetFiles(OpenSekai.Platform.GamePaths.Root, "*.musicScore", SearchOption.TopDirectoryOnly);
 			foreach (string file in files)
 			{
 				File.Delete(file);

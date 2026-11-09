@@ -173,7 +173,7 @@ namespace Sekai.MusicScoreMaker.Common
 		static MusicScoreMakerRepository()
 		{
 			AutoSavePattern = AutoSaveFilePrefix + "*";
-			SavePathBase = Path.Combine(Application.persistentDataPath, "music_score_maker");
+			SavePathBase = Path.Combine(OpenSekai.Platform.GamePaths.Root, "music_score_maker");
 		}
 	}
 }

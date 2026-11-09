@@ -5,7 +5,7 @@ using UnityEngine;
 namespace OpenSekai.Audio
 {
 	/// <summary>
-	/// Persists <see cref="AudioOptions"/> as JSON in <see cref="Application.persistentDataPath"/>.
+	/// Persists <see cref="AudioOptions"/> as JSON in <see cref="OpenSekai.Platform.GamePaths.Root"/> (persistentDataPath, or beside the game on desktop).
 	/// Replaces OurTaikoPlay's SettingManager for the audio subset.
 	/// Device options are applied when the engine starts; volumes apply immediately.
 	/// </summary>
@@ -16,7 +16,7 @@ namespace OpenSekai.Audio
 
 		public static event Action<AudioOptions> Changed;
 
-		private static string FilePath => Path.Combine(Application.persistentDataPath, FileName);
+		private static string FilePath => Path.Combine(OpenSekai.Platform.GamePaths.Root, FileName);
 
 		public static AudioOptions Current => current ??= Load();
 
