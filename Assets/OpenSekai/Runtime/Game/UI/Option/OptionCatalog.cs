@@ -78,7 +78,7 @@ namespace Sekai
 		public bool IsSide { get; private set; }
 		/// <summary>Columns: takes two cells.</summary>
 		public bool IsWide { get; private set; }
-		/// <summary>Radio: width of each option; 0 packs them tight (滑らかさ).</summary>
+		/// <summary>Radio: width of each option; 0 packs them tight, which only works when they fit the row.</summary>
 		public float SlotWidth { get; private set; } = 159f;
 		/// <summary>Columns / Halves: hidden on this platform (フルスクリーン off the desktop).</summary>
 		public bool IsHidden { get; private set; }
@@ -312,9 +312,11 @@ namespace Sekai
 							.Placeholder("No effect_asset/live/fever bundle exists."),
 						OptionRow.Toggle("skill-display", "スキル・活躍表示", s => !s.Live.HiddenSkillAndPraise, (s, on) => s.Live.HiddenSkillAndPraise = !on)
 							.Placeholder("Nothing reads LiveSettingData.HiddenSkillAndPraise."),
-						// OpenSekai offers 60 / 120 / Unlimited in place of the original's 高品質 / 標準.
+						// OpenSekai offers 60 / 120 / Unlimited in place of the original's 高品質 / 標準. Three options need
+						// about 410px (a 54px circle, 17px gap and the text each; "Unlimited" alone is ~143px), more than one
+						// 320px cell, so the row takes two cells; it is alone on its line.
 						OptionRow.Radio("fps", "滑らかさ(FPS)", new[] { "60", "120", "Unlimited" },
-							s => s.Live.LiveFrameRateMode, (s, i) => s.Live.FrameRateMode = i).Slots(0f))),
+							s => s.Live.LiveFrameRateMode, (s, i) => s.Live.FrameRateMode = i).Wide(220f))),
 				new OptionSection("ライブ補助設定",
 					new OptionBlock(OptionBlockLayout.Columns,
 						OptionRow.Toggle("simultaneous-line", "同時押しライン", s => s.Live.UseSimultaneousPushingLine, (s, on) => s.Live.UseSimultaneousPushingLine = on),
