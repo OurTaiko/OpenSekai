@@ -53,6 +53,9 @@ namespace Sekai.Core.Live
 
 		private bool coopAborted;
 
+		// The chart's best score before this live, read before the live's own record is written (null: not read yet).
+		private int? previousBest;
+
 		/// <summary>Starts the live described by <paramref name="bootData"/>. Called by <see cref="EntryPoint"/>.</summary>
 		public void Boot(LiveBootDataBase bootData)
 		{
@@ -463,6 +466,7 @@ namespace Sekai.Core.Live
 			playHistoryRecorded = true;
 			if (BootData is FreeLiveBootData freeLiveBootData)
 			{
+				CapturePreviousBest();
 				CustomMusicScorePlayHistoryStorage.AppendLiveResult(freeLiveBootData, liveLogic?.Score ?? default, currentMusicTimeMs, musicLength);
 			}
 		}
@@ -476,25 +480,30 @@ namespace Sekai.Core.Live
 
 			LiveViewExt.Finish3D(liveViews);
 			LiveViewExt.OnUnload(liveViews);
-			MenuScreenType? returnScreenType = (BootData as FreeLiveBootData)?.ReturnScreenType;
+			FreeLiveBootData freeLiveBootData = BootData as FreeLiveBootData;
+			MenuScreenType? returnScreenType = freeLiveBootData?.ReturnScreenType;
+			LiveResultData resultData = CreateResultData(freeLiveBootData);
 			base.OnExit();
 			if (returnScreenType.HasValue)
 			{
-				if (returnScreenType.Value == MenuScreenType.MusicScoreMakerTop)
+				if (returnScreenType.Value == MenuScreenType.MusicScoreMakerTop || returnScreenType.Value == MenuScreenType.CommunityCharts)
 				{
+					// A finished or failed live shows its result first; its 次へ goes back to the list.
 					MusicScoreMakerEntryPoint.BootData = null;
-					SceneManager.Instance.RequestScene(SceneManager.Scene.CustomMusicScoreManager);
+					LiveResultData.Last = resultData;
+					SceneManager.Instance.RequestScene(resultData != null ? SceneManager.Scene.LiveResult
+						: returnScreenType.Value == MenuScreenType.CommunityCharts ? SceneManager.Scene.CommunityCharts
+						: SceneManager.Scene.CustomMusicScoreManager);
 				}
 				else if (returnScreenType.Value == MenuScreenType.CoopLive)
 				{
 					// A finished co-op live goes to its result; one left before it started goes back to the room.
 					MusicScoreMakerEntryPoint.BootData = null;
-					SceneManager.Instance.RequestScene(coopAborted ? SceneManager.Scene.CoopLive : SceneManager.Scene.CoopLiveResult);
-				}
-				else if (returnScreenType.Value == MenuScreenType.CommunityCharts)
-				{
-					MusicScoreMakerEntryPoint.BootData = null;
-					SceneManager.Instance.RequestScene(SceneManager.Scene.CommunityCharts);
+					if (resultData != null)
+					{
+						LiveResultData.Last = resultData;
+					}
+					SceneManager.Instance.RequestScene(coopAborted ? SceneManager.Scene.CoopLive : SceneManager.Scene.LiveResult);
 				}
 				else
 				{
@@ -504,6 +513,37 @@ namespace Sekai.Core.Live
 			else if (BootData?.MusicData?.IsTestPlay == true)
 			{
 				ReturnToChartEditor();
+			}
+		}
+
+		/// <summary>The Result scene's data for a live that ended (finished, failed, or a co-op live); null when it has none.</summary>
+		private LiveResultData CreateResultData(FreeLiveBootData bootData)
+		{
+			if (bootData == null || bootData.MusicData?.IsTestPlay == true)
+			{
+				return null;
+			}
+			bool coop = bootData.ReturnScreenType == MenuScreenType.CoopLive;
+			if (coop ? coopAborted : result < 2)
+			{
+				return null;
+			}
+			CapturePreviousBest();
+			LiveScore score = liveLogic?.Score ?? default;
+			LiveResultData data = LiveResultData.Create(bootData, score, previousBest ?? -1, result == 2 || score.life <= 0);
+			if (coop)
+			{
+				data.IsCoop = true;
+				data.CoopRound = Sekai.CoopLive.CoopSession.LastPlayedRound;
+			}
+			return data;
+		}
+
+		private void CapturePreviousBest()
+		{
+			if (!previousBest.HasValue)
+			{
+				previousBest = LiveResultData.LoadBest(BootData as FreeLiveBootData);
 			}
 		}
 

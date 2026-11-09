@@ -29,7 +29,7 @@ namespace Sekai
 			Home = 11,
 			CommunityCharts = 12,
 			CoopLive = 13,
-			CoopLiveResult = 14
+			LiveResult = 14
 		}
 
 		private const string CustomMusicScoreManagerSceneName = "Charts.Local";
@@ -38,7 +38,7 @@ namespace Sekai
 		private const string HomeSceneName = "Home";
 		private const string CommunityChartsSceneName = "Charts.Online";
 		private const string CoopLiveSceneName = "CoopLive";
-		private const string CoopLiveResultSceneName = "CoopLive.Result";
+		private const string LiveResultSceneName = "Result";
 
 		private static SceneManager instance;
 
@@ -144,8 +144,8 @@ namespace Sekai
 					return CommunityChartsSceneName;
 				case Scene.CoopLive:
 					return CoopLiveSceneName;
-				case Scene.CoopLiveResult:
-					return CoopLiveResultSceneName;
+				case Scene.LiveResult:
+					return LiveResultSceneName;
 				case Scene.MusicScoreMaker:
 					return MusicScoreMakerSceneName;
 				default:
@@ -156,7 +156,7 @@ namespace Sekai
 		/// <summary>Scenes that have a file, in lookup order (Title and OutGame also open Home).</summary>
 		private static readonly Scene[] NamedScenes =
 		{
-			Scene.Home, Scene.Core, Scene.CustomMusicScoreManager, Scene.CommunityCharts, Scene.CoopLive, Scene.CoopLiveResult, Scene.MusicScoreMaker,
+			Scene.Home, Scene.Core, Scene.CustomMusicScoreManager, Scene.CommunityCharts, Scene.CoopLive, Scene.LiveResult, Scene.MusicScoreMaker,
 		};
 
 		private static Scene GetActiveScene()

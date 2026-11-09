@@ -1288,7 +1288,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d0095c97f8cd74fa6ad8f1f753da92d8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: OpenSekai.Game::Sekai.CoopLive.CoopLiveResultEntryPoint
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.LiveResultEntryPoint
   resultScreen: {fileID: 1635524634}
 --- !u!1 &1635524632
 GameObject:
@@ -1301,7 +1301,7 @@ GameObject:
   - component: {fileID: 1635524633}
   - component: {fileID: 1635524634}
   m_Layer: 5
-  m_Name: ScreenLayerCoopResult
+  m_Name: ScreenLayerLiveResult
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1337,7 +1337,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 97fe68e7515cd4860a92b391af9fd7be, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: OpenSekai.Game::Sekai.CoopLive.ScreenLayerCoopResult
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.ScreenLayerLiveResult
   layerCamera: {fileID: 0}
   roundSprite: {fileID: 21300000, guid: 7a3d961e7b5dbb244bcb13af8ba84c80, type: 2}
   backgroundSprite: {fileID: 21300000, guid: 356f752a662eebc49a9013ea2d497a25, type: 3}

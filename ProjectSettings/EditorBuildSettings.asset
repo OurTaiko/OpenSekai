@@ -18,7 +18,7 @@ EditorBuildSettings:
     path: Assets/Scenes/CoopLive.unity
     guid: ff07a6034768b47f2b068549da2c4132
   - enabled: 1
-    path: Assets/Scenes/CoopLive.Result.unity
+    path: Assets/Scenes/Result.unity
     guid: c3545305309da42cb8eacfb0f5676881
   - enabled: 1
     path: Assets/Scenes/MusicScoreMaker.unity

@@ -15,7 +15,7 @@ namespace Sekai.CoopLive
 	/// ルーム作成 (a private room) and joining by the 5-digit ルームID. In a room it shows the five member slots
 	/// and the current phase: waiting (the host's メンバー決定), song select (a community chart or おまかせ, 20 s),
 	/// the draw, difficulty (10 s, 準備完了), loading, and the result after the live. スタンプ are the chat.
-	/// The result of a live is its own scene (<see cref="ScreenLayerCoopResult"/>).
+	/// The result of a live is its own scene (<see cref="ScreenLayerLiveResult"/>).
 	/// The layout is built in code because it changes with every phase; colors and sprites follow the menus.
 	/// </summary>
 	public sealed class ScreenLayerCoopLive : ScreenLayer

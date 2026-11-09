@@ -122,13 +122,12 @@ screen data `Resources/screen/data/ScreenLayerCoopLive.asset` in `EntryScreenLay
     retire or retry; life 0 keeps playing), `StartGate` (after the music is ready it sends `loaded` and waits for `start_live`, via
     `BaseLiveController.WaitBeforeMusicStart`) and `ScoreLogicFactory` (`CoopScoreLogic`, 1.5× during FEVER). It streams the
     score, draws the other players and the FEVER banner on its own overlay canvas, reports FEVER CHANCE and sends the final score
-    from `SoloLiveController.LiveEnded`. A finished live goes to the `CoopLive.Result` scene (`SceneManager.Scene.CoopLiveResult` 14, screen type `CoopLiveResult` 9003,
-    `UI/ScreenLayerCoopResult`): it shows the others' scores until everyone has finished, then the result, and goes back to the
-    room on 返回房间 or by itself when the room starts its next round. A live left before it started (`AbortToMenu`) goes straight
-    back to the room. `CoopSession.LastResult` keeps the result if the connection drops; the room's 上一局结果 opens the scene
-    again through `CoopResultSceneArgs`.
-  - `UI/ScreenLayerCoopLive` builds the room screen in code (it changes with every phase), with `CoopUi` helpers (`Frame`,
-    `StampBar`, `Toast` are shared with the result screen); the two sprites of each screen are serialized on the scene object. Stamp texts are in `CoopStamps`.
+    from `SoloLiveController.LiveEnded`. A finished live goes to the `Result` scene (see "Result scene" below). A live left before
+    it started (`AbortToMenu`) goes straight back to the room. `CoopSession.LastResult` keeps the result if the connection drops;
+    the room's 上一局结果 opens the Result scene again through `CoopResultSceneArgs`.
+  - `UI/ScreenLayerCoopLive` builds the room screen in code (it changes with every phase), with `CoopUi` helpers (`StampBar`,
+    `Toast` and the builders are shared with the result screen); the two sprites of each screen are serialized on the scene object.
+    Stamp texts are in `CoopStamps`.
 - gRPC: NuGet `Grpc.Net.Client` 2.85 and `Google.Protobuf` 3.36 (`Assets/packages.config`). Unity's HttpClient has no HTTP/2, so
   the transport is **YetAnotherHttpHandler** (UPM `com.cysharp.yetanotherhttphandler`, native, all five platforms). Its code is in
   the separate assembly `Runtime/CoopLiveHttp2` (define constraint `OPENSEKAI_YAHH`, set by a version define when the package is
@@ -137,10 +136,32 @@ screen data `Resources/screen/data/ScreenLayerCoopLive.asset` in `EntryScreenLay
 - The server address comes from `/api/v1/meta` (`multiplay.url`); `OPENSEKAI_MULTIPLAY_URL` overrides it (e.g.
   `http://127.0.0.1:50051`, plain h2c).
 
+## Result scene
+
+Every live started from 自制谱管理, 在线谱面 or a 協力ライブ room ends in the `Result` scene (`SceneManager.Scene.LiveResult` 14,
+screen type `LiveResult` 9003, `Assets/OpenSekai/Runtime/Game/Result/`). It copies the original's two result pages under one
+header (jacket, difficulty, the C/B/A/S gauge, SCORERANK), built in code by `ScreenLayerLiveResult`:
+
+- Members (co-op only): one card per player, all the same size (no larger MVP card), in a row that scrolls sideways. Until
+  everyone has finished it shows the scores as they come in; then MVP / SUPER STAR, TEAM SCORE and FEVER. The header gauge is the
+  team's (thresholds times the number of players), one segment per player in their slot color. メンバーの成績 opens a table of
+  everyone's judgements; スタンプ work here. There are no フレンド申請 buttons and no character art: the card shows the avatar,
+  or the slot color with the nickname's first letter.
+- Detail: this player's score, ハイスコア (NEW RECORD when beaten), judgements, COMBO and LATE / FAST / FLICK. The original's
+  character is replaced by the jacket and how the live ended. There is no 達成報酬 button.
+
+次へ on the members page goes to the detail page; on the detail page it goes back to the chart list after a solo live
+(`LiveResultData.ReturnScreenType`) and, after a co-op live, asks whether to go back to the room (回到房间) or leave it (退出房间 →
+Home). A co-op round starting meanwhile takes the player back to the room by itself.
+
+`SoloLiveController.OnExit` fills `LiveResultData.Last` (score, chart, the best score read before this live's record is written)
+for a finished or failed live and for every co-op live that started; a retired live (pause → リタイア) and editor test plays go
+back without a result. Score ranks and the gauge use `ScoreGaugeCalculator`'s rates of 1,000,000 (`LiveResultData.RankOf`, `GaugeOf`).
+
 ## Scene names
 
 Scene files are named by area, not by class: `Home`, `Charts.Local` (自制谱管理, `SceneManager.Scene.CustomMusicScoreManager`),
-`Charts.Online` (在线谱面, `Scene.CommunityCharts`), `CoopLive`, `CoopLive.Result`, `MusicScoreMaker`, `Core`. The enum keeps
+`Charts.Online` (在线谱面, `Scene.CommunityCharts`), `CoopLive`, `Result` (`Scene.LiveResult`), `MusicScoreMaker`, `Core`. The enum keeps
 its old member names; `SceneManager.GetSceneName` maps each to its file, and `GetActiveScene` looks the active scene up through the
 same table (a dotted name is not an enum name). A new scene needs a case there, an entry in `NamedScenes`, and a build-settings entry.
 
