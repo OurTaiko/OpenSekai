@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -199,6 +200,23 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 			}
 		}
 
+		// Skill / Fever positions carried over from imported charts. Saved in score.json only:
+		// EventArray still drops these events and ToMusicScore does not emit them, so live play is unchanged.
+		public List<MusicScoreSkillFeverMarker> SkillFeverMarkerList
+		{
+			get
+			{
+				return _skillFeverMarkerList;
+			}
+			set
+			{
+				_skillFeverMarkerList = value ?? new List<MusicScoreSkillFeverMarker>();
+			}
+		}
+
+		[JsonIgnore]
+		private List<MusicScoreSkillFeverMarker> _skillFeverMarkerList;
+
 		public List<MusicScoreNoteBase> NoteList { get; set; }
 
 		[JsonIgnore]
@@ -274,6 +292,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 			CopiedNoteList = new List<MusicScoreNoteBase>();
 			CopiedEventDataList = new List<MusicScoreEventData>();
 			EventArray = Array.Empty<EventBase>();
+			SkillFeverMarkerList = new List<MusicScoreSkillFeverMarker>();
 			QuantizeSettings = new QuantizeSettings();
 			VersionCode = CURRENT_VERSION;
 		}
@@ -289,6 +308,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 			}
 			AddEventRange(ConvertEventList(musicScore.musicScoreInfoArray));
 			EventArray = FilterOutSkillFeverEvents(musicScore.EventArray);
+			SkillFeverMarkerList = ConvertSkillFeverMarkers(musicScore.EventArray, musicScore.musicScoreInfoArray);
 			if (musicScore.NoteArray != null)
 			{
 				List<MusicScoreInfo> sortedInfos = MusicScoreMakerUtility.CreateSortedMusicScoreInfoList(musicScore.musicScoreInfoArray);
@@ -470,6 +490,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 		{
 			ClearNotesAndSpeedEvents();
 			EventArray = Array.Empty<EventBase>();
+			SkillFeverMarkerList = new List<MusicScoreSkillFeverMarker>();
 			FullComboDataHash = null;
 		}
 
@@ -1570,6 +1591,8 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 			NoteBase[] noteArray = ConvertNoteArray(conversionData.NoteList, musicScoreInfos, liveBundleBuildData, conversionData, filterBeforeTicks);
 			EventBase[] eventArray = FilterEventArray(EventArray, filterBeforeTicks, musicScoreInfos);
 			MusicScore musicScore = new MusicScore(musicScoreInfos, eventArray, noteArray);
+			EventBase[] skillFeverEventArray = BuildSkillFeverEventArray(SkillFeverMarkerList, musicScoreInfos, noteArray, conversionData);
+			musicScore.SetSkillFeverEventArray(FilterEventArray(skillFeverEventArray, filterBeforeTicks, musicScoreInfos));
 			if (filterBeforeTicks.HasValue && filterBeforeTicks.Value >= 1L)
 			{
 				musicScore.FilterBeforeTimeSec = MusicScoreMakerUtility.GetTimeFromTicks(filterBeforeTicks.Value, musicScoreInfos);
@@ -1754,6 +1777,113 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 				}
 			}
 			return result.ToArray();
+		}
+
+		// Turns the stored markers back into live event objects for MusicScore.SkillFeverEventArray.
+		// FeverBegin gets the judgment-note count up to the next FeverStart, as the SUS converter does.
+		private static EventBase[] BuildSkillFeverEventArray(List<MusicScoreSkillFeverMarker> markers, MusicScoreInfo[] musicScoreInfos, NoteBase[] noteArray, MusicScoreMakerData conversionData)
+		{
+			if (markers == null || markers.Count == 0)
+			{
+				return Array.Empty<EventBase>();
+			}
+			List<MusicScoreSkillFeverMarker> sortedMarkers = new List<MusicScoreSkillFeverMarker>(markers.Count);
+			foreach (MusicScoreSkillFeverMarker marker in markers)
+			{
+				if (marker != null)
+				{
+					sortedMarkers.Add(marker);
+				}
+			}
+			// Stable by ticks so markers on the same tick keep their stored order.
+			sortedMarkers = sortedMarkers.OrderBy(marker => marker.ticks).ToList();
+			List<EventBase> result = new List<EventBase>(sortedMarkers.Count);
+			FeverBeginEvent pendingFeverBegin = null;
+			foreach (MusicScoreSkillFeverMarker marker in sortedMarkers)
+			{
+				MusicScoreInfo info = MusicScoreMakerUtility.GenerateMusicScoreInfoFromTicks(marker.ticks, musicScoreInfos, conversionData);
+				switch (marker.type)
+				{
+				case MusicScoreSkillFeverMarkerType.Skill:
+					result.Add(new SkillEvent(info));
+					break;
+				case MusicScoreSkillFeverMarkerType.FeverBegin:
+					pendingFeverBegin = new FeverBeginEvent(info);
+					result.Add(pendingFeverBegin);
+					break;
+				case MusicScoreSkillFeverMarkerType.FeverStart:
+					if (pendingFeverBegin != null)
+					{
+						pendingFeverBegin.Setup(CountJudgmentNotesBetween(noteArray, pendingFeverBegin.MusicScoreInfo.time, info.time));
+						pendingFeverBegin = null;
+					}
+					result.Add(new FeverStartEvent(info));
+					break;
+				case MusicScoreSkillFeverMarkerType.FeverEnd:
+					result.Add(new FeverEndEvent(info));
+					break;
+				}
+			}
+			return result.ToArray();
+		}
+
+		private static int CountJudgmentNotesBetween(NoteBase[] noteArray, float startTime, float endTime)
+		{
+			int count = 0;
+			if (noteArray == null)
+			{
+				return count;
+			}
+			foreach (NoteBase root in noteArray)
+			{
+				if (root?.NoteList == null)
+				{
+					continue;
+				}
+				foreach (NoteBase note in root.NoteList)
+				{
+					if (note != null && note.HasJudgment && note.MusicScoreInfo.time >= startTime && note.MusicScoreInfo.time < endTime)
+					{
+						count++;
+					}
+				}
+			}
+			return count;
+		}
+
+		private static List<MusicScoreSkillFeverMarker> ConvertSkillFeverMarkers(EventBase[] eventArray, MusicScoreInfo[] musicScoreInfos)
+		{
+			List<MusicScoreSkillFeverMarker> result = new List<MusicScoreSkillFeverMarker>();
+			if (eventArray == null || eventArray.Length == 0)
+			{
+				return result;
+			}
+			List<MusicScoreInfo> sortedInfos = MusicScoreMakerUtility.CreateSortedMusicScoreInfoList(musicScoreInfos);
+			foreach (EventBase eventBase in eventArray)
+			{
+				MusicScoreSkillFeverMarkerType type;
+				switch (eventBase)
+				{
+				case SkillEvent _:
+					type = MusicScoreSkillFeverMarkerType.Skill;
+					break;
+				case FeverBeginEvent _:
+					type = MusicScoreSkillFeverMarkerType.FeverBegin;
+					break;
+				case FeverStartEvent _:
+					type = MusicScoreSkillFeverMarkerType.FeverStart;
+					break;
+				case FeverEndEvent _:
+					type = MusicScoreSkillFeverMarkerType.FeverEnd;
+					break;
+				default:
+					continue;
+				}
+				MusicScoreInfo info = eventBase.MusicScoreInfo;
+				long ticks = MusicScoreMakerUtility.CalculateTicksFromBarAndProgressSorted(info.bar, info.barProgress, sortedInfos);
+				result.Add(new MusicScoreSkillFeverMarker(type, ticks));
+			}
+			return result;
 		}
 
 		private static EventBase[] FilterOutSkillFeverEvents(EventBase[] eventArray)

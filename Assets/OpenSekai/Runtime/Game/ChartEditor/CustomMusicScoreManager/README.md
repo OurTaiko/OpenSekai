@@ -53,6 +53,15 @@ Expected entry files:
 
 The manager's Score selector accepts `score.json` directly or an official SUS `.txt` / `.sus`;
 SUS files are converted to the local `score.json` format on import.
+SUS Skill (lane 0) and Fever (lane f) markers are kept in `score.json` as `SkillFeverMarkerList`
+(`type` + `ticks`). `ToMusicScore` turns them into `MusicScore.SkillFeverEventArray`, which live play
+does not read yet (`EventArray` still carries no Skill/Fever events).
+
+The detail window's 导出SUS button writes `score.json` back out as SUS (`MusicScoreSusExporter`), in the
+layout `Sekai.SUS.Converter` reads, so importing the file gives back the same chart. Notes stacked on the
+same tick and lane are written 1/8–3/8 of a tick late so the importer keeps them apart, which makes those
+rows long. What SUS cannot hold is reported in the status line: guide colour or easing with no matching
+note under it, Fever end markers, and skip-relay lanes (the importer recomputes those, as live play does).
 
 `manifest.title` is the song title shown in live MusicInfo. `manifest.scoreTitle`
 is the custom score title shown in the score-info area.

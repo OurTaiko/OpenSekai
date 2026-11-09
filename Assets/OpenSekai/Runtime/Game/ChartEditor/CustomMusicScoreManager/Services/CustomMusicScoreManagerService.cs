@@ -211,6 +211,49 @@ namespace Sekai.CustomMusicScoreManager
 			return destinationPath;
 		}
 
+		/// <summary>Writes the entry's score.json as a SUS file. Returns the path, or null when there is no score.</summary>
+		public static string ExportSus(CustomMusicScoreEntry entry, out List<string> warnings, string destinationPath = null)
+		{
+			warnings = new List<string>();
+			MusicScoreMakerData data = entry?.LoadScore();
+			if (data == null)
+			{
+				return null;
+			}
+
+			CustomMusicScoreManifest manifest = entry.Manifest;
+			MusicScoreSusExporter.Result result = MusicScoreSusExporter.Export(data, new MusicScoreSusExporter.Metadata
+			{
+				Title = manifest?.title,
+				Artist = manifest?.composer,
+				Designer = manifest?.userName,
+				Wave = manifest?.audioFileName,
+				Jacket = manifest?.jacketFileName,
+				PlayLevel = manifest?.playLevel ?? 0
+			});
+			warnings = result.Warnings;
+
+			if (string.IsNullOrEmpty(destinationPath))
+			{
+				string exportDirectory = Path.Combine(CustomMusicScoreStorage.RootDirectory, ExportDirectoryName);
+				Directory.CreateDirectory(exportDirectory);
+				string safeTitle = SanitizeFileName(manifest?.scoreTitle);
+				if (string.IsNullOrEmpty(safeTitle))
+				{
+					safeTitle = "未命名";
+				}
+				destinationPath = Path.Combine(exportDirectory, safeTitle + "_" + manifest?.id + ".sus");
+			}
+
+			string directory = Path.GetDirectoryName(destinationPath);
+			if (!string.IsNullOrEmpty(directory))
+			{
+				Directory.CreateDirectory(directory);
+			}
+			File.WriteAllText(destinationPath, result.Text, new System.Text.UTF8Encoding(false));
+			return destinationPath;
+		}
+
 		public static CustomMusicScoreEntry SaveManifest(CustomMusicScoreEntry entry, CustomMusicScoreManifest manifest)
 		{
 			if (entry == null || manifest == null)

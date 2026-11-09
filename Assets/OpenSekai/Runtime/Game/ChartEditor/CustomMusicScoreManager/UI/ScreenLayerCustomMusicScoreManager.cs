@@ -143,6 +143,8 @@ namespace Sekai.CustomMusicScoreManager
 		[SerializeField]
 		private Button _exportButton;
 		[SerializeField]
+		private Button _exportSusButton;
+		[SerializeField]
 		private Button _saveManifestButton;
 		[SerializeField]
 		private Button _audioSelectButton;
@@ -245,6 +247,7 @@ namespace Sekai.CustomMusicScoreManager
 			_autoButton.onClick.AddListener(AutoPlaySelected);
 			_duplicateButton.onClick.AddListener(DuplicateSelected);
 			_exportButton.onClick.AddListener(ExportSelected);
+			_exportSusButton.onClick.AddListener(ExportSelectedSus);
 			_deleteButton.onClick.AddListener(DeleteSelected);
 
 			_audioSelectButton.onClick.AddListener(ReplaceSelectedAudio);
@@ -526,7 +529,7 @@ namespace Sekai.CustomMusicScoreManager
 		{
 			Button[] buttons =
 			{
-				_editButton, _playButton, _autoButton, _duplicateButton, _deleteButton, _exportButton, _saveManifestButton,
+				_editButton, _playButton, _autoButton, _duplicateButton, _deleteButton, _exportButton, _exportSusButton, _saveManifestButton,
 				_audioSelectButton, _jacketSelectButton, _scoreSelectButton, _videoSelectButton, _difficultyButton, _detailToggleButton
 			};
 			foreach (Button button in buttons)
@@ -569,6 +572,7 @@ namespace Sekai.CustomMusicScoreManager
 			_duplicateButton.interactable = hasSelection;
 			_deleteButton.interactable = hasSelection;
 			_exportButton.interactable = hasSelection;
+			_exportSusButton.interactable = hasSelection && item.HasScore;
 			_saveManifestButton.interactable = hasSelection;
 			_audioSelectButton.interactable = hasSelection;
 			_jacketSelectButton.interactable = hasSelection;
@@ -978,11 +982,47 @@ namespace Sekai.CustomMusicScoreManager
 			string path = CustomMusicScoreManagerService.ExportZip(_selected.Entry, destination);
 			SetStatus(string.IsNullOrEmpty(path) ? "导出失败。" : "已导出：" + path);
 #elif UNITY_ANDROID || UNITY_IOS
-			ExportSelectedNative();
+			ExportSelectedNative(() => CustomMusicScoreManagerService.ExportZip(_selected.Entry), null);
 #else
 			string path = CustomMusicScoreManagerService.ExportZip(_selected.Entry);
 			SetStatus(string.IsNullOrEmpty(path) ? "导出失败。" : "已导出：" + path);
 #endif
+		}
+
+		private void ExportSelectedSus()
+		{
+			if (_selected == null)
+			{
+				return;
+			}
+
+			List<string> warnings = null;
+#if UNITY_EDITOR || UNITY_STANDALONE
+			string defaultName = _selected.Entry.Manifest.scoreTitle + "_" + _selected.Entry.Manifest.id;
+			string destination = SaveStandaloneFile("导出SUS谱面", CustomMusicScoreStorage.RootDirectory, defaultName, "sus");
+			if (string.IsNullOrEmpty(destination))
+			{
+				return;
+			}
+
+			string path = CustomMusicScoreManagerService.ExportSus(_selected.Entry, out warnings, destination);
+			SetStatus(FormatSusExportStatus(path, warnings));
+#elif UNITY_ANDROID || UNITY_IOS
+			ExportSelectedNative(() => CustomMusicScoreManagerService.ExportSus(_selected.Entry, out warnings), () => FormatSusWarnings(warnings));
+#else
+			string path = CustomMusicScoreManagerService.ExportSus(_selected.Entry, out warnings);
+			SetStatus(FormatSusExportStatus(path, warnings));
+#endif
+		}
+
+		private static string FormatSusExportStatus(string path, List<string> warnings)
+		{
+			return string.IsNullOrEmpty(path) ? "导出失败：没有谱面。" : "已导出：" + path + FormatSusWarnings(warnings);
+		}
+
+		private static string FormatSusWarnings(List<string> warnings)
+		{
+			return warnings == null || warnings.Count == 0 ? string.Empty : "\n" + string.Join("\n", warnings);
 		}
 
 		private void ImportEntry()
@@ -1179,7 +1219,8 @@ namespace Sekai.CustomMusicScoreManager
 #endif
 
 #if UNITY_ANDROID || UNITY_IOS
-		private void ExportSelectedNative()
+		/// <summary>Writes the export to the app folder, then hands it to the system share/export sheet.</summary>
+		private void ExportSelectedNative(Func<string> export, Func<string> getStatusSuffix)
 		{
 			if (NativeFilePicker.IsFilePickerBusy())
 			{
@@ -1187,7 +1228,8 @@ namespace Sekai.CustomMusicScoreManager
 				return;
 			}
 
-			string path = CustomMusicScoreManagerService.ExportZip(_selected.Entry);
+			string path = export();
+			string suffix = getStatusSuffix?.Invoke() ?? string.Empty;
 			if (string.IsNullOrEmpty(path))
 			{
 				SetStatus("导出失败。");
@@ -1196,7 +1238,7 @@ namespace Sekai.CustomMusicScoreManager
 
 			if (!NativeFilePicker.CanExportFiles())
 			{
-				SetStatus("当前平台不支持文件导出，已导出到：" + path);
+				SetStatus("当前平台不支持文件导出，已导出到：" + path + suffix);
 				return;
 			}
 
@@ -1208,7 +1250,7 @@ namespace Sekai.CustomMusicScoreManager
 					return;
 				}
 
-				SetStatus(success ? "已导出：" + path : "导出已取消或失败。");
+				SetStatus(success ? "已导出：" + path + suffix : "导出已取消或失败。");
 			});
 		}
 

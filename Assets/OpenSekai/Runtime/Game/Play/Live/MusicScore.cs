@@ -24,6 +24,16 @@ namespace Sekai.Live
 			private set;
 		}
 
+		// Skill / Fever events from a custom chart's markers. Kept apart from EventArray on purpose:
+		// LiveLogic only plays EventArray, so these are available to the game but not acted on yet.
+		public EventBase[] SkillFeverEventArray
+		{
+			[CompilerGenerated]
+			get;
+			[CompilerGenerated]
+			private set;
+		} = Array.Empty<EventBase>();
+
 		public float? FilterBeforeTimeSec
 		{
 			[CompilerGenerated]
@@ -66,6 +76,11 @@ namespace Sekai.Live
 		public void AddNoteArray(NoteBase[] noteArray)
 		{
 			NoteArray = noteArray;
+		}
+
+		public void SetSkillFeverEventArray(EventBase[] skillFeverEventArray)
+		{
+			SkillFeverEventArray = skillFeverEventArray ?? Array.Empty<EventBase>();
 		}
 
 		public float GetTimeSignature(int barIndex)
