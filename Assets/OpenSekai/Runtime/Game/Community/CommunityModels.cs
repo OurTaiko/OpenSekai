@@ -26,7 +26,8 @@ namespace Sekai.Community
 		public long PackageSize;
 		public string JacketUrl;
 		public string AudioUrl;
-		public string PackageUrl;
+		/// <summary>The chart folder as parts. Only in single-chart reads (<see cref="CommunityClient.GetAsync"/>).</summary>
+		public CommunityPackage Package;
 		public int DownloadCount;
 		public int PlayCount;
 		/// <summary>Upvotes minus downvotes.</summary>
@@ -57,6 +58,28 @@ namespace Sekai.Community
 				return !string.IsNullOrWhiteSpace(Singer) ? Singer : Composer ?? string.Empty;
 			}
 		}
+	}
+
+	/// <summary>
+	/// A chart package as the site keeps it: no ZIP, only manifest.json and the files it names. Writing the
+	/// manifest and each file under its name makes the chart folder.
+	/// </summary>
+	public sealed class CommunityPackage
+	{
+		public Newtonsoft.Json.Linq.JObject Manifest;
+		public List<CommunityPackageFile> Files = new List<CommunityPackageFile>();
+	}
+
+	public sealed class CommunityPackageFile
+	{
+		/// <summary>score, audio, jacket or video.</summary>
+		public string Role = string.Empty;
+		/// <summary>The file's name in the chart folder.</summary>
+		public string Name = string.Empty;
+		public string Url = string.Empty;
+		public long Size;
+		/// <summary>Lowercase hex SHA-256 of the file.</summary>
+		public string Sha256 = string.Empty;
 	}
 
 	public sealed class CommunityUser

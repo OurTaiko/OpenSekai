@@ -79,6 +79,11 @@ community chart browser is the `CommunityCharts` scene; its charts come from Sek
   Lives started from either screen go through `CustomMusicScorePlayLauncher`; `ReturnScreenType` decides whether the
   live goes back to the manager or to `CommunityCharts`. A finished, non-auto live of a downloaded chart reports one
   play to the site (`CustomMusicScorePlayHistoryStorage` calls `CommunityLibrary.OnLocalChartPlayed`).
+- The site keeps no chart ZIPs. A single-chart read (`CommunityClient.GetAsync`) carries `Package`: the manifest and
+  the files it names, each with a URL on the CDN, size and SHA-256. `CommunityLibrary.DownloadAsync` writes
+  manifest.json, downloads and checks each file into a folder under `GamePaths.Root/CommunityDownloads`, imports it with
+  `CustomMusicScoreManagerService.ImportFolder`, deletes the temporary folder and counts the download
+  (`POST /api/v1/charts/<id>/downloads`).
 - Votes work like the site (Reddit style): ▲ / ▼ in the chart window send `PUT /api/v1/charts/<id>/vote` with 1, -1, or
   0 to take the vote back; `Score` is upvotes minus downvotes. おすすめ and 検索 > 人気 use `CommunitySort.Hot` (Reddit's
   hot ranking), ランキング 総合 uses `Top` (score) and デイリー uses `Daily` (plays in the last 24 hours).

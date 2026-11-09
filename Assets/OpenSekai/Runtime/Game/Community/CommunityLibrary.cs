@@ -22,9 +22,9 @@ namespace Sekai.Community
 	}
 
 	/// <summary>
-	/// Community charts downloaded into the local custom chart folder. A download goes through
-	/// /charts/&lt;id&gt;/download (which counts it and redirects to the CDN), is imported with
-	/// <see cref="CustomMusicScoreManagerService.ImportZip"/>, and is remembered in
+	/// Community charts downloaded into the local custom chart folder. A download fetches the chart's parts
+	/// from the CDN, is imported with <see cref="CustomMusicScoreManagerService.ImportFolder"/>, is counted with
+	/// POST /api/v1/charts/&lt;id&gt;/downloads, and is remembered in
 	/// <c>CustomMusicScores/CommunityInstalls.json</c> so the browser can show 已下载 and replace it with a newer revision.
 	/// </summary>
 	public static class CommunityLibrary
@@ -67,38 +67,51 @@ namespace Sekai.Community
 				: null;
 		}
 
-		/// <summary>Downloads and imports a chart, replacing an older installed revision. Returns the local entry.</summary>
+		/// <summary>
+		/// Downloads a chart and imports it, replacing an older installed revision. The site keeps no ZIP: this
+		/// fetches each part from the CDN, checks its size and SHA-256, writes manifest.json beside them and
+		/// imports the folder. Returns the local entry.
+		/// </summary>
 		public static async UniTask<CustomMusicScoreEntry> DownloadAsync(CommunityChart chart, IProgress<float> progress, CancellationToken ct)
 		{
-			Directory.CreateDirectory(DownloadDirectory);
-			string zipPath = Path.Combine(DownloadDirectory, chart.Id + "-r" + chart.Revision + "-" + Guid.NewGuid().ToString("N").Substring(0, 8) + ".zip");
+			// List rows carry no package; the single-chart read does.
+			CommunityChart full = chart.Package != null ? chart : await CommunityClient.GetAsync(chart.Id, ct);
+			CommunityPackage package = full?.Package;
+			if (package?.Manifest == null || package.Files == null || package.Files.Count == 0)
+			{
+				throw new CommunityException("PACKAGE_PENDING", "这份谱面正在整理，请稍后再试。");
+			}
+
+			string work = Path.Combine(DownloadDirectory, chart.Id + "-r" + full.Revision + "-" + Guid.NewGuid().ToString("N").Substring(0, 8));
+			string folder = Path.Combine(work, "chart");
 			try
 			{
-				using (UnityWebRequest request = new UnityWebRequest(CommunityClient.DownloadUrl(chart.Id), UnityWebRequest.kHttpVerbGET))
+				Directory.CreateDirectory(folder);
+				File.WriteAllText(Path.Combine(folder, "manifest.json"), package.Manifest.ToString(Formatting.Indented));
+
+				long total = Math.Max(1L, package.Files.Sum(f => Math.Max(0L, f.Size)));
+				long done = 0;
+				foreach (CommunityPackageFile file in package.Files)
 				{
-					request.downloadHandler = new DownloadHandlerFile(zipPath) { removeFileOnAbort = true };
-					request.timeout = 300;
-					UnityWebRequestAsyncOperation operation = request.SendWebRequest();
-					while (!operation.isDone)
+					string name = file.Name ?? string.Empty;
+					if (name.Length == 0 || name != Path.GetFileName(name) || name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0
+						|| string.Equals(name, "manifest.json", StringComparison.OrdinalIgnoreCase))
 					{
-						progress?.Report(request.downloadProgress);
-						await UniTask.Yield(PlayerLoopTiming.Update, ct);
+						throw new CommunityException("PACKAGE_INVALID", "谱面包里有不正确的文件名。");
 					}
-					if (request.result != UnityWebRequest.Result.Success)
-					{
-						throw new CommunityException(
-							request.responseCode == 404 ? "NOT_FOUND" : "DOWNLOAD_FAILED",
-							request.responseCode == 404 ? "这份谱面已经不在了。" : "下载失败：" + request.error,
-							request.responseCode);
-					}
+					string path = Path.Combine(folder, name);
+					long before = done;
+					await DownloadFileAsync(file.Url, path, received => progress?.Report((float)(before + received) / total), ct);
+					await VerifyAsync(file, path, ct);
+					done += Math.Max(0L, file.Size);
 				}
 				progress?.Report(1f);
 
 				CustomMusicScoreEntry previous = GetEntry(chart);
-				CustomMusicScoreEntry entry = CustomMusicScoreManagerService.ImportZip(zipPath);
+				CustomMusicScoreEntry entry = CustomMusicScoreManagerService.ImportFolder(folder);
 				if (entry == null)
 				{
-					throw new CommunityException("IMPORT_FAILED", "谱面包无法导入。");
+					throw new CommunityException("IMPORT_FAILED", "谱面无法导入。");
 				}
 				if (previous != null && !string.Equals(previous.RootDirectory, entry.RootDirectory, StringComparison.Ordinal))
 				{
@@ -115,25 +128,90 @@ namespace Sekai.Community
 				Index()[chart.Id] = new Install
 				{
 					ChartId = chart.Id,
-					Revision = chart.Revision,
+					Revision = full.Revision,
 					Directory = Path.GetFileName(entry.RootDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)),
 					InstalledAt = DateTime.UtcNow,
 				};
 				SaveIndex();
+				chart.Revision = full.Revision;
+				ReportDownloadAsync(chart.Id).Forget();
 				return entry;
 			}
 			finally
 			{
 				try
 				{
-					if (File.Exists(zipPath))
+					if (Directory.Exists(work))
 					{
-						File.Delete(zipPath);
+						Directory.Delete(work, true);
 					}
 				}
 				catch (IOException)
 				{
 				}
+			}
+		}
+
+		private static async UniTask DownloadFileAsync(string url, string path, Action<long> received, CancellationToken ct)
+		{
+			using UnityWebRequest request = new UnityWebRequest(url, UnityWebRequest.kHttpVerbGET);
+			request.downloadHandler = new DownloadHandlerFile(path) { removeFileOnAbort = true };
+			request.timeout = 300;
+			UnityWebRequestAsyncOperation operation = request.SendWebRequest();
+			try
+			{
+				while (!operation.isDone)
+				{
+					received((long)request.downloadedBytes);
+					await UniTask.Yield(PlayerLoopTiming.Update, ct);
+				}
+			}
+			catch (OperationCanceledException)
+			{
+				request.Abort();
+				throw;
+			}
+			if (request.result != UnityWebRequest.Result.Success)
+			{
+				throw new CommunityException(
+					request.responseCode == 404 ? "NOT_FOUND" : "DOWNLOAD_FAILED",
+					request.responseCode == 404 ? "这份谱面的文件已经不在了。" : "下载失败：" + request.error,
+					request.responseCode);
+			}
+		}
+
+		private static async UniTask VerifyAsync(CommunityPackageFile file, string path, CancellationToken ct)
+		{
+			long length = new FileInfo(path).Length;
+			if (file.Size > 0 && length != file.Size)
+			{
+				throw new CommunityException("DOWNLOAD_INCOMPLETE", file.Name + " 下载不完整，请重试。");
+			}
+			if (string.IsNullOrEmpty(file.Sha256))
+			{
+				return;
+			}
+			string hash = await UniTask.RunOnThreadPool(() =>
+			{
+				using FileStream stream = File.OpenRead(path);
+				using System.Security.Cryptography.SHA256 sha = System.Security.Cryptography.SHA256.Create();
+				return string.Concat(sha.ComputeHash(stream).Select(b => b.ToString("x2")));
+			}, cancellationToken: ct);
+			if (!string.Equals(hash, file.Sha256, StringComparison.OrdinalIgnoreCase))
+			{
+				throw new CommunityException("DOWNLOAD_INCOMPLETE", file.Name + " 下载不完整，请重试。");
+			}
+		}
+
+		private static async UniTaskVoid ReportDownloadAsync(string chartId)
+		{
+			try
+			{
+				await CommunityClient.ReportDownloadAsync(chartId);
+			}
+			catch (Exception exception)
+			{
+				Debug.LogWarning("[Community] Could not count the download of chart " + chartId + ": " + exception.Message);
 			}
 		}
 

@@ -40,7 +40,6 @@ namespace Sekai.Community
 		/// <summary>The web page of a chart, for sharing or opening in a browser.</summary>
 		public static string ChartPageUrl(string id) => Server + "/charts/" + Uri.EscapeDataString(id);
 
-		public static string DownloadUrl(string id) => Server + "/charts/" + Uri.EscapeDataString(id) + "/download";
 
 		public static async UniTask<CommunityMeta> GetMetaAsync(CancellationToken ct = default)
 		{
@@ -136,6 +135,12 @@ namespace Sekai.Community
 		public static async UniTask SetBookmarkAsync(string id, bool saved, CancellationToken ct = default)
 		{
 			await SendWithSessionAsync<object>(saved ? "PUT" : "DELETE", Server + "/api/v1/charts/" + id + "/bookmark", null, ct);
+		}
+
+		/// <summary>Counts a download on the site (the game fetches the parts from the CDN itself).</summary>
+		public static async UniTask ReportDownloadAsync(string id, CancellationToken ct = default)
+		{
+			await CommunityHttp.SendRawAsync("POST", Server + "/api/v1/charts/" + Uri.EscapeDataString(id) + "/downloads", null, "{}", ct);
 		}
 
 		/// <summary>Reports a finished play. Counted once per player (or address) per chart per hour.</summary>
