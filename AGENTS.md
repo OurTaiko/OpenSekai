@@ -58,7 +58,9 @@ Also note:
 UI that a layout component drives (HorizontalLayoutGroup, ContentSizeFitter, AspectRatioFitter, Scrollbar) makes Unity
 record the driven anchors, sizes and positions as prefab instance overrides whenever the layout re-runs, for example after
 the Canvas changes size. They are saved as `value: 0` and recomputed on load. `Assets/OpenSekai/Editor/DrivenOverrideStripper.cs`
-deletes them before each scene or Prefab Mode save, so a save only diffs what you changed. If a save still adds
+deletes them before each scene or Prefab Mode save, so a save only diffs what you changed. The exception is an
+AspectRatioFitter, which re-drives at once and records its overrides again; Unity records those on every load anyway,
+so they stay in the scene unchanged (the three on the manager's background `Image`). If a save still adds
 RectTransform overrides, check whether those properties are driven before changing values in the prefab.
 
 `ScreenManager` runs in edit mode but leaves the CanvasScaler's match alone there; it picks it from the screen aspect only

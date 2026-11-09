@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -16,9 +17,13 @@ namespace OpenSekai.Editor
 	/// records the driven anchors, sizeDelta and anchoredPosition as instance overrides. They are written as 0, hidden
 	/// in the Overrides dropdown and recomputed by the driver on load, so they carry nothing; they only make a scene
 	/// save show dozens of new overrides. Overrides on properties that nothing drives are kept.
+	///
+	/// The overrides are removed with <see cref="PrefabUtility.SetPropertyModifications"/>. Deleting them from the
+	/// PrefabInstance's serialized <c>m_Modification.m_Modifications</c> also works, but the next save then asserts
+	/// <c>!m_HasValidAddedGameObjects</c> and <c>!m_HasValidAddedComponents</c>.
 	/// </remarks>
 	[InitializeOnLoad]
-	internal static class DrivenOverrideStripper
+	internal sealed class DrivenOverrideStripper : AssetModificationProcessor
 	{
 		private static readonly PropertyInfo DrivenPropertiesInfo =
 			typeof(RectTransform).GetProperty("drivenProperties", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
@@ -49,16 +54,29 @@ namespace OpenSekai.Editor
 				return;
 			}
 
-			EditorSceneManager.sceneSaving += OnSceneSaving;
 			PrefabStage.prefabSaving += OnPrefabSaving;
 		}
 
-		private static void OnSceneSaving(Scene scene, string path)
+		private static string[] OnWillSaveAssets(string[] paths)
 		{
-			foreach (GameObject root in scene.GetRootGameObjects())
+			if (DrivenPropertiesInfo == null)
 			{
-				StripInstancesUnder(root);
+				return paths;
 			}
+
+			var saving = new HashSet<string>(paths);
+			for (int i = 0; i < SceneManager.sceneCount; i++)
+			{
+				Scene scene = SceneManager.GetSceneAt(i);
+				if (scene.isLoaded && saving.Contains(scene.path))
+				{
+					foreach (GameObject root in scene.GetRootGameObjects())
+					{
+						StripInstancesUnder(root);
+					}
+				}
+			}
+			return paths;
 		}
 
 		private static void OnPrefabSaving(GameObject prefabContentsRoot)
@@ -80,8 +98,8 @@ namespace OpenSekai.Editor
 
 		private static void Strip(GameObject instanceRoot)
 		{
-			Object instanceHandle = PrefabUtility.GetPrefabInstanceHandle(instanceRoot);
-			if (instanceHandle == null)
+			PropertyModification[] modifications = PrefabUtility.GetPropertyModifications(instanceRoot);
+			if (modifications == null || modifications.Length == 0)
 			{
 				return;
 			}
@@ -97,31 +115,14 @@ namespace OpenSekai.Editor
 				}
 			}
 
-			// Edit the serialized list rather than calling PrefabUtility.SetPropertyModifications: that re-applies the
-			// prefab's values, and an AspectRatioFitter re-drives its rect at once and records the overrides again.
-			var serializedInstance = new SerializedObject(instanceHandle);
-			SerializedProperty modifications = serializedInstance.FindProperty("m_Modification.m_Modifications");
-			if (modifications == null)
+			PropertyModification[] kept = modifications
+				.Where(modification => !IsDriven(modification.target, modification.propertyPath, instanceOf))
+				.ToArray();
+			if (kept.Length != modifications.Length)
 			{
-				return;
-			}
-
-			bool removed = false;
-			for (int i = modifications.arraySize - 1; i >= 0; i--)
-			{
-				SerializedProperty modification = modifications.GetArrayElementAtIndex(i);
-				Object target = modification.FindPropertyRelative("target").objectReferenceValue;
-				string propertyPath = modification.FindPropertyRelative("propertyPath").stringValue;
-				if (IsDriven(target, propertyPath, instanceOf))
-				{
-					modifications.DeleteArrayElementAtIndex(i);
-					removed = true;
-				}
-			}
-
-			if (removed)
-			{
-				serializedInstance.ApplyModifiedPropertiesWithoutUndo();
+				// This re-applies the prefab's values. An AspectRatioFitter re-drives its rect at once and records its
+				// overrides again; those are recorded on every load too, so the scene keeps them unchanged.
+				PrefabUtility.SetPropertyModifications(instanceRoot, kept);
 			}
 		}
 

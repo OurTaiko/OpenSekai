@@ -1378,6 +1378,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1836844086376221210, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1836844086376221210, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1836844086376221210, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6260026444548187471, guid: e7cc2ca84ed69ff4d87dc0ffb7ecb050, type: 3}
       propertyPath: m_Name
       value: ScreenLayerMusicScoreMakerTop
