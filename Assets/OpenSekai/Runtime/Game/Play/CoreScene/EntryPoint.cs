@@ -62,6 +62,11 @@ namespace Sekai.Core
 				case PlayMode.SoloLive:
 					soloLiveController.Boot(args.BootData);
 					break;
+				case PlayMode.MultiLive:
+					// 協力ライブ: the solo live with the co-op bridge (other players, FEVER, the shared start).
+					gameObject.AddComponent<Sekai.CoopLive.CoopLiveBridge>().Attach(soloLiveController);
+					soloLiveController.Boot(args.BootData);
+					break;
 				default:
 					Debug.LogWarning($"Unsupported Core PlayMode: {args.PlayMode}; returning to the custom chart manager.", this);
 					SceneManager.Instance.RequestScene(SceneManager.Scene.CustomMusicScoreManager);

@@ -102,6 +102,37 @@ community chart browser is the `CommunityCharts` scene; its charts come from Sek
   environment of the Editor or player. In an open Editor, `System.Environment.SetEnvironmentVariable` from a
   `unity command eval` works until the Editor restarts.
 
+## Co-op live (協力ライブ)
+
+Online co-op lives with up to 5 players, like the original's マルチライブ, over gRPC to SekaiFanmade's co-op server (protocol
+`proto/sekai/multiplay/v1/multiplay.proto` in `~/Repos/SekaiFanmade`; its README has the room rules, timers, FEVER and result
+rules). Home's 協力ライブ card opens the `CoopLive` scene (`SceneManager.Scene.CoopLive` 13, screen type `CoopLive` 9002,
+screen data `Resources/screen/data/ScreenLayerCoopLive.asset` in `EntryScreenLayers`).
+
+- Code is in `Assets/OpenSekai/Runtime/Game/CoopLive/`:
+  - `Proto/Multiplay.cs` is generated, never edit it. After changing the proto in SekaiFanmade:
+    `protoc --proto_path=proto --csharp_out=<OpenSekai>/Assets/OpenSekai/Runtime/Game/CoopLive/Proto proto/sekai/multiplay/v1/multiplay.proto`
+    (protoc 36.x for Google.Protobuf 3.36.x). There is no generated client: `CoopTransport` declares the one duplex method by hand.
+  - `CoopSession` is the connection. It is static and outlives scenes (room screen → Core → room screen), queues writes one at a
+    time, raises its events on the main thread, pings every 15 s and, if the stream drops, joins the same room again (the
+    server keeps the place 10 s).
+  - `CoopRoundLauncher` handles LOADING: it downloads the chart the server assigned (`CommunityLibrary`) and starts the live through
+    `CustomMusicScorePlayLauncher.PlayAsync(..., MenuScreenType.CoopLive, ..., PlayMode.MultiLive)`.
+  - `CoopLiveBridge` is added by the Core `EntryPoint` for `PlayMode.MultiLive`. It sets `SoloLiveController.IsCoop` (no pause,
+    retire or retry; life 0 keeps playing), `StartGate` (after the music is ready it sends `loaded` and waits for `start_live`, via
+    `BaseLiveController.WaitBeforeMusicStart`) and `ScoreLogicFactory` (`CoopScoreLogic`, 1.5× during FEVER). It streams the
+    score, draws the other players and the FEVER banner on its own overlay canvas, reports FEVER CHANCE and sends the final score
+    from `SoloLiveController.LiveEnded`. The live returns to the CoopLive scene, whose screen shows the result.
+  - `UI/ScreenLayerCoopLive` builds the room screen in code (it changes with every phase), with `CoopUi` helpers; its two sprites are
+    serialized on the scene object. Stamp texts are in `CoopStamps`.
+- gRPC: NuGet `Grpc.Net.Client` 2.85 and `Google.Protobuf` 3.36 (`Assets/packages.config`). Unity's HttpClient has no HTTP/2, so
+  the transport is **YetAnotherHttpHandler** (UPM `com.cysharp.yetanotherhttphandler`, native, all five platforms). Its code is in
+  the separate assembly `Runtime/CoopLiveHttp2` (define constraint `OPENSEKAI_YAHH`, set by a version define when the package is
+  present), which registers `CoopTransport.HandlerFactory`. Without the package everything compiles, and the co-op screen says
+  HTTP/2 is missing. `link.xml` files keep IL2CPP from stripping gRPC and protobuf.
+- The server address comes from `/api/v1/meta` (`multiplay.url`); `OPENSEKAI_MULTIPLAY_URL` overrides it (e.g.
+  `http://127.0.0.1:50051`, plain h2c).
+
 ## Platforms and builds
 
 OpenSekai ships on Windows x64, macOS universal, Linux x64, Android and iOS, the way OurTaikoPlay and MajdataPlay do:

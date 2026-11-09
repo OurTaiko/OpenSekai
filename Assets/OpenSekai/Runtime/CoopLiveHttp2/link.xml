@@ -1,0 +1,3 @@
+<linker>
+	<assembly fullname="Cysharp.Net.Http.YetAnotherHttpHandler" preserve="all" />
+</linker>

@@ -109,6 +109,16 @@ namespace Sekai.Community
 		public int ApiVersion;
 		public CommunitySsoInfo Sso = new CommunitySsoInfo();
 		public int PageSize = 24;
+		/// <summary>The co-op live server (gRPC), or null when the site does not run one.</summary>
+		public CommunityMultiplayInfo Multiplay;
+	}
+
+	public sealed class CommunityMultiplayInfo
+	{
+		public string Url = string.Empty;
+		public int Protocol;
+		public int MaxMembers = 5;
+		public int MinPlayers = 2;
 	}
 
 	public sealed class CommunitySsoInfo

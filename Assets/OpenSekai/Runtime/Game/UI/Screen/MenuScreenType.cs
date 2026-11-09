@@ -256,6 +256,7 @@ namespace Sekai
 		MusicScoreMakerBookMarkForCreate = 3013,
 		// OpenSekai's own screens.
 		OpenSekaiHome = 9000,
-		CommunityCharts = 9001
+		CommunityCharts = 9001,
+		CoopLive = 9002
 	}
 }

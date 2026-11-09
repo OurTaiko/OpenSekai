@@ -25,6 +25,7 @@ Assets/
 │   │       ├── Play/            #   live 玩法：CoreScene（Core 场景控制器）、Live、SUS、多人
 │   │       ├── ChartEditor/     #   谱面编辑器 MusicScoreMaker、自制谱管理 CustomMusicScoreManager
 │   │       ├── Community/       #   在线谱面（SekaiFanmade 社区）、OurTaiko 账号登录、首页导航
+│   │       ├── CoopLive/        #   協力ライブ（gRPC 联机，最多 5 人）
 │   │       ├── UI/              #   UI 组件、Screen 层、对话框、调色板、模糊
 │   │       ├── Data/            #   主数据（Master）、用户数据（User）、枚举（Domain）
 │   │       ├── Online/          #   API / 网络层
@@ -35,7 +36,7 @@ Assets/
 │   ├── Prefabs/                 # 场景里摆放的界面 prefab：CustomMusicScoreManager/（自制谱管理）、Community/（首页、在线谱面、登录页）、MusicScoreMaker/（谱面编辑器）、Live/（live 视图和暂停界面）
 │   ├── Resources/               # 运行时通过 Resources 加载的 prefab、字体、特效、界面数据
 │   └── AssetBundles/            # AssetBundle 源资源（保留 AssetBundle 名称，由构建流程打包）
-├── Scenes/                      # Home（首场景，导航）、CustomMusicScoreManager（自制谱管理）、CommunityCharts（在线谱面）、MusicScoreMaker（谱面编辑器）、Core（live）；界面都直接摆在场景里
+├── Scenes/                      # Home（首场景，导航）、CustomMusicScoreManager（自制谱管理）、CommunityCharts（在线谱面）、CoopLive（協力ライブ）、MusicScoreMaker（谱面编辑器）、Core（live）；界面都直接摆在场景里
 ├── Settings/                    # URP 管线资源、Renderer、Volume Profile
 ├── ThirdParty/                  # 第三方源码（ManagedBass 子模块、ZString、StandaloneFileBrowser 等）
 ├── Plugins/                     # 原生库（BASS）与 DOTween

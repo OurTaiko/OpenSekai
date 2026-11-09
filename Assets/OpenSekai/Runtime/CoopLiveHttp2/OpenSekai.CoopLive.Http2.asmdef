@@ -1,0 +1,25 @@
+{
+    "name": "OpenSekai.CoopLive.Http2",
+    "rootNamespace": "Sekai.CoopLive",
+    "references": [
+        "OpenSekai.Game",
+        "Cysharp.Net.Http.YetAnotherHttpHandler"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "OPENSEKAI_YAHH"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.cysharp.yetanotherhttphandler",
+            "expression": "",
+            "define": "OPENSEKAI_YAHH"
+        }
+    ],
+    "noEngineReferences": false
+}

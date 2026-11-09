@@ -20,7 +20,8 @@ namespace Sekai.CustomMusicScoreManager
 			bool isAuto,
 			MenuScreenType returnScreenType,
 			Action<string> setStatus,
-			CancellationToken ct)
+			CancellationToken ct,
+			Sekai.Core.PlayMode playMode = Sekai.Core.PlayMode.SoloLive)
 		{
 			if (entry == null)
 			{
@@ -57,7 +58,7 @@ namespace Sekai.CustomMusicScoreManager
 				return "无法创建游玩启动数据。";
 			}
 
-			Sekai.Core.CoreSceneArgs.Prepare(Sekai.Core.PlayMode.SoloLive, bootData);
+			Sekai.Core.CoreSceneArgs.Prepare(playMode, bootData);
 			LiveTransitioner.SafeForceFinish(null);
 			ScreenManager.Instance?.PushUIScreen(MenuScreenType.LiveLoading, false);
 			return null;

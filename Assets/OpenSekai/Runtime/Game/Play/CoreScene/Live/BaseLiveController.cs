@@ -45,6 +45,12 @@ namespace Sekai.Core.Live
 
 		public bool JustPlayingState => state == LiveControllerState.Playing;
 
+		/// <summary>Length of the song, known once the music is ready.</summary>
+		public long MusicLengthMs => musicLength;
+
+		/// <summary>Current music time of the live.</summary>
+		public long MusicTimeMs => currentMusicTimeMs;
+
 		public bool IsPlayableState => state == LiveControllerState.Playing || state == LiveControllerState.ResumeCountDown;
 
 		protected float currentAudioLatencyMusicTimeMs => Mathf.Max(timingAdjust + currentMusicTimeMs / 1000f, 0f);
@@ -174,6 +180,7 @@ namespace Sekai.Core.Live
 			}
 
 			yield return StartCoroutine(MusicReady());
+			yield return StartCoroutine(WaitBeforeMusicStart());
 
 			OnMusicStart();
 			float rhythmGameStartWait = ShouldWaitBeforeRhythmGameStart() ? waitTime : 0.05f;
@@ -183,6 +190,12 @@ namespace Sekai.Core.Live
 			}
 
 			OnRhythmGameStart();
+		}
+
+		/// <summary>Runs once the music is ready, before it starts; a co-op live waits here for the other players.</summary>
+		protected virtual IEnumerator WaitBeforeMusicStart()
+		{
+			yield break;
 		}
 
 		protected virtual bool ShouldKeepTransitionUntilMusicStart()

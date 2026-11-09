@@ -27,7 +27,8 @@ namespace Sekai
 			CustomMusicScoreManager = 10,
 			// OpenSekai's own scenes.
 			Home = 11,
-			CommunityCharts = 12
+			CommunityCharts = 12,
+			CoopLive = 13
 		}
 
 		private const string CustomMusicScoreManagerSceneName = "CustomMusicScoreManager";
@@ -35,6 +36,7 @@ namespace Sekai
 		private const string CoreSceneName = "Core";
 		private const string HomeSceneName = "Home";
 		private const string CommunityChartsSceneName = "CommunityCharts";
+		private const string CoopLiveSceneName = "CoopLive";
 
 		private static SceneManager instance;
 
@@ -138,6 +140,8 @@ namespace Sekai
 					return CustomMusicScoreManagerSceneName;
 				case Scene.CommunityCharts:
 					return CommunityChartsSceneName;
+				case Scene.CoopLive:
+					return CoopLiveSceneName;
 				case Scene.MusicScoreMaker:
 					return MusicScoreMakerSceneName;
 				default:

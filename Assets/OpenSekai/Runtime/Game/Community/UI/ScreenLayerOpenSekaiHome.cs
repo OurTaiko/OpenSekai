@@ -22,6 +22,10 @@ namespace Sekai.Community
 		private Button settingsButton;
 
 		[SerializeField]
+		[Tooltip("協力ライブ (co-op live).")]
+		private Button coopButton;
+
+		[SerializeField]
 		private TextMeshProUGUI statusText;
 
 		[SerializeField]
@@ -34,6 +38,10 @@ namespace Sekai.Community
 			base.Awake();
 			communityButton.onClick.AddListener(() => Leave(SceneManager.Scene.CommunityCharts));
 			managerButton.onClick.AddListener(() => Leave(SceneManager.Scene.CustomMusicScoreManager));
+			if (coopButton != null)
+			{
+				coopButton.onClick.AddListener(() => Leave(SceneManager.Scene.CoopLive));
+			}
 			settingsButton.onClick.AddListener(() => ScreenManager.Instance?.ShowDialog<OptionDialog>(DialogType.OptionDialog));
 			if (versionText != null)
 			{

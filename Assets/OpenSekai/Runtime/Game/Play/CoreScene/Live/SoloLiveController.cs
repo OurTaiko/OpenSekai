@@ -31,6 +31,26 @@ namespace Sekai.Core.Live
 
 		public bool IsBooted { get; private set; }
 
+		/// <summary>
+		/// A co-op live (協力ライブ, <see cref="Sekai.CoopLive.CoopLiveBridge"/>): no pause, retire or retry, the
+		/// live keeps going at life 0, and it goes back to the co-op room. Set before <see cref="Boot"/>.
+		/// </summary>
+		public bool IsCoop { get; set; }
+
+		/// <summary>Co-op: waits, once the music is ready, until every player can start.</summary>
+		public System.Func<System.Collections.IEnumerator> StartGate { get; set; }
+
+		/// <summary>Co-op: makes the score logic (FEVER scores more).</summary>
+		public System.Func<LiveBundleBuildData, ScoreLogic> ScoreLogicFactory { get; set; }
+
+		/// <summary>The score so far.</summary>
+		public LiveScore CurrentScore => liveLogic?.Score ?? default;
+
+		/// <summary>Raised once when the live ends (the last note, or leaving it), with the final score.</summary>
+		public event System.Action<LiveScore> LiveEnded;
+
+		private bool liveEndedRaised;
+
 		/// <summary>Starts the live described by <paramref name="bootData"/>. Called by <see cref="EntryPoint"/>.</summary>
 		public void Boot(LiveBootDataBase bootData)
 		{
@@ -149,6 +169,11 @@ namespace Sekai.Core.Live
 
 		protected override void OnPause()
 		{
+			// Co-op lives cannot be paused: the others keep playing.
+			if (IsCoop)
+			{
+				return;
+			}
 			if ((state == LiveControllerState.Playing || state == LiveControllerState.ResumeCountDown) && result == 0)
 			{
 				state = LiveControllerState.Pause;
@@ -251,7 +276,7 @@ namespace Sekai.Core.Live
 			liveLogic = new LiveLogic(liveBundleBuildData);
 			liveLogic.Setup(BootData, liveViews);
 			liveLogic.SetSkillLogic(new SkillLogic());
-			liveLogic.SetScoreLogic(new ScoreLogic(liveBundleBuildData));
+			liveLogic.SetScoreLogic(ScoreLogicFactory?.Invoke(liveBundleBuildData) ?? new ScoreLogic(liveBundleBuildData));
 			liveLogic.OnFinished += OnFinished;
 			liveLogic.OnFailure += OnFailure;
 		}
@@ -386,8 +411,43 @@ namespace Sekai.Core.Live
 			}
 
 			TryAppendPlayHistory();
+			RaiseLiveEnded();
 			state = LiveControllerState.Finish;
 			SetFinish(delay, waitTime, BootData?.MusicData?.IsTestPlay == true ? 0.1f : 2f);
+		}
+
+		private void RaiseLiveEnded()
+		{
+			if (liveEndedRaised)
+			{
+				return;
+			}
+			liveEndedRaised = true;
+			LiveEnded?.Invoke(liveLogic?.Score ?? default);
+		}
+
+		/// <summary>
+		/// Co-op: leaves the live without a result (the round started without this player, or the room is gone)
+		/// and goes back to the co-op room.
+		/// </summary>
+		public void AbortToMenu()
+		{
+			if (state == LiveControllerState.Finish)
+			{
+				return;
+			}
+			RaiseLiveEnded();
+			state = LiveControllerState.Finish;
+			result = 0;
+			Exit();
+		}
+
+		protected override System.Collections.IEnumerator WaitBeforeMusicStart()
+		{
+			if (StartGate != null)
+			{
+				yield return StartGate();
+			}
 		}
 
 		private void TryAppendPlayHistory()
@@ -421,6 +481,11 @@ namespace Sekai.Core.Live
 				{
 					MusicScoreMakerEntryPoint.BootData = null;
 					SceneManager.Instance.RequestScene(SceneManager.Scene.CustomMusicScoreManager);
+				}
+				else if (returnScreenType.Value == MenuScreenType.CoopLive)
+				{
+					MusicScoreMakerEntryPoint.BootData = null;
+					SceneManager.Instance.RequestScene(SceneManager.Scene.CoopLive);
 				}
 				else if (returnScreenType.Value == MenuScreenType.CommunityCharts)
 				{
