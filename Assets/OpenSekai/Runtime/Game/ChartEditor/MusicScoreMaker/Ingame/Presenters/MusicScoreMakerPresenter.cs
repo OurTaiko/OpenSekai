@@ -2309,6 +2309,10 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 		{
 			long beforeTicks = _model?.FocusTicks ?? 0L;
 			StartActiveLongNoteSe(beforeTicks);
+			// Note sounds are started one output latency ahead of the playhead (which is what is heard), so they are
+			// heard together with the music instead of one latency after it.
+			float outputLatency = (float)(OpenSekai.Audio.AudioEngine.Instance?.OutputLatency ?? 0.0);
+			long beforeSeTicks = beforeTicks;
 			bool isMusicEnded = false;
 			while (_model != null && _model.IsMusicPlaying && cancellationTokenSource != null && !cancellationTokenSource.IsCancellationRequested)
 			{
@@ -2320,7 +2324,14 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 				}
 				long ticks = MusicScoreMakerUtility.GetTicksFromTime(_model.CurrentMusicTime, _model.MusicScoreMakerData.MusicScoreEventDataList);
 				SetFocusTicks(ticks);
-				UpdateMusicScoreSe(ticks, beforeTicks);
+				long seTicks = outputLatency > 0f
+					? MusicScoreMakerUtility.GetTicksFromTime(_model.CurrentMusicTime + outputLatency, _model.MusicScoreMakerData.MusicScoreEventDataList)
+					: ticks;
+				if (seTicks > beforeSeTicks)
+				{
+					UpdateMusicScoreSe(seTicks, beforeSeTicks);
+					beforeSeTicks = seTicks;
+				}
 				beforeTicks = ticks;
 				if (MusicScoreMakerEventDispatcher.ExistsInstance)
 				{

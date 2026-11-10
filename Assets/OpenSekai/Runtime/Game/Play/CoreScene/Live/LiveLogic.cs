@@ -72,6 +72,11 @@ namespace Sekai.Core.Live
 		private LiveViewBase[] liveViews;
 		private MusicScore musicScore;
 		private NoteBase[] noteArray = Array.Empty<NoteBase>();
+
+		/// <summary>Auto play: the notes whose judgment plays a sound, by time (see <see cref="PlayAutoSeAhead"/>).</summary>
+		private NoteBase[] autoSeNotes = Array.Empty<NoteBase>();
+
+		private int autoSeIndex;
 		private NoteScrollTimeline scrollTimeline = NoteScrollTimeline.Create(null);
 		// noteArray indices ordered by the time each note (or one of its children) first comes on screen.
 		private int[] spawnOrder = Array.Empty<int>();
@@ -178,6 +183,8 @@ namespace Sekai.Core.Live
 			BuildSpawnOrder();
 			eventArray = SortEvents(musicScore.EventArray);
 			BindNoteCallbacks(noteArray);
+			autoSeNotes = BuildAutoSeNotes(noteArray);
+			autoSeIndex = 0;
 			BindEventCallbacks(eventArray);
 			LiveViewExt.CreateNotePool(liveViews, LiveUtility.CalculateMaxSimultaneousNotes(musicScore, CalcFirstVisibleTime));
 			calcCamera = CameraUtility.GetFrontCamera();
@@ -224,6 +231,7 @@ namespace Sekai.Core.Live
 
 		private void ResetScoreState()
 		{
+			autoSeIndex = 0;
 			noteStartIndex = 0;
 			spawnIndex = 0;
 			activeNoteIndices.Clear();
@@ -283,6 +291,60 @@ namespace Sekai.Core.Live
 					OnFinished?.Invoke();
 				}
 			}
+		}
+
+		/// <summary>
+		/// Auto play: plays the sound of every note due by <paramref name="aheadTime"/> (the judgment time plus the output
+		/// latency) now, so it is heard together with the music; the note is still judged, and its effect shown, on time.
+		/// The note sounds used to be started at the judgment and so came one output latency after the music.
+		/// </summary>
+		public void PlayAutoSeAhead(float aheadTime)
+		{
+			while (autoSeIndex < autoSeNotes.Length && autoSeNotes[autoSeIndex].MusicScoreInfo.time <= aheadTime)
+			{
+				NoteBase note = autoSeNotes[autoSeIndex++];
+				// Already judged (before the start of a test play, or before this pass began): its sound has gone.
+				if (note.State == NoteState.Done)
+				{
+					continue;
+				}
+				foreach (LiveViewBase view in liveViews ?? Array.Empty<LiveViewBase>())
+				{
+					if (view is LiveFrontView frontView)
+					{
+						frontView.PlayAutoSeAhead(note);
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// The notes auto play judges with a result that sounds: every note, and each long note's start, relay points and
+		/// end. Guide notes are never judged, hidden relay points are judged Pass, and hold combos make no sound.
+		/// </summary>
+		private static NoteBase[] BuildAutoSeNotes(NoteBase[] notes)
+		{
+			List<NoteBase> result = new List<NoteBase>();
+			foreach (NoteBase note in notes)
+			{
+				if (note == null || note is GuideNote)
+				{
+					continue;
+				}
+				if (note is LongNote longNote && longNote.NoteList != null)
+				{
+					foreach (NoteBase child in longNote.NoteList)
+					{
+						if (child != null && !(child is HiddenConnectionNote) && !(child is LongHoldCombo))
+						{
+							result.Add(child);
+						}
+					}
+					continue;
+				}
+				result.Add(note);
+			}
+			return result.OrderBy(note => note.MusicScoreInfo.time).ToArray();
 		}
 
 		public void OnAutoInput()

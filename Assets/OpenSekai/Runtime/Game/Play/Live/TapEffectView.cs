@@ -120,6 +120,44 @@ namespace Sekai
 		{
 			lastFrame = 0;
 			pairNoteSeMap?.Clear();
+			aheadSeNoteIds.Clear();
+		}
+
+		/// <summary>Notes whose sound <see cref="PlayAutoSeAhead"/> has played; their judgment shows only the effect.</summary>
+		private readonly HashSet<int> aheadSeNoteIds = new HashSet<int>();
+
+		/// <summary>
+		/// Auto play: plays the sound <see cref="Excute"/> would play for <paramref name="note"/> judged Auto, ahead of the
+		/// judgment, so that it is heard with the music despite the output latency.
+		/// </summary>
+		public void PlayAutoSeAhead(INote note)
+		{
+			if (note == null || aheadSeNoteIds.Contains(note.Id))
+			{
+				return;
+			}
+			switch (note.Category)
+			{
+				case NoteCategory.FrictionHide:
+				case NoteCategory.FrictionHideLong:
+				case NoteCategory.Combo:
+				case NoteCategory.Hidden:
+					return;
+			}
+
+			noteInfo = new NoteInfo
+			{
+				result = NoteResult.Auto,
+				category = note.Category,
+				type = note.Type,
+				direction = note.Direction,
+				laneStart = note.LaneStart,
+				laneEnd = note.LaneEnd,
+				pairNote = note.PairNote,
+				noteId = note.Id
+			};
+			_playSeAction?.Invoke();
+			aheadSeNoteIds.Add(note.Id);
 		}
 
 		public void Dispose()
@@ -333,7 +371,10 @@ namespace Sekai
 					break;
 			}
 
-			_playSeAction?.Invoke();
+			if (!aheadSeNoteIds.Remove(note.Id))
+			{
+				_playSeAction?.Invoke();
+			}
 			if (checkPlayedHaptic == null || !checkPlayedHaptic())
 			{
 				PlayHaptic();

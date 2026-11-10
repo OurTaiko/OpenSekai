@@ -793,6 +793,12 @@ namespace Sekai.Live
 			}
 		}
 
+		/// <summary>Auto play: plays a note's sound ahead of its judgment (see <c>LiveLogic.PlayAutoSeAhead</c>).</summary>
+		public void PlayAutoSeAhead(INote note)
+		{
+			tapEffect?.PlayAutoSeAhead(note);
+		}
+
 		private void Effect(INote note)
 		{
 			tapEffect?.Excute(note, CheckPlayedHaptic);

@@ -160,6 +160,9 @@ namespace Sekai.Core.Live
 			}
 			if (BootData?.IsAuto == true)
 			{
+				// Note sounds start one output latency early, so they are heard with the music (judgments stay on time).
+				double outputLatency = OpenSekai.Audio.AudioEngine.Instance?.OutputLatency ?? 0.0;
+				liveLogic?.PlayAutoSeAhead(currentAudioLatencyMusicTimeMs - fillerSec - judgeAdjust + (float)outputLatency);
 				liveLogic?.OnAutoInput();
 			}
 			else

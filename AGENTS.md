@@ -80,6 +80,12 @@ seconds through the BPM events. The editor, the live and test play all use audio
 sets `fillerSec = −WAVEOFFSET` (a positive WAVEOFFSET cannot be represented, so the import warns and uses 0), and
 exporting writes `−fillerSec`.
 
+Note sounds that follow the music clock start one output latency early (`AudioEngine.OutputLatency`), since the clock
+is the heard position and a sound started at it is itself heard one latency later: the chart editor's playback looks
+ahead in `UpdatePlayingMusicCurrentMusicScoreStartTicks`, and auto play plays each note's sound from
+`LiveLogic.PlayAutoSeAhead` (through `TapEffectView.PlayAutoSeAhead`) while judging and drawing it on time. Sounds of
+the player's own taps are played when they tap, as before.
+
 The track shows the audio's waveform (`MusicScoreWaveformView` behind the lane lines, option 波形表示). `MusicScoreMakerWaveform`
 decodes the chart's audio once with BASS (`SoundBuffer.ComputePeaks`) on a worker thread. With the Editor's build target set
 to iOS, BASS does not load, so the editor has no audio and no waveform; switch to a desktop target to test it.
