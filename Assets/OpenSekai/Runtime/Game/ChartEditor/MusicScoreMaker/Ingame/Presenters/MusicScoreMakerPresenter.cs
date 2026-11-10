@@ -2232,7 +2232,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 			{
 				_model.FillerSec = 0f;
 			}
-			float playbackStartTime = Mathf.Max(currentTime, 0f) + _model.FillerSec;
+			float playbackStartTime = Mathf.Max(currentTime + _model.FillerSec, 0f);
 			// OpenSekai: official data keeps secForMusicScoreMaker within the playable BGM range.
 			// Custom charts can exceed the audio length, so avoid seeking CRI/our shim past EOF.
 			if (_model.MusicLength > 0L && playbackStartTime * 1000f >= _model.MusicLength)
@@ -2700,7 +2700,8 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 			long playbackTimeMs = SoundManager.Instance.GetAudioSyncedUnityTimer();
 			if (playbackTimeMs > 0L && (_model.MusicLength <= 0L || playbackTimeMs <= _model.MusicLength))
 			{
-				_model.CurrentMusicTime = Mathf.Max(0f, playbackTimeMs / 1000f - _model.FillerSec);
+				// Before bar 1 the chart time is negative, down to the start of the audio.
+				_model.CurrentMusicTime = Mathf.Max(-_model.FillerSec, playbackTimeMs / 1000f - _model.FillerSec);
 				return false;
 			}
 			if (playbackTimeMs > _model.MusicLength && _model.MusicLength > 0L)
@@ -2776,7 +2777,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 			_model.SetFullComboDataHash(_model.MusicScoreMakerData.FullComboDataHash, _model.MusicScoreMakerData.FullComboDataHash != null);
 			_model.MusicId = musicId;
 			ApplyMusicScoreStartupData(musicId);
-			_model.FocusTicks = ClampTicksToValidRange(focusTicks);
+			_model.FocusTicks = ClampFocusTicks(focusTicks);
 			await UpdateBackground2DJacketAsync(musicId, token);
 			NotifyMusicScoreAndTimelineChanged();
 			_model.UpdateSavedDataHash();
@@ -2815,7 +2816,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 			_model.MusicScoreMakerData = data;
 			_model.MusicId = entry.MusicId;
 			_model.LiveBundleBuildData = Resources.Load<LiveBundleBuildData>(LiveConfig.ConfigBundleNamePath);
-			_model.FocusTicks = ClampTicksToValidRange(focusTicks);
+			_model.FocusTicks = ClampFocusTicks(focusTicks);
 			NotifyMusicScoreAndTimelineChanged();
 			_model.UpdateSavedDataHash();
 			return UniTask.CompletedTask;
@@ -3359,7 +3360,12 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 			{
 				return;
 			}
-			long clampedTicks = Math.Min(Math.Max(ticks, 0L), GetMaxFocusableTicks());
+			if (ticks < 0L)
+			{
+				// Before bar 1 (the playhead can go there to line the chart up with the audio): nothing to place.
+				return;
+			}
+			long clampedTicks = Math.Min(ticks, GetMaxFocusableTicks());
 			MusicScoreNoteBase[] generatedNotes = GenerateNote(lane, clampedTicks);
 			if (generatedNotes == null || generatedNotes.Length == 0)
 			{
@@ -5803,7 +5809,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 			long minTicks = MusicScoreMakerUtility.FindMinTick(sourceNotes, sourceEvents);
 			long maxTicks = MusicScoreMakerUtility.FindMaxTick(sourceNotes, sourceEvents);
 			long spanTicks = Math.Max(0L, maxTicks - minTicks);
-			long focusTicks = _model?.FocusTicks ?? 0L;
+			long focusTicks = Math.Max(0L, _model?.FocusTicks ?? 0L);
 			long maxFocusableTicks = GetMaxFocusableTicks();
 			if (maxFocusableTicks - focusTicks < spanTicks)
 			{
@@ -6340,9 +6346,34 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 			UpdateMusicTimeTextEventFromFocusTicks();
 		}
 
+		/// <summary>
+		/// The focus (playhead) can go before bar 1 as far as the start of the audio (<see cref="GetMinFocusableTicks"/>),
+		/// so the first bar can be moved earlier too. Notes and events still start at tick 0 (<see cref="ClampTicksToValidRange"/>).
+		/// </summary>
 		private long ClampFocusTicks(long value)
 		{
-			return ClampTicksToValidRange(value);
+			long minTicks = GetMinFocusableTicks();
+			if (value < minTicks)
+			{
+				return minTicks;
+			}
+			return Math.Min(value, Math.Max(GetMaxFocusableTicks(), 0L));
+		}
+
+		/// <summary>The tick at audio time 0, before bar 1 when the chart has a fillerSec; 0 otherwise.</summary>
+		private long GetMinFocusableTicks()
+		{
+			MusicScoreMakerData data = _model?.MusicScoreMakerData;
+			if (data == null || _model.FillerSec <= 0f)
+			{
+				return 0L;
+			}
+			long ticks = MusicScoreMakerUtility.GetTicksFromTime(-_model.FillerSec, data.MusicScoreEventDataList);
+			if (data.GetTimeFromTicks(ticks) + _model.FillerSec < 0f)
+			{
+				ticks++;
+			}
+			return Math.Min(0L, ticks);
 		}
 
 		private long ClampTicksToValidRange(long value)

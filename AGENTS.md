@@ -69,6 +69,9 @@ The chart editor's (`MusicScoreMaker` scene) menu buttons send events through `D
   ノーツ端判定幅 (`NoteEdgeWidth`) and レイアウトパターン.
 - 現在位置を第1小節に makes the current position (the playhead, or the focus line when stopped) the start of bar 1: it
   sets the chart's `fillerSec` to that audio time after a confirmation and saves manifest.json. Notes keep their ticks.
+  The playhead can go before bar 1 as far as audio time 0 (negative ticks, timed with tick 0's BPM), so bar 1 can be
+  moved earlier as well as later. Nothing can be placed there: a tap before tick 0 does nothing, paste and events start
+  at tick 0, bar lines start at bar 1, and the time display shows a negative time.
 - 使用方法 is left empty on purpose: there is no `Sekai.TutorialUtility` or tutorial slides.
 
 Timing: tick 0 (bar 1) is at audio time `fillerSec` (manifest.json, also editable in 自制谱管理's form), and ticks become

@@ -186,10 +186,13 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 			{
 				return;
 			}
+			// Before bar 1 the time is negative.
+			string sign = time < 0f ? "-" : string.Empty;
+			time = Math.Abs(time);
 			int minutes = (int)Math.Floor(time / 60f);
 			int seconds = (int)Math.Floor(time % 60f);
 			int milliseconds = (int)Math.Floor(time * 1000f % 1000f);
-			timeText.text = string.Format("{0:00}:{1:00}:{2:000}", minutes, seconds, milliseconds);
+			timeText.text = sign + string.Format("{0:00}:{1:00}:{2:000}", minutes, seconds, milliseconds);
 		}
 
 		public MusicControllerView()

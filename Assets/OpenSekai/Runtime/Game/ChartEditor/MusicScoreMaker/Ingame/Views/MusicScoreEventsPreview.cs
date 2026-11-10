@@ -265,7 +265,8 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 					_ticksGroupsCache[eventData.ticks] = group;
 				}
 				group.Add(eventData);
-				if (eventData.ticks > focusTicks)
+				// Before bar 1 the timing is tick 0's.
+				if (eventData.ticks > System.Math.Max(0L, focusTicks))
 				{
 					continue;
 				}

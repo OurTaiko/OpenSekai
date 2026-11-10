@@ -160,7 +160,8 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 				_sortedTimeSignatureTicksCache.Add(ticks);
 			}
 			_sortedTimeSignatureTicksCache.Sort();
-			GetInitialBarState(startTicks, _sortedTimeSignatureTicksCache, timeSignatureByTicks, out TimeSignatureInfo currentTimeSignature, out long currentBarStartTicks, out int barNumber);
+			// Bars start at tick 0; before it (where the playhead can reach the start of the audio) there are none.
+			GetInitialBarState(System.Math.Max(0L, startTicks), _sortedTimeSignatureTicksCache, timeSignatureByTicks, out TimeSignatureInfo currentTimeSignature, out long currentBarStartTicks, out int barNumber);
 			bool skipBeatLines = CheckSkipBeatLines(startTicks, endTicks, currentTimeSignature, _sortedTimeSignatureTicksCache, timeSignatureByTicks);
 			int barDisplayInterval = CalculateBarDisplayInterval(startTicks, endTicks, currentTimeSignature, _sortedTimeSignatureTicksCache, timeSignatureByTicks);
 			int barLineIndex = 0;

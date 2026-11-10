@@ -1029,7 +1029,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Utilities
 			}
 			foreach (MusicScoreEventData evt in musicScoreEventDataList)
 			{
-				if (evt.eventType == MusicScoreEventType.BPM && evt.ticks <= ticks)
+				if (evt.eventType == MusicScoreEventType.BPM && evt.ticks <= Math.Max(0L, ticks))
 				{
 					bpm = ConvertToFloat(evt.changeValue, bpm);
 				}
@@ -1046,7 +1046,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Utilities
 			}
 			foreach (MusicScoreEventData evt in musicScoreEventDataList)
 			{
-				if (evt.eventType == MusicScoreEventType.TimeSignature && evt.ticks <= ticks)
+				if (evt.eventType == MusicScoreEventType.TimeSignature && evt.ticks <= Math.Max(0L, ticks))
 				{
 					result = GetTimeSignatureFromChangeValue(evt.changeValue);
 				}
@@ -1078,7 +1078,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Utilities
 			}
 			foreach (MusicScoreEventData evt in musicScoreEventDataList)
 			{
-				if (evt.eventType == MusicScoreEventType.HighSpeed && evt.ticks <= ticks)
+				if (evt.eventType == MusicScoreEventType.HighSpeed && evt.ticks <= Math.Max(0L, ticks))
 				{
 					speedRatio = ConvertToFloat(evt.changeValue, speedRatio);
 				}
