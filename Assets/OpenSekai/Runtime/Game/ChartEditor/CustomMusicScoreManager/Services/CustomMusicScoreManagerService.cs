@@ -236,7 +236,8 @@ namespace Sekai.CustomMusicScoreManager
 				Designer = manifest?.noteDesigner,
 				Wave = manifest?.audioFileName,
 				Jacket = manifest?.jacketFileName,
-				PlayLevel = manifest?.playLevel ?? 0
+				PlayLevel = manifest?.playLevel ?? 0,
+				WaveOffset = manifest != null && manifest.fillerSec > 0f ? -manifest.fillerSec : 0f
 			});
 			warnings = result.Warnings;
 
@@ -299,6 +300,16 @@ namespace Sekai.CustomMusicScoreManager
 
 		public static CustomMusicScoreEntry ReplaceScoreFile(CustomMusicScoreEntry entry, string sourcePath)
 		{
+			return ReplaceScoreFile(entry, sourcePath, out _);
+		}
+
+		/// <summary>
+		/// Imports a score file as score.json. A SUS file's #WAVEOFFSET sets fillerSec (fillerSec = −WAVEOFFSET);
+		/// <paramref name="warning"/> says when that would be negative, which fillerSec cannot be.
+		/// </summary>
+		public static CustomMusicScoreEntry ReplaceScoreFile(CustomMusicScoreEntry entry, string sourcePath, out string warning)
+		{
+			warning = null;
 			if (entry == null || string.IsNullOrEmpty(sourcePath) || !File.Exists(sourcePath))
 			{
 				return entry;
@@ -339,6 +350,16 @@ namespace Sekai.CustomMusicScoreManager
 					data.MusicId = entry.MusicId;
 					data.InitializeIdCount();
 					File.WriteAllText(destinationPath, DeepCopyHelper.ToJsonString(data));
+					if (MusicScoreSusExporter.TryReadWaveOffset(susText, out float waveOffset))
+					{
+						float fillerSec = -waveOffset;
+						if (fillerSec < 0f)
+						{
+							warning = $"#WAVEOFFSET {waveOffset:0.###} 表示谱面比音频早开始 {-fillerSec:0.###} 秒，偏移不能为负，已设为 0。";
+							fillerSec = 0f;
+						}
+						manifest.fillerSec = fillerSec;
+					}
 				}
 
 				manifest.scoreFileName = "score.json";

@@ -1239,8 +1239,10 @@ namespace Sekai.CustomMusicScoreManager
 
 		private void ReplaceSelectedScore()
 		{
+			string warning = null;
 			ReplaceSelectedFromPicker("导入谱面文件", "已取消导入谱面。", "谱面文件", new[] { "json", "txt", "sus" },
-				CustomMusicScoreManagerService.ReplaceScoreFile, "已导入谱面", "当前平台暂不支持导入谱面文件，请手动复制。");
+				(entry, path) => CustomMusicScoreManagerService.ReplaceScoreFile(entry, path, out warning), "已导入谱面", "当前平台暂不支持导入谱面文件，请手动复制。",
+				() => warning);
 		}
 
 		private void ReplaceSelectedVideo()
@@ -1256,7 +1258,8 @@ namespace Sekai.CustomMusicScoreManager
 			string[] extensions,
 			Func<CustomMusicScoreEntry, string, CustomMusicScoreEntry> replaceFile,
 			string successStatus,
-			string unsupportedStatus)
+			string unsupportedStatus,
+			Func<string> getWarning = null)
 		{
 			if (_selected?.Entry == null)
 			{
@@ -1270,7 +1273,7 @@ namespace Sekai.CustomMusicScoreManager
 					return false;
 				}
 
-				ReplaceSelectedFile(path, replaceFile, successStatus);
+				ReplaceSelectedFile(path, replaceFile, successStatus, getWarning);
 				return true;
 			}, unsupportedStatus);
 		}
@@ -1308,7 +1311,8 @@ namespace Sekai.CustomMusicScoreManager
 		private void ReplaceSelectedFile(
 			string sourcePath,
 			Func<CustomMusicScoreEntry, string, CustomMusicScoreEntry> replaceFile,
-			string successStatus)
+			string successStatus,
+			Func<string> getWarning = null)
 		{
 			try
 			{
@@ -1327,7 +1331,8 @@ namespace Sekai.CustomMusicScoreManager
 					File.Exists(entry.AudioPath),
 					File.Exists(entry.JacketPath));
 				RefreshList();
-				SetStatus(successStatus + ": " + Path.GetFileName(sourcePath));
+				string warning = getWarning?.Invoke();
+				SetStatus(successStatus + ": " + Path.GetFileName(sourcePath) + (string.IsNullOrEmpty(warning) ? string.Empty : "\n" + warning));
 			}
 			catch (Exception ex)
 			{

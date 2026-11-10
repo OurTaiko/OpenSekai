@@ -23,6 +23,9 @@ namespace Sekai.MusicScoreMaker.Common
 			public string Wave;
 			public string Jacket;
 			public int PlayLevel;
+
+			/// <summary>#WAVEOFFSET: minus the chart's fillerSec (SUS tools put the music this many seconds after the chart's start).</summary>
+			public float WaveOffset;
 		}
 
 		public sealed class Result
@@ -105,7 +108,7 @@ namespace Sekai.MusicScoreMaker.Common
 			sb.Append("#DESIGNER \"").Append(Quote(metadata?.Designer)).Append("\"\n");
 			sb.Append("#PLAYLEVEL ").Append(metadata != null && metadata.PlayLevel > 0 ? metadata.PlayLevel.ToString(CultureInfo.InvariantCulture) : string.Empty).Append('\n');
 			sb.Append("#WAVE \"").Append(Quote(metadata?.Wave)).Append("\"\n");
-			sb.Append("#WAVEOFFSET 0\n");
+			sb.Append("#WAVEOFFSET ").Append(FormatFloat(metadata?.WaveOffset ?? 0f)).Append('\n');
 			sb.Append("#JACKET \"").Append(Quote(metadata?.Jacket)).Append("\"\n");
 			sb.Append('\n');
 			sb.Append("#REQUEST \"ticks_per_beat ").Append(TicksPerBeat.ToString(CultureInfo.InvariantCulture)).Append("\"\n");
@@ -605,6 +608,30 @@ namespace Sekai.MusicScoreMaker.Common
 		private static string Quote(string value)
 		{
 			return string.IsNullOrEmpty(value) ? string.Empty : value.Replace("\"", "'").Replace("\r", " ").Replace("\n", " ");
+		}
+
+		/// <summary>
+		/// Reads #WAVEOFFSET. In SUS (Ched, and usctool / the Sonolus engines that read it) it is the opposite of fillerSec:
+		/// the chart starts at audio time −WAVEOFFSET.
+		/// </summary>
+		public static bool TryReadWaveOffset(string susText, out float waveOffset)
+		{
+			waveOffset = 0f;
+			if (string.IsNullOrEmpty(susText))
+			{
+				return false;
+			}
+			foreach (string rawLine in susText.Split('\n'))
+			{
+				string line = rawLine.Trim();
+				if (!line.StartsWith("#WAVEOFFSET", StringComparison.OrdinalIgnoreCase))
+				{
+					continue;
+				}
+				string value = line.Substring("#WAVEOFFSET".Length).Trim().Trim('"').Trim();
+				return float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out waveOffset);
+			}
+			return false;
 		}
 
 		private static string FormatFloat(float value)
