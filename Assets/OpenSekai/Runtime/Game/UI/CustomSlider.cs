@@ -18,7 +18,12 @@ namespace Sekai.UI
 		[SerializeField]
 		private bool m_isUsePositionOneValueMax;
 
+		private const string SliderUpCue = "SE_UI_GAUGE_SLIDER_UP";
+		private const string SliderDownCue = "SE_UI_GAUGE_SLIDER_DOWN";
+		private const float SliderSeIntervalSec = 0.08f;
+
 		private float currentValue;
+		private float lastSliderSeTime = float.NegativeInfinity;
 
 		private Action<float> _onDragCallback;
 
@@ -84,14 +89,32 @@ namespace Sekai.UI
 		public override void OnPointerDown(PointerEventData eventData)
 		{
 			currentValue = value;
+			float before = value;
 			base.OnPointerDown(eventData);
+			PlaySliderSe(before);
 			_onDragCallback?.Invoke(value);
 		}
 
 		public override void OnDrag(PointerEventData eventData)
 		{
+			float before = value;
 			base.OnDrag(eventData);
+			PlaySliderSe(before);
 			_onDragCallback?.Invoke(value);
+		}
+
+		/// <summary>The gauge sound of a slider the player moves (only with m_isUseSliderSE), at most every
+		/// <see cref="SliderSeIntervalSec"/>.</summary>
+		private void PlaySliderSe(float before)
+		{
+			if (!m_isUseSliderSE || Mathf.Approximately(before, value) || Time.unscaledTime - lastSliderSeTime < SliderSeIntervalSec)
+			{
+				return;
+			}
+
+			lastSliderSeTime = Time.unscaledTime;
+			IsSEPlaying = true;
+			SoundManager.Instance?.PlaySEOneShot(value > before ? SliderUpCue : SliderDownCue, 0);
 		}
 
 		private void OnValueChange(float value)

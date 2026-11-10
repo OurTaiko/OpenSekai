@@ -7,6 +7,7 @@ using Sekai.CoopLive.Proto;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Sekai.UI;
 
 namespace Sekai.CoopLive
 {
@@ -459,6 +460,7 @@ namespace Sekai.CoopLive
 			if (CoopSession.IsHost)
 			{
 				Button lockMembers = CoopUi.Button(card, "Lock", "メンバー決定", CoopSession.LockMembers, CoopUi.Accent, Color.white, 38);
+				UIClickSound.Add(lockMembers, SeType.Other, "SE_MULTILIVE_MEMBER_DECIDE");
 				lockMembers.GetComponent<RectTransform>().Place(new Vector2(0.5f, 0), new Vector2(0, 50), new Vector2(520, 110));
 				lockMembers.interactable = present >= 2;
 				_hostButtons.Add(lockMembers);
@@ -557,6 +559,7 @@ namespace Sekai.CoopLive
 				Image row = CoopUi.Image(list, "Chart " + c.NumberId, CoopUi.PanelSoft);
 				CoopUi.Size(row, height: 92);
 				Button button = row.gameObject.AddComponent<Button>();
+				UIClickSound.Add(button);
 				button.targetGraphic = row;
 				button.onClick.AddListener(() =>
 				{
@@ -694,6 +697,7 @@ namespace Sekai.CoopLive
 
 		private void OnStamp(StampSent stamp)
 		{
+			CoopUi.PlayStampSound();
 			Member member = CoopSession.Find(stamp.UserId);
 			Room room = CoopSession.Room;
 			if (member == null || room == null)

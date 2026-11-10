@@ -202,6 +202,7 @@ GameObject:
   - component: {fileID: 2529967854223383035}
   - component: {fileID: 3700848949604386272}
   - component: {fileID: 4743279085738189170}
+  - component: {fileID: 1887143392828799455}
   m_Layer: 5
   m_Name: RegisterButton
   m_TagString: Untagged
@@ -324,6 +325,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1887143392828799455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 733690619683216739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8abb848caf5514417978825436f26ecd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.UI.UIClickSound
+  se: 1
+  otherSeName: 
 --- !u!1 &760320165663731267
 GameObject:
   m_ObjectHideFlags: 0
@@ -412,6 +427,7 @@ GameObject:
   - component: {fileID: 3214580674331886766}
   - component: {fileID: 8027049800749362499}
   - component: {fileID: 1133373912002723580}
+  - component: {fileID: 766915360688284064}
   m_Layer: 5
   m_Name: LoginButton
   m_TagString: Untagged
@@ -533,6 +549,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &766915360688284064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 930594215463071421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8abb848caf5514417978825436f26ecd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.UI.UIClickSound
+  se: 1
+  otherSeName: 
 --- !u!1 &1049272093546970550
 GameObject:
   m_ObjectHideFlags: 0
@@ -2105,6 +2135,7 @@ GameObject:
   - component: {fileID: 6452367027749900694}
   - component: {fileID: 8667166470227850760}
   - component: {fileID: 7629032494100991342}
+  - component: {fileID: 343510752517923763}
   m_Layer: 5
   m_Name: AccountCenterButton
   m_TagString: Untagged
@@ -2227,6 +2258,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &343510752517923763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3216012348715283181}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8abb848caf5514417978825436f26ecd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.UI.UIClickSound
+  se: 1
+  otherSeName: 
 --- !u!1 &3405631418215790629
 GameObject:
   m_ObjectHideFlags: 0
@@ -2565,6 +2610,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8664156542367753939}
   - component: {fileID: 7005273189426987640}
+  - component: {fileID: 405943517524159121}
   m_Layer: 5
   m_Name: CloseButton
   m_TagString: Untagged
@@ -2638,6 +2684,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &405943517524159121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4324849303455110402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8abb848caf5514417978825436f26ecd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.UI.UIClickSound
+  se: 2
+  otherSeName: 
 --- !u!1 &4340155301435247328
 GameObject:
   m_ObjectHideFlags: 0
@@ -2651,6 +2711,7 @@ GameObject:
   - component: {fileID: 3986758577957490428}
   - component: {fileID: 3453492526598811303}
   - component: {fileID: 8892355819699952959}
+  - component: {fileID: 9099951419040639826}
   m_Layer: 5
   m_Name: ForgotButton
   m_TagString: Untagged
@@ -2773,6 +2834,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &9099951419040639826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4340155301435247328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8abb848caf5514417978825436f26ecd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.UI.UIClickSound
+  se: 1
+  otherSeName: 
 --- !u!1 &4743822169816052896
 GameObject:
   m_ObjectHideFlags: 0
@@ -3789,6 +3864,7 @@ GameObject:
   - component: {fileID: 5270959453572413627}
   - component: {fileID: 7600196688281659279}
   - component: {fileID: 3230157478438094941}
+  - component: {fileID: 3354197624690630223}
   m_Layer: 5
   m_Name: LogoutButton
   m_TagString: Untagged
@@ -3910,6 +3986,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3354197624690630223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7355517080431807574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8abb848caf5514417978825436f26ecd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.UI.UIClickSound
+  se: 1
+  otherSeName: 
 --- !u!1 &7395862978250783235
 GameObject:
   m_ObjectHideFlags: 0

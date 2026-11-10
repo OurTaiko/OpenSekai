@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using Sekai.UI;
 
 namespace Sekai.CoopLive
 {
@@ -108,6 +109,7 @@ namespace Sekai.CoopLive
 		{
 			Image image = Image(parent, name, background ?? Accent);
 			Button button = image.gameObject.AddComponent<Button>();
+			UIClickSound.Add(button);
 			ColorBlock colors = button.colors;
 			colors.highlightedColor = new Color(0.95f, 0.95f, 0.95f, 1f);
 			colors.pressedColor = new Color(0.8f, 0.8f, 0.8f, 1f);
@@ -252,6 +254,7 @@ namespace Sekai.CoopLive
 			header.rectTransform.offsetMin = new Vector2(0, -132);
 			header.rectTransform.offsetMax = Vector2.zero;
 			Button back = Button(header.transform, "Back", "‹ 返回", onBack, Color.white, Ink, 28);
+			UIClickSound.Add(back, SeType.Cancel);
 			back.GetComponent<RectTransform>().Place(new Vector2(0, 0.5f), new Vector2(34, 0), new Vector2(170, 72));
 			title = Text(header.transform, "Title", "協力ライブ", 40, Color.white, true);
 			title.rectTransform.Place(new Vector2(0, 0.5f), new Vector2(234, 0), new Vector2(900, 70));
@@ -278,6 +281,12 @@ namespace Sekai.CoopLive
 				Size(stamp, height: 80);
 			}
 			return bar;
+		}
+
+		/// <summary>The sound of a スタンプ arriving (anyone's: the server sends the sender's own stamp back too).</summary>
+		public static void PlayStampSound()
+		{
+			SoundManager.Instance?.PlaySEOneShot("SE_COMMON_STAMP", 0);
 		}
 
 		/// <summary>A message box at the top; hide it again with SetActive(false) on the returned label's parent.</summary>

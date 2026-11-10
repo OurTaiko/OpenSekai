@@ -222,6 +222,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2174867419236443297}
   - component: {fileID: 5815031463217643090}
+  - component: {fileID: 6055172759243739949}
   m_Layer: 5
   m_Name: SettingsButton
   m_TagString: Untagged
@@ -295,6 +296,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6055172759243739949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 700399322668250726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8abb848caf5514417978825436f26ecd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.UI.UIClickSound
+  se: 1
+  otherSeName: 
 --- !u!1 &918747950519377079
 GameObject:
   m_ObjectHideFlags: 0
@@ -670,6 +685,7 @@ GameObject:
   - component: {fileID: 1698186020897798389}
   - component: {fileID: 6057011068224793413}
   - component: {fileID: 3643610220800931181}
+  - component: {fileID: 6241300054488280465}
   m_Layer: 5
   m_Name: CreateButton
   m_TagString: Untagged
@@ -792,6 +808,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6241300054488280465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2137355137568071047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8abb848caf5514417978825436f26ecd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.UI.UIClickSound
+  se: 1
+  otherSeName: 
 --- !u!1 &2596721850189883474
 GameObject:
   m_ObjectHideFlags: 0
@@ -1273,6 +1303,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4222501394867754062}
   - component: {fileID: 3738411370381684231}
+  - component: {fileID: 1536611367201837627}
   m_Layer: 5
   m_Name: HomeButton
   m_TagString: Untagged
@@ -1346,6 +1377,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1536611367201837627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6610733868077414831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8abb848caf5514417978825436f26ecd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.UI.UIClickSound
+  se: 2
+  otherSeName: 
 --- !u!1 &6868218944596287721
 GameObject:
   m_ObjectHideFlags: 0
@@ -1506,6 +1551,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9023016688715704476}
   - component: {fileID: 1664138817151015590}
+  - component: {fileID: 4969624775730121422}
   m_Layer: 5
   m_Name: RefreshButton
   m_TagString: Untagged
@@ -1579,6 +1625,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4969624775730121422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7526801584309192703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8abb848caf5514417978825436f26ecd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.UI.UIClickSound
+  se: 1
+  otherSeName: 
 --- !u!1 &7763624803320241149
 GameObject:
   m_ObjectHideFlags: 0

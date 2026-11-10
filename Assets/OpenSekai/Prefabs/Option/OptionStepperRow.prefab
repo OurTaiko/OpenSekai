@@ -503,6 +503,7 @@ GameObject:
   - component: {fileID: 4878546073907162351}
   - component: {fileID: 1027580333663626787}
   - component: {fileID: 2124538251243719836}
+  - component: {fileID: 5718720835368913205}
   m_Layer: 5
   m_Name: GlyphButton
   m_TagString: Untagged
@@ -665,6 +666,20 @@ MonoBehaviour:
   m_LayoutPriority: 1
   m_MaxWidth: -1
   m_MaxHeight: -1
+--- !u!114 &5718720835368913205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3334457740924305438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8abb848caf5514417978825436f26ecd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.UI.UIClickSound
+  se: 1
+  otherSeName: 
 --- !u!1 &4307012181806257263
 GameObject:
   m_ObjectHideFlags: 0
@@ -1028,6 +1043,7 @@ GameObject:
   - component: {fileID: 8935248164650684822}
   - component: {fileID: 6142762306787962232}
   - component: {fileID: 5492409493509252837}
+  - component: {fileID: 1169872745988909757}
   m_Layer: 5
   m_Name: TextButton
   m_TagString: Untagged
@@ -1189,6 +1205,20 @@ MonoBehaviour:
   m_LayoutPriority: 1
   m_MaxWidth: -1
   m_MaxHeight: -1
+--- !u!114 &1169872745988909757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7238079215667371512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8abb848caf5514417978825436f26ecd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.UI.UIClickSound
+  se: 1
+  otherSeName: 
 --- !u!1001 &2170378592372598409
 PrefabInstance:
   m_ObjectHideFlags: 0

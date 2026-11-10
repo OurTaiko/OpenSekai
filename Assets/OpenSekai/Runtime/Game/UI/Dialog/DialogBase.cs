@@ -516,7 +516,7 @@ namespace Sekai
 				"SE_UI_DIALOG_OPEN",
 				"SE_UI_DIALOG_OPEN",
 				"SE_UI_DIALOG_OPEN",
-				"SE_SUBWINDOW_OPEN",
+				"SE_SUBWINDOW",
 				"SE_UI_DIALOG_OPEN",
 				"SE_UI_DIALOG_OPEN"
 			};

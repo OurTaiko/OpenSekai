@@ -88,6 +88,12 @@ namespace Sekai
 		/// <summary>Why the setting is stored but does nothing yet (see AGENTS.md); null when it works.</summary>
 		public string NoEffect { get; private set; }
 
+		/// <summary>Volume: the cue played at the new volume when it changes (the original's SE_VOLCHANGE_*); null plays the
+		/// gauge slider's up / down sound instead.</summary>
+		public string PreviewCue { get; private set; }
+		/// <summary>Volume: <see cref="PreviewCue"/> is a voice and plays in the voice group.</summary>
+		public bool PreviewIsVoice { get; private set; }
+
 		private Func<OptionSettings, float> getNumber;
 		private Action<OptionSettings, float> setNumber;
 		private Func<OptionSettings, int> getIndex;
@@ -220,6 +226,13 @@ namespace Sekai
 			return this;
 		}
 
+		public OptionRow PreviewWith(string cue, bool voice = false)
+		{
+			PreviewCue = cue;
+			PreviewIsVoice = voice;
+			return this;
+		}
+
 	}
 
 	public sealed class OptionBlock
@@ -349,13 +362,17 @@ namespace Sekai
 				new OptionSection("ライブ音量",
 					new OptionBlock(OptionBlockLayout.Volume,
 						OptionRow.Volume("live-bgm", "BGM", s => s.LiveVolume.Bgm, (s, v) => s.LiveVolume.Bgm = v),
-						OptionRow.Volume("live-se", "SE", s => s.LiveVolume.Se, (s, v) => s.LiveVolume.Se = v),
-						OptionRow.Volume("live-voice", "ボイス", s => s.LiveVolume.Voice, (s, v) => s.LiveVolume.Voice = v))),
+						OptionRow.Volume("live-se", "SE", s => s.LiveVolume.Se, (s, v) => s.LiveVolume.Se = v)
+							.PreviewWith("SE_VOLCHANGE_SE_INGAME"),
+						OptionRow.Volume("live-voice", "ボイス", s => s.LiveVolume.Voice, (s, v) => s.LiveVolume.Voice = v)
+							.PreviewWith("SE_VOLCHANGE_VOX_INGAME", voice: true))),
 				new OptionSection("システム音量",
 					new OptionBlock(OptionBlockLayout.Volume,
 						OptionRow.Volume("system-bgm", "BGM", s => s.SystemVolume.Bgm, (s, v) => s.SystemVolume.Bgm = v),
-						OptionRow.Volume("system-se", "SE", s => s.SystemVolume.Se, (s, v) => s.SystemVolume.Se = v),
-						OptionRow.Volume("system-voice", "ボイス", s => s.SystemVolume.Voice, (s, v) => s.SystemVolume.Voice = v))));
+						OptionRow.Volume("system-se", "SE", s => s.SystemVolume.Se, (s, v) => s.SystemVolume.Se = v)
+							.PreviewWith("SE_VOLCHANGE_SE_UI"),
+						OptionRow.Volume("system-voice", "ボイス", s => s.SystemVolume.Voice, (s, v) => s.SystemVolume.Voice = v)
+							.PreviewWith("SE_VOLCHANGE_VOX_SCENARIO", voice: true))));
 		}
 
 		private static OptionPage SystemPage()

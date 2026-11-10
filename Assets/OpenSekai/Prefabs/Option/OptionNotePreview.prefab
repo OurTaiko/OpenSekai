@@ -732,6 +732,7 @@ GameObject:
   - component: {fileID: 3641948003861201107}
   - component: {fileID: 8282132198553541207}
   - component: {fileID: 8725341689421214304}
+  - component: {fileID: 2282898199706330552}
   m_Layer: 5
   m_Name: PreviewDetail
   m_TagString: Untagged
@@ -893,6 +894,20 @@ MonoBehaviour:
   m_LayoutPriority: 1
   m_MaxWidth: -1
   m_MaxHeight: -1
+--- !u!114 &2282898199706330552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6983466553037480247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8abb848caf5514417978825436f26ecd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.UI.UIClickSound
+  se: 1
+  otherSeName: 
 --- !u!1 &7260411647021238719
 GameObject:
   m_ObjectHideFlags: 0

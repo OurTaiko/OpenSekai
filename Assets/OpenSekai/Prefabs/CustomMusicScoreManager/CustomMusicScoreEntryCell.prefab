@@ -857,6 +857,7 @@ GameObject:
   - component: {fileID: 3057625838418215920}
   - component: {fileID: 5490304006265740429}
   - component: {fileID: 4255610472383527324}
+  - component: {fileID: 8535327006509811447}
   m_Layer: 5
   m_Name: CustomMusicScoreEntryCell
   m_TagString: Untagged
@@ -1015,6 +1016,20 @@ MonoBehaviour:
   jacketImage: {fileID: 584655717044090214}
   selectedFrame: {fileID: 7991830602648588752}
   separator: {fileID: 2919365541925984051}
+--- !u!114 &8535327006509811447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5840636280254100115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8abb848caf5514417978825436f26ecd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.UI.UIClickSound
+  se: 1
+  otherSeName: 
 --- !u!1 &5984246710428816452
 GameObject:
   m_ObjectHideFlags: 0

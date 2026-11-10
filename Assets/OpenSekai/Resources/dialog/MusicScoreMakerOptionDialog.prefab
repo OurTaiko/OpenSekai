@@ -2551,7 +2551,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
-  se: 0
+  se: 1
   interval: 0
   disableActionType: 0
   coverImage: {fileID: 0}
@@ -3348,7 +3348,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
-  se: 0
+  se: 1
   interval: 0
   disableActionType: 0
   coverImage: {fileID: 0}
@@ -5291,7 +5291,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_isUseExtension: 0
-  m_isUseSliderSE: 0
+  m_isUseSliderSE: 1
   m_isUsePositionOneValueMax: 0
 --- !u!1 &8553873853879871032
 GameObject:

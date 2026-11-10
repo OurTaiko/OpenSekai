@@ -684,6 +684,12 @@ namespace Sekai
 			return PlayCue(cueName, AudioGroup.Se, Mathf.Clamp01(volume), Mathf.Max(0f, startTime), ingame: false);
 		}
 
+		/// <summary>Plays a cue in the voice group (a menu voice, such as the voice volume preview).</summary>
+		public uint PlayVoice(string cueName, float volume = 1f)
+		{
+			return PlayCue(cueName, AudioGroup.Voice, Mathf.Clamp01(volume), 0f, ingame: false);
+		}
+
 		public void PlaySEOneShot(string cueName, int priority = 0)
 		{
 			PlayCue(cueName, AudioGroup.Se, 1f, 0f, ingame: false);

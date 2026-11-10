@@ -10,6 +10,7 @@ using Sekai.CoopLive.Proto;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Sekai.UI;
 
 namespace Sekai
 {
@@ -970,6 +971,8 @@ namespace Sekai
 			Button close = shade.gameObject.AddComponent<Button>();
 			close.transition = Selectable.Transition.None;
 			close.onClick.AddListener(CloseModal);
+			UIClickSound.Add(close, SeType.Cancel);
+			UIClickSound.PlayOpen();
 			_modal = shade.rectTransform;
 			Image panel = CoopUi.Image(shade.transform, "Panel", CoopUi.Panel);
 			panel.raycastTarget = true;
@@ -996,6 +999,7 @@ namespace Sekai
 			body.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0, -120), new Vector2(860, 100), new Vector2(0.5f, 1));
 			body.textWrappingMode = TextWrappingModes.Normal;
 			Button leave = CoopUi.Button(panel, "Leave", inRoom ? "退出房间" : "回到首页", LeaveToHome, CoopUi.PanelSoft, HeaderInk, 32);
+			UIClickSound.Add(leave, SeType.Cancel);
 			leave.GetComponent<RectTransform>().Place(new Vector2(0.5f, 0), new Vector2(-200, 40), new Vector2(360, 96), new Vector2(0.5f, 0));
 			Button back = CoopUi.Button(panel, "Back", inRoom ? "回到房间" : "協力ライブ", BackToRoom, CoopUi.Accent, Color.white, 32);
 			back.GetComponent<RectTransform>().Place(new Vector2(0.5f, 0), new Vector2(200, 40), new Vector2(360, 96), new Vector2(0.5f, 0));
@@ -1072,6 +1076,7 @@ namespace Sekai
 
 		private void OnStamp(StampSent stamp)
 		{
+			CoopUi.PlayStampSound();
 			string text = CoopStamps.Text(stamp.StampId);
 			if (_cards.TryGetValue(stamp.UserId, out CardView card) && card.Root != null)
 			{

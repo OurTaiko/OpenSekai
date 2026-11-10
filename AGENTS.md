@@ -53,6 +53,23 @@ Also note:
 - The ノーツスキン page for custom01 is put together from that skin's note sprites. custom02 uses the official
   `note_preview/custom02` strip.
 
+## UI sounds
+
+The original game's `CustomButton` / `CustomToggle` play their click sound themselves (`se`: SE_DECIDE1, SE_CANCEL or a named
+cue, through `CustomSelectableDefine.PlaySE`). OpenSekai's own screens use plain uGUI `Button` and `Toggle`, so each of them
+carries a `UIClickSound` (`Runtime/Game/UI/UIClickSound.cs`) with the same choice: SE_CANCEL for close and back buttons,
+SE_DECIDE1 otherwise. Give every new plain button one, in its prefab or, for UI built in code, with `UIClickSound.Add`
+(`CoopUi.Button` already does). Panels that open without `DialogBase` (the login panel, 新建 menu, 譜面ID検索, the result
+screen's modals) call `UIClickSound.PlayOpen()` (SE_UI_DIALOG_OPEN), as dialogs do.
+
+- Volume rows play the original's SE_VOLCHANGE_* cue at the new volume instead of a click (`OptionRow.PreviewWith`; BGM rows
+  play SE_UI_GAUGE_SLIDER_UP / DOWN). A ライブ row's preview is scaled against the system volume, so it cannot sound louder
+  than that. The ノーツのSE test buttons play only the note sound.
+- `CustomSlider` with `m_isUseSliderSE` plays the gauge up / down sound while dragged (the chart editor's option sliders).
+- Co-op: スタンプ play SE_COMMON_STAMP when they arrive (the server sends the sender's own back), メンバー決定 plays
+  SE_MULTILIVE_MEMBER_DECIDE.
+- The cue names are in `Assets/StreamingAssets/MenuCommon.acb` and `MenuCommon_Built_in.acb` (`strings` lists them).
+
 ## Chart editor menu
 
 The chart editor's (`MusicScoreMaker` scene) menu buttons send events through `DispatcherEventBaseButton`, which the

@@ -487,6 +487,7 @@ GameObject:
   - component: {fileID: 5997761045369307444}
   - component: {fileID: 6587075618812564503}
   - component: {fileID: 3379748653146428407}
+  - component: {fileID: 497687610975120537}
   m_Layer: 5
   m_Name: Prev
   m_TagString: Untagged
@@ -595,6 +596,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &497687610975120537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2184409582820563461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8abb848caf5514417978825436f26ecd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.UI.UIClickSound
+  se: 1
+  otherSeName: 
 --- !u!1 &2232085251047802173
 GameObject:
   m_ObjectHideFlags: 0
@@ -990,6 +1005,7 @@ GameObject:
   - component: {fileID: 1784741873289134536}
   - component: {fileID: 5723783157730500186}
   - component: {fileID: 175906968972134323}
+  - component: {fileID: 4691881350796194293}
   m_Layer: 5
   m_Name: Next
   m_TagString: Untagged
@@ -1098,6 +1114,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4691881350796194293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6407424856136998099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8abb848caf5514417978825436f26ecd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.UI.UIClickSound
+  se: 1
+  otherSeName: 
 --- !u!1 &6425197265053945753
 GameObject:
   m_ObjectHideFlags: 0

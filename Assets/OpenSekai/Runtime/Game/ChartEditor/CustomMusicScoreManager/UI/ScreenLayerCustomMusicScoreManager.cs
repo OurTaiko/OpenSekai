@@ -297,6 +297,10 @@ namespace Sekai.CustomMusicScoreManager
 				return;
 			}
 
+			if (visible && !_createMenuOverlay.activeSelf)
+			{
+				Sekai.UI.UIClickSound.PlayOpen();
+			}
 			_createMenuOverlay.SetActive(visible);
 			if (visible)
 			{

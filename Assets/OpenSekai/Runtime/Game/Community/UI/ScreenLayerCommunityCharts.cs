@@ -280,6 +280,7 @@ namespace Sekai.Community
 			searchTagInput.onSubmit.AddListener(_ => SubmitSearch());
 			idSearchButton.onClick.AddListener(() =>
 			{
+				Sekai.UI.UIClickSound.PlayOpen();
 				idSearchPopup.SetActive(true);
 				idSearchInput.text = string.Empty;
 				idSearchInput.ActivateInputField();

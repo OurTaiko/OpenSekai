@@ -85,6 +85,10 @@ namespace Sekai.Community
 		public void Show(string reason = null, Action onSignedIn = null)
 		{
 			_onSignedIn = onSignedIn;
+			if (!gameObject.activeSelf)
+			{
+				Sekai.UI.UIClickSound.PlayOpen();
+			}
 			gameObject.SetActive(true);
 			transform.SetAsLastSibling();
 			passwordInput.text = string.Empty;
