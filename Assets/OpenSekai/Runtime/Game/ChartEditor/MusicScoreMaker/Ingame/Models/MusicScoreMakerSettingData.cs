@@ -64,6 +64,8 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 
 		public const bool DEFAULT_SHOW_QUANTIZE_LINES = true;
 
+		public const bool DEFAULT_SHOW_WAVEFORM = true;
+
 		public const float DEFAULT_SCORE_DISPLAY_SCALE_HORIZONTAL = 1f;
 
 		public const float DEFAULT_SCORE_DISPLAY_SCALE_VERTICAL = 1f;
@@ -412,6 +414,10 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 			set;
 		}
 
+		/// <summary>OpenSekai: draw the audio's waveform along the track.</summary>
+		[Key(36)]
+		public bool ShowWaveform { get; set; }
+
 		public MusicScoreMakerSettingData()
 		{
 			ZoomTimelineStep = DEFAULT_ZOOM_TIMELINE_STEP;
@@ -446,6 +452,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Models
 			MaxClipboardCacheCount = DEFAULT_MAX_CLIPBOARD_CACHE_COUNT;
 			AutoPlayEnabled = DEFAULT_AUTO_PLAY_ENABLED;
 			TestPlayLiveModeTypeRaw = DEFAULT_TEST_PLAY_LIVE_MODE_TYPE_RAW;
+			ShowWaveform = DEFAULT_SHOW_WAVEFORM;
 		}
 	}
 }

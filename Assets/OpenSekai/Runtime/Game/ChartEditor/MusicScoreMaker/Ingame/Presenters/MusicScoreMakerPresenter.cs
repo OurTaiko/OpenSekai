@@ -903,6 +903,8 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 
 		private CancellationTokenSource _musicUpdateCts;
 
+		private CancellationTokenSource _waveformCts;
+
 		private Dictionary<int, string> _tapSeDict;
 
 		private Dictionary<NoteType, uint> _longPlaybackIds;
@@ -1180,6 +1182,10 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 			_musicUpdateCts?.Cancel();
 			_musicUpdateCts?.Dispose();
 			_musicUpdateCts = null;
+			_waveformCts?.Cancel();
+			_waveformCts?.Dispose();
+			_waveformCts = null;
+			MusicScoreMakerWaveform.Clear();
 			if (MusicScoreMakerEventDispatcher.ExistsInstance)
 			{
 				MusicScoreMakerEventDispatcher.Instance.ClearSavedUndoRedoStackIfNotTestPlay();
@@ -2897,6 +2903,11 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 			bool audioRegistered = await entry.RegisterAudioAsync(_musicReadyCts != null ? _musicReadyCts.Token : CancellationToken.None);
 			_model.AssetbundleName = entry.AudioCueName;
 			_model.FillerSec = entry.Manifest.fillerSec;
+			MusicScoreMakerWaveform.FillerSec = _model.FillerSec;
+			if (audioRegistered)
+			{
+				LoadWaveformAsync(entry.AudioPath).Forget();
+			}
 			_model.MasterMusicSec = entry.MusicDurationSec;
 			_model.MusicLength = audioRegistered && entry.AudioLengthMs > 0L
 				? entry.AudioLengthMs
@@ -6577,6 +6588,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 			dispatcher.Register<RecheckJudgmentNoteGapEvent>(OnRecheckJudgmentNoteGap);
 			dispatcher.Register<CallTutorialEvent>(CallTutorial);
 			dispatcher.Register<ShowNoteAndComboCountDialogEvent>(ShowNoteAndComboCountDialog);
+			dispatcher.Register<SetFirstBarToCurrentPositionEvent>(SetFirstBarToCurrentPosition);
 			dispatcher.EditGuard = OnEditGuardForFullCombo;
 		}
 
@@ -6623,6 +6635,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 			dispatcher.Remove<RecheckJudgmentNoteGapEvent>(OnRecheckJudgmentNoteGap);
 			dispatcher.Remove<CallTutorialEvent>(CallTutorial);
 			dispatcher.Remove<ShowNoteAndComboCountDialogEvent>(ShowNoteAndComboCountDialog);
+			dispatcher.Remove<SetFirstBarToCurrentPositionEvent>(SetFirstBarToCurrentPosition);
 		}
 
 		private MusicScoreMakerData GetMusicScoreMakerData(GetMusicScoreMakerDataEvent dataEvent)
@@ -6981,7 +6994,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 				bootData.MusicData.IsUseCustomScore = true;
 				bootData.MusicData.CustomPlayLevel = difficulty?.playLevel ?? _model?.CustomMusicScoreEntry?.Manifest.playLevel ?? 0;
 				bootData.MusicData.MusicScore = musicScore;
-				bootData.MusicData.StartMusicTimeMs = MusicScoreMakerSettingsManager.CalcStartMusicTimeMs(bootData, Mathf.FloorToInt(_model?.FillerSec ?? 0f));
+				bootData.MusicData.StartMusicTimeMs = MusicScoreMakerSettingsManager.CalcStartMusicTimeMs(bootData, _model?.FillerSec ?? 0f);
 				bootData.MusicData.PlayStartEffectEnabled = false;
 			}
 
@@ -7668,6 +7681,70 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 		private void CallTutorial(CallTutorialEvent e)
 		{
 			MusicScoreMakerRuleSlideTutorialUtility.TryShowTutorialSlideIfFirstTime("enter");
+		}
+
+		private async UniTaskVoid LoadWaveformAsync(string audioPath)
+		{
+			_waveformCts?.Cancel();
+			_waveformCts?.Dispose();
+			_waveformCts = new CancellationTokenSource();
+			bool loaded = await MusicScoreMakerWaveform.LoadAsync(audioPath, _waveformCts.Token);
+			if (loaded && _model != null)
+			{
+				NotifyMusicScoreAndTimelineChanged();
+			}
+		}
+
+		/// <summary>
+		/// Menu: makes the current position (the playhead, or the focus line when stopped) the start of bar 1 by
+		/// setting fillerSec to its audio time. Notes keep their ticks, so they move with the bars relative to the audio.
+		/// </summary>
+		private void SetFirstBarToCurrentPosition(SetFirstBarToCurrentPositionEvent e)
+		{
+			MusicScoreMakerData data = CurrentData();
+			if (_model?.CustomMusicScoreEntry == null || data == null || ScreenManager.Instance == null)
+			{
+				return;
+			}
+			float chartTime = _model.IsMusicPlaying ? _model.CurrentMusicTime : data.GetTimeFromTicks(_model.FocusTicks);
+			StopMusicIfPlaying();
+			float currentFillerSec = _model.FillerSec;
+			float fillerSec = Mathf.Max(0f, Mathf.Round((chartTime + currentFillerSec) * 1000f) / 1000f);
+			Common2ButtonDialog dialog = ScreenManager.Instance.Show2ButtonDialog<Common2ButtonDialog>(
+				DialogType.Common2ButtonDialog,
+				null,
+				"WORD_DECIDE",
+				"WORD_CANCEL",
+				() => ApplyFillerSec(fillerSec),
+				null,
+				DisplayLayerType.Layer_Dialog,
+				DialogSize.Manual,
+				true);
+			dialog?.SetWordingText("MSG_MUSIC_SCORE_MAKER_SET_FIRST_BAR_CONFIRM", fillerSec.ToString("0.000"), currentFillerSec.ToString("0.000"));
+		}
+
+		private void ApplyFillerSec(float fillerSec)
+		{
+			CustomMusicScoreEntry entry = _model?.CustomMusicScoreEntry;
+			if (entry == null)
+			{
+				return;
+			}
+			CustomMusicScoreManifest manifest = entry.Manifest;
+			manifest.fillerSec = fillerSec;
+			CustomMusicScoreEntry saved = Sekai.CustomMusicScoreManager.CustomMusicScoreManagerService.SaveManifest(entry, manifest);
+			if (saved != null)
+			{
+				_model.CustomMusicScoreEntry = saved;
+				entry = saved;
+			}
+			_model.FillerSec = entry.Manifest.fillerSec;
+			MusicScoreMakerWaveform.FillerSec = _model.FillerSec;
+			_model.MasterMusicSec = entry.MusicDurationSec;
+			_model.UpdateComboCountMinimum(_model.MasterMusicSec);
+			InvalidateMaxFocusableTicksCache();
+			SetFocusTicks(0L);
+			NotifyMusicScoreAndTimelineChanged(refresh: true);
 		}
 
 		private void ShowNoteAndComboCountDialog(ShowNoteAndComboCountDialogEvent e)

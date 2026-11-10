@@ -81,6 +81,9 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 		private BarLinePreview _barLineView;
 
 		[SerializeField]
+		private MusicScoreWaveformView _waveformView;
+
+		[SerializeField]
 		private LaneLinePreview _laneLineView;
 
 		[SerializeField]
@@ -562,6 +565,10 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 				return;
 			}
 
+			if (_waveformView != null)
+			{
+				_waveformView.UpdateView(startTicks, endTicks, musicScore);
+			}
 			_barLineView.UpdateView(currentMusicScoreScale, startTicks, endTicks, musicScore.MusicScoreEventDataList, true, true);
 			_laneLineView.UpdateView(1f, 0f);
 		}

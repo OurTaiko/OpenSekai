@@ -48,6 +48,8 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 
 		public const string SETTING_SHOW_QUANTIZE_LINES = "分解能補助線表示";
 
+		public const string SETTING_SHOW_WAVEFORM = "波形表示";
+
 		public const string SETTING_PLAY_MUSIC_SE_ENABLED = "楽曲再生時にSEを鳴らす";
 
 		public const string SETTING_NOTE_EDGE_WIDTH = "ノーツ端判定幅";

@@ -111,6 +111,79 @@ namespace OpenSekai.Audio
 			return Length;
 		}
 
+		/// <summary>
+		/// Decodes the whole file to mono and returns the loudest sample of each 1/<paramref name="peaksPerSecond"/>
+		/// second (0..1), or null when BASS cannot open it. <paramref name="peakRate"/> is the exact number of peaks per
+		/// second (the sample rate divided by whole frames per peak). Safe to call from a worker thread once the engine is up.
+		/// </summary>
+		public float[] ComputePeaks(int peaksPerSecond, out double peakRate)
+		{
+			peakRate = 0;
+			if (peaksPerSecond <= 0)
+			{
+				throw new ArgumentOutOfRangeException(nameof(peaksPerSecond));
+			}
+
+			var handle = OpenDecoder(BassFlags.Decode | BassFlags.Float | BassFlags.Mono);
+			if (handle == 0)
+			{
+				return null;
+			}
+
+			try
+			{
+				var info = Bass.ChannelGetInfo(handle);
+				var rate = Math.Max(1, info.Frequency);
+				var channels = Math.Max(1, info.Channels);
+				var framesPerPeak = Math.Max(1, rate / peaksPerSecond);
+				peakRate = rate / (double)framesPerPeak;
+				var totalFrames = Bass.ChannelGetLength(handle) / (sizeof(float) * channels);
+				var peaks = new List<float>((int)Math.Min(int.MaxValue, totalFrames / framesPerPeak + 1));
+				var buffer = new float[16384 * channels];
+				var current = 0f;
+				var framesInPeak = 0;
+				while (true)
+				{
+					var bytes = Bass.ChannelGetData(handle, buffer, buffer.Length * sizeof(float));
+					if (bytes <= 0)
+					{
+						break;
+					}
+
+					var count = bytes / sizeof(float);
+					for (var i = 0; i < count; i += channels)
+					{
+						for (var c = 0; c < channels; c++)
+						{
+							var value = Math.Abs(buffer[i + c]);
+							if (value > current)
+							{
+								current = value;
+							}
+						}
+
+						if (++framesInPeak == framesPerPeak)
+						{
+							peaks.Add(current);
+							current = 0f;
+							framesInPeak = 0;
+						}
+					}
+				}
+
+				if (framesInPeak > 0)
+				{
+					peaks.Add(current);
+				}
+
+				return peaks.ToArray();
+			}
+			finally
+			{
+				Bass.StreamFree(handle);
+			}
+		}
+
 		/// <summary>Opens a decode stream over the pinned data; returns 0 on failure.</summary>
 		internal int OpenDecoder(BassFlags flags)
 		{

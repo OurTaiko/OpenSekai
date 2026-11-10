@@ -210,6 +210,18 @@ namespace Sekai.MusicScoreMaker.Ingame.Utilities
 			}
 		}
 
+		public static bool ShowWaveform
+		{
+			get
+			{
+				return SettingData.ShowWaveform;
+			}
+			set
+			{
+				SettingData.ShowWaveform = value;
+			}
+		}
+
 		public static float ScoreDisplayScaleHorizontal
 		{
 			get
@@ -503,9 +515,9 @@ namespace Sekai.MusicScoreMaker.Ingame.Utilities
 			return float.IsPositiveInfinity(focusTimeMs) ? long.MinValue : (long)focusTimeMs;
 		}
 
-		public static long CalcStartMusicTimeMs(FreeLiveBootData data, long fillerSec)
+		public static long CalcStartMusicTimeMs(FreeLiveBootData data, float fillerSec)
 		{
-			long startMusicTimeMs = 1000L * fillerSec;
+			long startMusicTimeMs = (long)System.Math.Round(1000.0 * fillerSec);
 			if (SetStartMusicTimeMsEnabled)
 			{
 				MusicScoreInfo[] musicScoreInfoArray = null;

@@ -246,6 +246,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 				UIElementInfoFactory.CreateCheckBox(MusicScoreMakerOptionConstants.SETTING_SHOW_BAR_LINES, () => MusicScoreMakerSettingsManager.ShowBarLines, value => MusicScoreMakerSettingsManager.ShowBarLines = value),
 				UIElementInfoFactory.CreateCheckBox(MusicScoreMakerOptionConstants.SETTING_SHOW_BEAT_LINES, () => MusicScoreMakerSettingsManager.ShowBeatLines, value => MusicScoreMakerSettingsManager.ShowBeatLines = value),
 				UIElementInfoFactory.CreateCheckBox(MusicScoreMakerOptionConstants.SETTING_SHOW_QUANTIZE_LINES, () => MusicScoreMakerSettingsManager.ShowQuantizeLines, value => MusicScoreMakerSettingsManager.ShowQuantizeLines = value),
+				UIElementInfoFactory.CreateCheckBox(MusicScoreMakerOptionConstants.SETTING_SHOW_WAVEFORM, () => MusicScoreMakerSettingsManager.ShowWaveform, value => MusicScoreMakerSettingsManager.ShowWaveform = value),
 				UIElementInfoFactory.CreateText(MusicScoreMakerOptionConstants.SECTION_AUDIO_SETTINGS),
 				UIElementInfoFactory.CreateCheckBox(MusicScoreMakerOptionConstants.SETTING_PLAY_MUSIC_SE_ENABLED, () => MusicScoreMakerSettingsManager.PlayMusicSEEnabled, value => MusicScoreMakerSettingsManager.PlayMusicSEEnabled = value),
 				UIElementInfoFactory.CreateText(MusicScoreMakerOptionConstants.SECTION_SYSTEM),

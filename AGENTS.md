@@ -67,7 +67,19 @@ The chart editor's (`MusicScoreMaker` scene) menu buttons send events through `D
   決定 saves them, キャンセル puts back the ones the dialog opened with. The labels are the original's Japanese strings
   in `MusicScoreMakerOptionConstants`. Three settings have nothing reading them yet: `TICKS_PER_SCROLL_STEP`,
   ノーツ端判定幅 (`NoteEdgeWidth`) and レイアウトパターン.
+- 現在位置を第1小節に makes the current position (the playhead, or the focus line when stopped) the start of bar 1: it
+  sets the chart's `fillerSec` to that audio time after a confirmation and saves manifest.json. Notes keep their ticks.
 - 使用方法 is left empty on purpose: there is no `Sekai.TutorialUtility` or tutorial slides.
+
+Timing: tick 0 (bar 1) is at audio time `fillerSec` (manifest.json, also editable in 自制谱管理's form), and ticks become
+seconds through the BPM events. The editor, the live and test play all use audio time = chart time + `fillerSec`. SUS
+`#WAVEOFFSET` is the same value with the opposite sign (usctool and the Sonolus engines read it that way): importing a SUS
+sets `fillerSec = −WAVEOFFSET` (a positive WAVEOFFSET cannot be represented, so the import warns and uses 0), and
+exporting writes `−fillerSec`.
+
+The track shows the audio's waveform (`MusicScoreWaveformView` behind the lane lines, option 波形表示). `MusicScoreMakerWaveform`
+decodes the chart's audio once with BASS (`SoundBuffer.ComputePeaks`) on a worker thread. With the Editor's build target set
+to iOS, BASS does not load, so the editor has no audio and no waveform; switch to a desktop target to test it.
 
 ## Home and community charts
 

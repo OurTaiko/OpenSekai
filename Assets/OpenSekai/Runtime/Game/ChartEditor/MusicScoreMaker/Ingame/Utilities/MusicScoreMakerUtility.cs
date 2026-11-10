@@ -1136,6 +1136,18 @@ namespace Sekai.MusicScoreMaker.Ingame.Utilities
 			return time;
 		}
 
+		/// <summary>The BPM changes of <paramref name="eventArray"/>, for many <see cref="GetTimeFromTicksOnTimeline"/> calls.</summary>
+		public static (long ticks, float bpm)[] BuildBpmTimeline(List<MusicScoreEventData> eventArray)
+		{
+			return BuildBpmEvents(ConvertMusicScoreInfo(eventArray));
+		}
+
+		/// <summary>Chart time of <paramref name="ticks"/>, like <see cref="GetTimeFromTicks(long, MusicScoreInfo[])"/>.</summary>
+		public static float GetTimeFromTicksOnTimeline(long ticks, (long ticks, float bpm)[] bpmTimeline)
+		{
+			return GetTimeFromTicksBpmOnly(ticks, bpmTimeline, bpmTimeline?.Length ?? 0);
+		}
+
 		public static MusicScoreInfo[] ConvertMusicScoreInfo(List<MusicScoreEventData> eventArray)
 		{
 			if (eventArray == null || eventArray.Count == 0)
