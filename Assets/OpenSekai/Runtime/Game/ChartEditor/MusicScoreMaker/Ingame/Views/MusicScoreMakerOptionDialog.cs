@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Sekai.MusicScoreMaker.Ingame.Events;
 using Sekai.MusicScoreMaker.Ingame.Models;
 using Sekai.MusicScoreMaker.Ingame.Utilities;
 using Sekai.UI;
@@ -50,8 +51,12 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 
 		private IUIElementInfo[] _settingItems;
 
+		/// <summary>The settings when the dialog opened; キャンセル puts them back.</summary>
+		private string _settingSnapshot;
+
 		public void Setup()
 		{
+			_settingSnapshot = MusicScoreMakerSettingsManager.CaptureSettingData();
 			_generatedUIElements ??= new List<GameObject>();
 			_sliders ??= new List<CustomSlider>();
 			_checkBoxes ??= new List<CustomToggle>();
@@ -66,6 +71,18 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 		private void OnClearClipboardButtonClicked()
 		{
 			ClipboardCacheManager.Instance.ClearAll();
+			if (MusicScoreMakerEventDispatcher.ExistsInstance)
+			{
+				MusicScoreMakerEventDispatcher.Instance.Publish(new ClearClipboardCacheEvent());
+			}
+		}
+
+		private void OnResetButtonClicked()
+		{
+			MusicScoreMakerSettingsManager.ResetSettingData();
+			_selectedLayoutPatternIndexPortrait = MusicScoreMakerSettingsManager.SelectedLayoutPatternIndexPortrait;
+			_selectedLayoutPatternIndexLandscape = MusicScoreMakerSettingsManager.SelectedLayoutPatternIndexLandscape;
+			RebuildUI();
 		}
 
 		private void OnDestroy()
@@ -143,6 +160,14 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 		{
 			ApplyData();
 			base.OnClickOK();
+		}
+
+		/// <summary>The sliders and check boxes change the settings as they move, so cancelling puts the old ones back.</summary>
+		protected override void OnClickCancel()
+		{
+			MusicScoreMakerSettingsManager.RestoreSettingData(_settingSnapshot);
+			MusicScoreMakerSettingsManager.SaveSettingData();
+			base.OnClickCancel();
 		}
 
 		private void ApplyData()
@@ -225,7 +250,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 				UIElementInfoFactory.CreateCheckBox(MusicScoreMakerOptionConstants.SETTING_PLAY_MUSIC_SE_ENABLED, () => MusicScoreMakerSettingsManager.PlayMusicSEEnabled, value => MusicScoreMakerSettingsManager.PlayMusicSEEnabled = value),
 				UIElementInfoFactory.CreateText(MusicScoreMakerOptionConstants.SECTION_SYSTEM),
 				UIElementInfoFactory.CreateSlider(MusicScoreMakerOptionConstants.SETTING_MAX_CLIPBOARD_CACHE_COUNT, MusicScoreMakerSettingData.MIN_MAX_CLIPBOARD_CACHE_COUNT, MusicScoreMakerSettingData.MAX_MAX_CLIPBOARD_CACHE_COUNT, SliderValueType.Integer, MusicScoreMakerOptionConstants.FORMAT_INTEGER, () => MusicScoreMakerSettingsManager.MaxClipboardCacheCount, value => MusicScoreMakerSettingsManager.MaxClipboardCacheCount = Mathf.RoundToInt(value)),
-				UIElementInfoFactory.CreateButton(MusicScoreMakerOptionConstants.SETTING_RESET_SETTING_DATA, MusicScoreMakerSettingsManager.ResetSettingData),
+				UIElementInfoFactory.CreateButton(MusicScoreMakerOptionConstants.SETTING_RESET_SETTING_DATA, OnResetButtonClicked),
 				UIElementInfoFactory.CreateButton("クリップボードキャッシュ削除", OnClearClipboardButtonClicked)
 			});
 

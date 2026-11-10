@@ -401,6 +401,8 @@ namespace Sekai.MusicScoreMaker.Ingame.Utilities
 
 		private static void LoadSettingData()
 		{
+			// Without a file (ResetSettingData has just deleted it) the settings are the defaults, not the ones in memory.
+			_settingData = null;
 			try
 			{
 				if (File.Exists(SavePath))
@@ -459,6 +461,32 @@ namespace Sekai.MusicScoreMaker.Ingame.Utilities
 			{
 			}
 			LoadSettingData();
+			Publish(new ScoreDisplayScaleChangedEvent());
+			Publish(new ToolWindowChildScaleChangedEvent());
+			Publish(new UpdateMusicScoreEvent());
+		}
+
+		/// <summary>The current settings, for <see cref="RestoreSettingData"/>.</summary>
+		public static string CaptureSettingData()
+		{
+			return JsonConvert.SerializeObject(SettingData);
+		}
+
+		/// <summary>Puts back settings from <see cref="CaptureSettingData"/> and redraws what the scale settings change.</summary>
+		public static void RestoreSettingData(string snapshot)
+		{
+			if (string.IsNullOrEmpty(snapshot))
+			{
+				return;
+			}
+			try
+			{
+				_settingData = JsonConvert.DeserializeObject<MusicScoreMakerSettingData>(snapshot) ?? _settingData;
+			}
+			catch (JsonException)
+			{
+				return;
+			}
 			Publish(new ScoreDisplayScaleChangedEvent());
 			Publish(new ToolWindowChildScaleChangedEvent());
 			Publish(new UpdateMusicScoreEvent());

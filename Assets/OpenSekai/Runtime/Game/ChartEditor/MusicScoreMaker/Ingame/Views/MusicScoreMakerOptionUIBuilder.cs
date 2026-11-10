@@ -194,6 +194,11 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 			{
 				if (!isOn)
 				{
+					// The group works like radio buttons: tapping the selected one keeps it selected.
+					if (_selectedLayoutPatternIndexPortrait == item.LayoutPatternIndex)
+					{
+						toggle.SetIsOnWithoutNotify(true);
+					}
 					return;
 				}
 				foreach (CustomToggle groupedToggle in group)

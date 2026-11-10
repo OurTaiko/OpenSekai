@@ -53,6 +53,22 @@ Also note:
 - The ノーツスキン page for custom01 is put together from that skin's note sprites. custom02 uses the official
   `note_preview/custom02` strip.
 
+## Chart editor menu
+
+The chart editor's (`MusicScoreMaker` scene) menu buttons send events through `DispatcherEventBaseButton`, which the
+`MusicScoreMakerPresenter` handles:
+
+- ノーツ数確認 opens `MusicScoreMakerNoteAndComboCountDialog` (`Resources/dialog/`): note counts, total combo, the estimated
+  difficulty and each difficulty's combo range from `MusicScoreDifficultyEstimator`. Its change-rate row stays hidden
+  until official charts can be loaded for comparison (`MusicScoreMakerModel.CreateOfficialNoteListForComparison`).
+- オプション opens `MusicScoreMakerOptionDialog`, the original's list of editor settings (`MusicScoreMakerSettingsManager`,
+  saved in `GamePaths.Root/inappcache/MusicScoreMakerSettingData.json`). `MusicScoreMakerOptionUIBuilder` fills the list
+  from the row templates under the prefab's `Templates`. Sliders and check boxes change the settings as they move;
+  決定 saves them, キャンセル puts back the ones the dialog opened with. The labels are the original's Japanese strings
+  in `MusicScoreMakerOptionConstants`. Three settings have nothing reading them yet: `TICKS_PER_SCROLL_STEP`,
+  ノーツ端判定幅 (`NoteEdgeWidth`) and レイアウトパターン.
+- 使用方法 is left empty on purpose: there is no `Sekai.TutorialUtility` or tutorial slides.
+
 ## Home and community charts
 
 The first scene is `Home` (navigation: 在线谱面, 自制谱管理, and ☰ for the option dialog). The

@@ -7796,8 +7796,27 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 
 		private void OpenToolOptionDialog(OpenToolOptionDialogEvent e)
 		{
-			// TODO(original): restore MusicScoreMakerOptionDialog window creation.
-			MusicScoreMakerSettingsManager.SaveSettingData();
+			if (ScreenManager.Instance == null)
+			{
+				return;
+			}
+			MusicScoreMakerOptionDialog dialog = ScreenManager.Instance.Show2ButtonDialog<MusicScoreMakerOptionDialog>(
+				DialogType.MusicScoreMakerOptionDialog,
+				null,
+				"WORD_DECIDE",
+				"WORD_CANCEL",
+				OnToolOptionDialogClosed,
+				OnToolOptionDialogClosed,
+				DisplayLayerType.Layer_Dialog,
+				DialogSize.Manual,
+				true);
+			dialog?.Setup();
+		}
+
+		/// <summary>Bar, beat and grid lines, note scaling and draw order are read when the score is drawn.</summary>
+		private void OnToolOptionDialogClosed()
+		{
+			NotifyMusicScoreAndTimelineChanged(refresh: true);
 		}
 
 		private void OnEnableInvalidPlacementCheckChanged(EnableInvalidPlacementCheckChangedEvent evt)
