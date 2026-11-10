@@ -1,14 +1,21 @@
+using System.IO;
+using Sekai.MusicScoreMaker.Common;
 using Sekai.MusicScoreMaker.Ingame.Models;
 using Sekai.MusicScoreMaker.Ingame.Utilities;
 using Sekai.UI;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Sekai.MusicScoreMaker.Ingame.Views
 {
+	/// <summary>
+	/// ノーツ数確認: how many notes of each kind the chart has, its total combo, the difficulty that combo suggests for the
+	/// song's length and the combo range of each difficulty (<see cref="MusicScoreDifficultyEstimator"/>).
+	/// </summary>
 	public class MusicScoreMakerNoteAndComboCountDialog : Common1ButtonDialog
 	{
 		[SerializeField]
-		private UITextureLoader _jacketLoader;
+		private RawImage _jacketImage;
 
 		[SerializeField]
 		private CustomTextMesh _tapCountText;
@@ -29,11 +36,13 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 		private CustomTextMesh _totalComboCountText;
 
 		[SerializeField]
-		private CustomTextMesh _estimatedDifficultyText;
+		private UIPartsMusicDifficultyLabel _estimatedDifficultyLabel;
 
+		/// <summary>EASY to MASTER.</summary>
 		[SerializeField]
 		private UIPartsMusicDifficultyLabel[] _difficultyLabels;
 
+		/// <summary>The combo range of each of <see cref="_difficultyLabels"/>.</summary>
 		[SerializeField]
 		private CustomTextMesh[] _difficultyThresholdTexts;
 
@@ -46,7 +55,9 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 		[SerializeField]
 		private CustomTextMesh _changeRateThresholdText;
 
-		public void Setup(NoteAndComboCountInfo countInfo, int musicId, string estimatedDifficultyDisplayText, int durationSec)
+		private Texture2D _jacketTexture;
+
+		public void Setup(NoteAndComboCountInfo countInfo, string jacketPath, MusicDifficulty estimatedDifficulty, int durationSec)
 		{
 			SetText(_tapCountText, countInfo.TapCount);
 			SetText(_longCountText, countInfo.LongCount);
@@ -54,12 +65,13 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 			SetText(_traceCountText, countInfo.TraceCount);
 			SetText(_middleNoteCountText, countInfo.MiddleNoteCount);
 			SetText(_totalComboCountText, countInfo.TotalComboCount);
-			if (_estimatedDifficultyText != null)
+			if (_estimatedDifficultyLabel != null)
 			{
-				_estimatedDifficultyText.text = estimatedDifficultyDisplayText;
+				_estimatedDifficultyLabel.Setup(estimatedDifficulty);
+				_estimatedDifficultyLabel.Show();
 			}
 			SetupDifficultyThresholdDisplay(durationSec);
-			LoadJacket(musicId);
+			LoadJacket(jacketPath);
 		}
 
 		public void SetChangeRateSectionVisible(bool visible)
@@ -79,27 +91,32 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 					float displayedRate = MusicScoreMakerUtility.RoundToDisplayedPercent(changeRate.Value);
 					float displayedThreshold = MusicScoreMakerUtility.RoundToDisplayedPercent(threshold);
 					_changeRateText.text = displayedRate.ToString("0.0") + "%";
-					_changeRateText.color = displayedRate < displayedThreshold ? Color.red : Color.white;
+					_changeRateText.color = displayedRate < displayedThreshold ? Color.red : TextColor;
 				}
 				else
 				{
 					_changeRateText.text = "-";
-					_changeRateText.color = Color.white;
+					_changeRateText.color = TextColor;
 				}
 			}
 			if (_changeRateThresholdText != null)
 			{
-				_changeRateThresholdText.text = string.Format("threshold {0:0.0}%", threshold * 100f);
+				_changeRateThresholdText.text = string.Format("≥ {0:0.0}%", threshold * 100f);
 			}
 		}
 
+		private static readonly Color TextColor = new Color32(0x55, 0x55, 0x77, 0xFF);
+
+		/// <summary>
+		/// EASY to EXPERT go up to the estimator's maximum for the song's length; MASTER is everything above EXPERT's.
+		/// </summary>
 		private void SetupDifficultyThresholdDisplay(int durationSec)
 		{
 			if (_difficultyLabels == null || _difficultyThresholdTexts == null)
 			{
 				return;
 			}
-			int[] thresholds = GetLevelDesignMaxValuesFromDuration(durationSec);
+			int[] maxValues = MusicScoreDifficultyEstimator.GetLevelDesignMaxValuesFromDuration(durationSec);
 			for (int i = 0; i < _difficultyLabels.Length; i++)
 			{
 				MusicDifficulty difficulty = (MusicDifficulty)(i + 1);
@@ -108,37 +125,69 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 					_difficultyLabels[i].Setup(difficulty);
 					_difficultyLabels[i].Show();
 				}
-				if (i < _difficultyThresholdTexts.Length && _difficultyThresholdTexts[i] != null)
+				if (i >= _difficultyThresholdTexts.Length || _difficultyThresholdTexts[i] == null)
 				{
-					_difficultyThresholdTexts[i].text = i < thresholds.Length ? "<= " + thresholds[i] : string.Empty;
+					continue;
 				}
+				string range;
+				if (i < maxValues.Length)
+				{
+					range = "～" + maxValues[i];
+				}
+				else
+				{
+					range = maxValues.Length > 0 ? (maxValues[maxValues.Length - 1] + 1) + "～" : string.Empty;
+				}
+				_difficultyThresholdTexts[i].text = range;
 			}
 		}
 
-		private void LoadJacket(int musicId)
+		private void LoadJacket(string jacketPath)
 		{
-			if (_jacketLoader == null)
+			ReleaseJacket();
+			if (_jacketImage == null)
 			{
 				return;
 			}
-			_jacketLoader.Unload();
-			if (musicId < 1)
+			if (!string.IsNullOrEmpty(jacketPath) && File.Exists(jacketPath))
 			{
-				return;
+				try
+				{
+					Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+					if (texture.LoadImage(File.ReadAllBytes(jacketPath)))
+					{
+						_jacketTexture = texture;
+					}
+					else
+					{
+						Destroy(texture);
+					}
+				}
+				catch (IOException exception)
+				{
+					Debug.LogWarning($"MusicScoreMaker: jacket {jacketPath}: {exception.Message}");
+				}
 			}
-			// TODO(original): restore MasterDataManager + MusicUtility.GetJacketResourceInfo based loading.
+			_jacketImage.texture = _jacketTexture;
+			_jacketImage.enabled = _jacketTexture != null;
+		}
+
+		private void ReleaseJacket()
+		{
+			if (_jacketImage != null)
+			{
+				_jacketImage.texture = null;
+			}
+			if (_jacketTexture != null)
+			{
+				Destroy(_jacketTexture);
+				_jacketTexture = null;
+			}
 		}
 
 		private void OnDestroy()
 		{
-			if (_jacketLoader != null)
-			{
-				_jacketLoader.Unload();
-			}
-		}
-
-		public MusicScoreMakerNoteAndComboCountDialog()
-		{
+			ReleaseJacket();
 		}
 
 		private static void SetText(CustomTextMesh text, int value)
@@ -147,20 +196,6 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 			{
 				text.text = value.ToString();
 			}
-		}
-
-		private static int[] GetLevelDesignMaxValuesFromDuration(int durationSec)
-		{
-			// TODO(original): reconnect MusicScoreDifficultyEstimator.GetLevelDesignMaxValuesFromDuration.
-			int safeDuration = Mathf.Max(1, durationSec);
-			return new[]
-			{
-				safeDuration * 2,
-				safeDuration * 3,
-				safeDuration * 4,
-				safeDuration * 6,
-				safeDuration * 8
-			};
 		}
 	}
 }

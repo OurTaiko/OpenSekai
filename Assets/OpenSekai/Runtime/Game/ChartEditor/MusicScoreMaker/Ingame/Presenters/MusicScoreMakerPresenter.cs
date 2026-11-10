@@ -727,46 +727,6 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 
 		[StructLayout((LayoutKind)3)]
 		[CompilerGenerated]
-		private struct _003CShowNoteAndComboCountDialogAsync_003Ed__349 : IAsyncStateMachine
-		{
-			public int _003C_003E1__state;
-
-			public AsyncUniTaskVoidMethodBuilder _003C_003Et__builder;
-
-			public MusicScoreMakerPresenter _003C_003E4__this;
-
-			private MusicScoreMakerNoteAndComboCountDialog _003Cdialog_003E5__2;
-
-			private CancellationToken _003Cct_003E5__3;
-
-			private UniTask<float?>.Awaiter _003C_003Eu__1;
-
-			private void MoveNext()
-			{
-				throw null;
-			}
-
-			void IAsyncStateMachine.MoveNext()
-			{
-				//ILSpy generated this explicit interface implementation from .override directive in MoveNext
-				this.MoveNext();
-			}
-
-			[DebuggerHidden]
-			private void SetStateMachine(IAsyncStateMachine stateMachine)
-			{
-				throw null;
-			}
-
-			void IAsyncStateMachine.SetStateMachine(IAsyncStateMachine stateMachine)
-			{
-				//ILSpy generated this explicit interface implementation from .override directive in SetStateMachine
-				this.SetStateMachine(stateMachine);
-			}
-		}
-
-		[StructLayout((LayoutKind)3)]
-		[CompilerGenerated]
 		private struct _003CUpdateBackground2DJacketAsync_003Ed__22 : IAsyncStateMachine
 		{
 			public int _003C_003E1__state;
@@ -7715,11 +7675,41 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 			ShowNoteAndComboCountDialogAsync().Forget();
 		}
 
-		[AsyncStateMachine(typeof(_003CShowNoteAndComboCountDialogAsync_003Ed__349))]
-		private UniTaskVoid ShowNoteAndComboCountDialogAsync()
+		private async UniTaskVoid ShowNoteAndComboCountDialogAsync()
 		{
-			// TODO(original): restore MusicScoreMakerNoteAndComboCountDialog view wiring.
-			return default;
+			MusicScoreMakerData data = CurrentData();
+			if (data == null || ScreenManager.Instance == null)
+			{
+				return;
+			}
+			int durationSec = Mathf.CeilToInt(GetScoreLengthSec());
+			NoteAndComboCountInfo countInfo = NoteAndComboCountInfo.Calculate(data);
+			MusicDifficulty estimatedDifficulty = MusicScoreDifficultyEstimator.Estimate(data, durationSec);
+			MusicScoreMakerNoteAndComboCountDialog dialog = ScreenManager.Instance.Show1ButtonDialog<MusicScoreMakerNoteAndComboCountDialog>(
+				DialogType.MusicScoreMakerNoteAndComboCountDialog,
+				null,
+				"WORD_CLOSE",
+				null,
+				DisplayLayerType.Layer_Dialog,
+				DialogSize.Manual,
+				true);
+			if (dialog == null)
+			{
+				return;
+			}
+			dialog.Setup(countInfo, _model?.CustomMusicScoreEntry?.JacketPath, estimatedDifficulty, durationSec);
+			// The change rate from the official chart is shown only when there is one to compare with.
+			dialog.SetChangeRateSectionVisible(false);
+			if (_model == null)
+			{
+				return;
+			}
+			float? changeRate = await _model.CalculateMinNoteChangeRateAsync(dialog.GetCancellationTokenOnDestroy());
+			if (changeRate.HasValue && dialog != null)
+			{
+				dialog.SetChangeRateSectionVisible(true);
+				dialog.SetupChangeRate(changeRate, MusicScoreMakerModel.GetNoteChangeRateThresholdValue());
+			}
 		}
 
 		[AsyncStateMachine(typeof(_003CCalculateBaseCustomScoreChangeRateAsync_003Ed__350))]
