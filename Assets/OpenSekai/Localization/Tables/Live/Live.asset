@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be51871efa6c3e4eae1703925c8f5ac, type: 3}
+  m_Name: Live
+  m_EditorClassIdentifier: Unity.Localization.Editor::UnityEditor.Localization.StringTableCollection
+  m_SharedTableData: {fileID: 11400000, guid: d23c80428575d424b83d6eff51c0114f, type: 2}
+  m_Tables:
+  - {fileID: 11400000, guid: 5e25b05cb993a4e45b86792adb82b01a, type: 2}
+  - {fileID: 11400000, guid: 44e2a16b4ed8c442d8e31a6dcba9ba74, type: 2}
+  - {fileID: 11400000, guid: 0051b3a6881c74883a81f3c2caa08124, type: 2}
+  m_Extensions: []
+  m_Group: String Table
+  references:
+    version: 2
+    RefIds: []

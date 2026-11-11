@@ -79,7 +79,7 @@ namespace Sekai.Community
 			CommunityPackage package = full?.Package;
 			if (package?.Manifest == null || package.Files == null || package.Files.Count == 0)
 			{
-				throw new CommunityException("PACKAGE_PENDING", "这份谱面正在整理，请稍后再试。");
+				throw new CommunityException("PACKAGE_PENDING", L10n.Get("Community", "error.packagePending"));
 			}
 
 			string work = Path.Combine(DownloadDirectory, chart.Id + "-r" + full.Revision + "-" + Guid.NewGuid().ToString("N").Substring(0, 8));
@@ -97,7 +97,7 @@ namespace Sekai.Community
 					if (name.Length == 0 || name != Path.GetFileName(name) || name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0
 						|| string.Equals(name, "manifest.json", StringComparison.OrdinalIgnoreCase))
 					{
-						throw new CommunityException("PACKAGE_INVALID", "谱面包里有不正确的文件名。");
+						throw new CommunityException("PACKAGE_INVALID", L10n.Get("Community", "error.packageInvalid"));
 					}
 					string path = Path.Combine(folder, name);
 					long before = done;
@@ -111,7 +111,7 @@ namespace Sekai.Community
 				CustomMusicScoreEntry entry = CustomMusicScoreManagerService.ImportFolder(folder);
 				if (entry == null)
 				{
-					throw new CommunityException("IMPORT_FAILED", "谱面无法导入。");
+					throw new CommunityException("IMPORT_FAILED", L10n.Get("Community", "error.importFailed"));
 				}
 				if (previous != null && !string.Equals(previous.RootDirectory, entry.RootDirectory, StringComparison.Ordinal))
 				{
@@ -175,7 +175,7 @@ namespace Sekai.Community
 			{
 				throw new CommunityException(
 					request.responseCode == 404 ? "NOT_FOUND" : "DOWNLOAD_FAILED",
-					request.responseCode == 404 ? "这份谱面的文件已经不在了。" : "下载失败：" + request.error,
+					request.responseCode == 404 ? L10n.Get("Community", "error.filesGone") : L10n.Format("Community", "error.downloadFailed", request.error),
 					request.responseCode);
 			}
 		}
@@ -185,7 +185,7 @@ namespace Sekai.Community
 			long length = new FileInfo(path).Length;
 			if (file.Size > 0 && length != file.Size)
 			{
-				throw new CommunityException("DOWNLOAD_INCOMPLETE", file.Name + " 下载不完整，请重试。");
+				throw new CommunityException("DOWNLOAD_INCOMPLETE", L10n.Format("Community", "error.downloadIncomplete", file.Name));
 			}
 			if (string.IsNullOrEmpty(file.Sha256))
 			{
@@ -199,7 +199,7 @@ namespace Sekai.Community
 			}, cancellationToken: ct);
 			if (!string.Equals(hash, file.Sha256, StringComparison.OrdinalIgnoreCase))
 			{
-				throw new CommunityException("DOWNLOAD_INCOMPLETE", file.Name + " 下载不完整，请重试。");
+				throw new CommunityException("DOWNLOAD_INCOMPLETE", L10n.Format("Community", "error.downloadIncomplete", file.Name));
 			}
 		}
 

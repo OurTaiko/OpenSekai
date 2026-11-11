@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Result_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 900fb4667d1834723a345af6a61781e5, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 305127424
+    m_Localized: <size=22>Lv.</size>{0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305127425
+    m_Localized: Next
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305127426
+    m_Localized: Stamps
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305127427
+    m_Localized: Member Scores
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305127428
+    m_Localized: "Waiting for the others to finish\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305127429
+    m_Localized: <color=#FF8899>Disconnected from the room; this round's result is unavailable.</color>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305127430
+    m_Localized: Disconnected
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305127431
+    m_Localized: Disconnected
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305127432
+    m_Localized: "Playing\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305127433
+    m_Localized: Score
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305127434
+    m_Localized: High Score
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305127435
+    m_Localized: Back to the room?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305127436
+    m_Localized: Go back to play the next song together.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305127437
+    m_Localized: Leave Room
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305127438
+    m_Localized: Back to Room
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305127439
+    m_Localized: Disconnected from the room
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305127440
+    m_Localized: Go back to Co-op Live to rejoin or open a new room.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305127441
+    m_Localized: Home
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305127442
+    m_Localized: Co-op Live
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305127443
+    m_Localized: '{0}: {1}'
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

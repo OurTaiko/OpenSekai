@@ -60,6 +60,11 @@ namespace Sekai
 			{
 				ScreenConfig.SetStandaloneFullscreen(Local.FullscreenEnabled.Value);
 			}
+			string language = L10n.Supported(Local.Language);
+			if (language != null && language != L10n.Language)
+			{
+				L10n.SetLanguage(language);
+			}
 		}
 	}
 }

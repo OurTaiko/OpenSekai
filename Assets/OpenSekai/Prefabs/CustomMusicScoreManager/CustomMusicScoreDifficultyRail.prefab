@@ -1420,6 +1420,7 @@ GameObject:
   - component: {fileID: 4541745125936861286}
   - component: {fileID: 4277399010532212575}
   - component: {fileID: 591280698080795496}
+  - component: {fileID: 7999757638610832956}
   m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
@@ -1546,6 +1547,20 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &7999757638610832956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4843684441956847012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bae688c7ffa6a457a978703e06e375ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.LocalizedText
+  table: ChartManager
+  key: rail.all
 --- !u!1 &5453991600830873816
 GameObject:
   m_ObjectHideFlags: 0

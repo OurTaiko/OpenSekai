@@ -18,6 +18,8 @@ namespace Sekai.CustomMusicScoreManager
 {
 	public sealed class ScreenLayerCustomMusicScoreManager : ScreenLayer
 	{
+		private const string Table = "ChartManager";
+
 		private const string BaseFontEbPath = "font/FOT-RodinNTLGPro-EB SDF_Base";
 
 		private const string DynamicFontEbPath = "font/FOT-RodinNTLGPro-EB SDF_Dynamic";
@@ -223,7 +225,21 @@ namespace Sekai.CustomMusicScoreManager
 			base.Awake();
 			SetupOriginalFontAssets();
 			BindEvents();
+			LocalizeListCountLabel();
 			UpdateSelection(null);
+		}
+
+		/// <summary>
+		/// The list area's count tab label (CountTab/Label beside the count). It is not bound in the prefab because
+		/// 在线谱面 nests the same prefab and writes its own tab name there.
+		/// </summary>
+		private void LocalizeListCountLabel()
+		{
+			Transform label = _listCountText != null ? _listCountText.transform.parent.Find("Label") : null;
+			if (label != null && label.TryGetComponent(out TMP_Text labelText))
+			{
+				labelText.text = L10n.Get(Table, "list.localCharts");
+			}
 		}
 
 		private void BindEvents()
@@ -321,7 +337,7 @@ namespace Sekai.CustomMusicScoreManager
 			}
 			if (_detailToggleLabel != null)
 			{
-				_detailToggleLabel.text = showForm ? "概要" : "编辑信息";
+				_detailToggleLabel.text = L10n.Get(Table, showForm ? "detail.toggle.overview" : "detail.toggle.editInfo");
 			}
 		}
 
@@ -449,7 +465,7 @@ namespace Sekai.CustomMusicScoreManager
 		{
 			_allItems = CustomMusicScoreManagerService.LoadItems();
 			RebuildRows();
-			SetStatus("已加载 " + _allItems.Count.ToString(CultureInfo.InvariantCulture) + " 个谱面。");
+			SetStatus(L10n.Format(Table, "status.loaded", _allItems.Count.ToString(CultureInfo.InvariantCulture)));
 		}
 
 		private void RebuildRows()
@@ -474,9 +490,7 @@ namespace Sekai.CustomMusicScoreManager
 			}
 
 			_emptyText.gameObject.SetActive(_items.Count == 0);
-			_emptyText.text = _allItems.Count == 0
-				? "还没有本地谱面。\n点击右上角的「新建」或「导入」开始制作。"
-				: "没有符合条件的谱面。";
+			_emptyText.text = L10n.Get(Table, _allItems.Count == 0 ? "list.empty.none" : "list.empty.filtered");
 			if (_listCountText != null)
 			{
 				_listCountText.text = _items.Count.ToString(CultureInfo.InvariantCulture) + " / " + _allItems.Count.ToString(CultureInfo.InvariantCulture);
@@ -643,11 +657,11 @@ namespace Sekai.CustomMusicScoreManager
 				_windowTitleText.text = string.IsNullOrWhiteSpace(artist) ? manifest.title : manifest.title + " - " + artist;
 			}
 			_detailTitle.text = string.IsNullOrWhiteSpace(manifest.scoreTitle) ? manifest.title : manifest.scoreTitle;
-			_detailMeta.text = string.Format(
-				CultureInfo.InvariantCulture,
-				"<color=#9C98C8>谱师</color>  {0}\n<color=#9C98C8>更新</color>  {1:yyyy-MM-dd HH:mm}",
+			_detailMeta.text = L10n.Format(
+				Table,
+				"detail.meta",
 				string.IsNullOrWhiteSpace(manifest.noteDesigner) ? "-" : manifest.noteDesigner,
-				item.LastWriteTime);
+				item.LastWriteTime.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture));
 			_detailStatus.text = item.StatusText;
 			_detailStatus.color = GetStatusColor(item);
 			if (_detailBadge != null)
@@ -656,7 +670,7 @@ namespace Sekai.CustomMusicScoreManager
 			}
 			if (_detailDescription != null)
 			{
-				_detailDescription.text = string.IsNullOrWhiteSpace(manifest.description) ? "<color=#8F8BB8>（没有简介）</color>" : manifest.description;
+				_detailDescription.text = string.IsNullOrWhiteSpace(manifest.description) ? L10n.Get(Table, "detail.noDescription") : manifest.description;
 			}
 			UpdateBestResult(manifest);
 			LoadJacket(item.Entry.JacketPath);
@@ -683,7 +697,7 @@ namespace Sekai.CustomMusicScoreManager
 
 			if (record == null)
 			{
-				_bestResultLeftText.text = _selected == null ? string.Empty : "暂无游玩记录";
+				_bestResultLeftText.text = _selected == null ? string.Empty : L10n.Get(Table, "detail.noPlayRecord");
 				_bestResultRightText.text = string.Empty;
 				return;
 			}
@@ -714,7 +728,7 @@ namespace Sekai.CustomMusicScoreManager
 				File.Exists(entry.AudioPath),
 				File.Exists(entry.JacketPath));
 			RefreshList();
-			SetStatus("已创建谱面。");
+			SetStatus(L10n.Get(Table, "status.created"));
 		}
 
 		private void OpenEditor()
@@ -727,7 +741,7 @@ namespace Sekai.CustomMusicScoreManager
 			CustomMusicScoreEntry entry = CustomMusicScoreStorage.LoadEntry(_selected.Entry.RootDirectory);
 			if (entry == null)
 			{
-				SetStatus("无法加载谱面。");
+				SetStatus(L10n.Get(Table, "status.loadFailed"));
 				RefreshList();
 				return;
 			}
@@ -757,7 +771,7 @@ namespace Sekai.CustomMusicScoreManager
 			entry ??= CustomMusicScoreStorage.LoadEntry(_selected.Entry.RootDirectory);
 			if (entry == null)
 			{
-				SetStatus("无法加载谱面。");
+				SetStatus(L10n.Get(Table, "status.loadFailed"));
 				RefreshList();
 				return;
 			}
@@ -769,7 +783,7 @@ namespace Sekai.CustomMusicScoreManager
 				SetStatus(error);
 				return;
 			}
-			SetStatus(isAuto ? "正在开始自动游玩..." : "正在开始游玩...");
+			SetStatus(L10n.Get(Table, isAuto ? "status.startingAuto" : "status.starting"));
 		}
 
 		/// <summary>Builds the boot data for playing a custom chart from the manager (also used by direct Core runs).</summary>
@@ -903,7 +917,7 @@ namespace Sekai.CustomMusicScoreManager
 			CustomMusicScoreEntry entry = CustomMusicScoreManagerService.DuplicateEntry(_selected.Entry);
 			_selected = entry == null ? null : new CustomMusicScoreManagerItem(entry, DateTime.Now, true, File.Exists(entry.ScorePath), File.Exists(entry.AudioPath), File.Exists(entry.JacketPath));
 			RefreshList();
-			SetStatus("已复制谱面。");
+			SetStatus(L10n.Get(Table, "status.duplicated"));
 		}
 
 		private void DeleteSelected()
@@ -927,7 +941,7 @@ namespace Sekai.CustomMusicScoreManager
 				true);
 			if (dialog != null)
 			{
-				dialog.SetMessageBodyText("确定要删除谱面吗？\n\n" + title + "\n\n这个操作无法撤销。");
+				dialog.SetMessageBodyText(L10n.Format(Table, "delete.confirm", title));
 				return;
 			}
 
@@ -948,7 +962,7 @@ namespace Sekai.CustomMusicScoreManager
 				_selected = null;
 			}
 			RefreshList();
-			SetStatus("已删除 " + title + "。");
+			SetStatus(L10n.Format(Table, "status.deleted", title));
 		}
 
 		private void ExportSelected()
@@ -959,9 +973,9 @@ namespace Sekai.CustomMusicScoreManager
 			}
 
 			CustomMusicScoreEntry entry = _selected.Entry;
-			SetStatus("请选择导出位置...");
+			SetStatus(L10n.Get(Table, "export.chooseLocation"));
 			PlatformFileDialog.Export(
-				"导出自制谱",
+				L10n.Get(Table, "export.zipTitle"),
 				CustomMusicScoreStorage.RootDirectory,
 				entry.Manifest.scoreTitle + "_" + entry.Manifest.id,
 				"zip",
@@ -978,14 +992,14 @@ namespace Sekai.CustomMusicScoreManager
 
 			CustomMusicScoreEntry entry = _selected.Entry;
 			List<string> warnings = null;
-			SetStatus("请选择导出位置...");
+			SetStatus(L10n.Get(Table, "export.chooseLocation"));
 			PlatformFileDialog.Export(
-				"导出SUS谱面",
+				L10n.Get(Table, "export.susTitle"),
 				CustomMusicScoreStorage.RootDirectory,
 				entry.Manifest.scoreTitle + "_" + entry.Manifest.id,
 				"sus",
 				destination => CustomMusicScoreManagerService.ExportSus(entry, out warnings, destination),
-				(result, path) => ShowExportResult(result, path, FormatSusWarnings(warnings), "导出失败：没有谱面。"));
+				(result, path) => ShowExportResult(result, path, FormatSusWarnings(warnings), L10n.Get(Table, "export.failedNoScore")));
 		}
 
 		private bool CanUpload(CustomMusicScoreManagerItem item)
@@ -1011,7 +1025,7 @@ namespace Sekai.CustomMusicScoreManager
 			}
 			if (!CommunityAccount.IsSignedIn)
 			{
-				SetStatus("上传前请先登录 OurTaiko 账号：右上角菜单 → Additionals → アカウント。");
+				SetStatus(L10n.Get(Table, "upload.signInFirst"));
 				return;
 			}
 			PrepareUploadAsync(_selected.Entry).Forget();
@@ -1032,7 +1046,7 @@ namespace Sekai.CustomMusicScoreManager
 				string linkedId = CommunityLibrary.FindChartId(entry.RootDirectory);
 				if (linkedId != null)
 				{
-					SetStatus("正在确认社区上的谱面…");
+					SetStatus(L10n.Get(Table, "upload.checking"));
 					try
 					{
 						linked = await CommunityClient.GetAsync(linkedId, token);
@@ -1049,7 +1063,7 @@ namespace Sekai.CustomMusicScoreManager
 			}
 			catch (CommunityException exception)
 			{
-				SetStatus("上传失败：" + exception.Message);
+				SetStatus(L10n.Format(Table, "upload.failed", exception.Message));
 				return;
 			}
 			finally
@@ -1064,15 +1078,15 @@ namespace Sekai.CustomMusicScoreManager
 			string message;
 			if (own)
 			{
-				message = "用当前版本更新 Sekai Fanmade 上的「" + title + "」（#" + linked.NumberId + "）？\n简介、标签、得分和评论会保留。";
+				message = L10n.Format(Table, "upload.confirmReplace", title, linked.NumberId);
 			}
 			else if (linked != null)
 			{
-				message = "「" + title + "」是从 Sekai Fanmade 下载的（谱师 " + linked.Uploader?.Nickname + "），会作为新谱面上传。\n改编别人的谱面前，请确认对方允许二次利用。";
+				message = L10n.Format(Table, "upload.confirmFromOther", title, linked.Uploader?.Nickname ?? string.Empty);
 			}
 			else
 			{
-				message = "把「" + title + "」上传到 Sekai Fanmade？\n上传后所有人都能下载，请只上传你有权分享的内容。";
+				message = L10n.Format(Table, "upload.confirmNew", title);
 			}
 
 			Common2ButtonDialog dialog = ScreenManager.Instance?.Show2ButtonDialog<Common2ButtonDialog>(
@@ -1081,7 +1095,7 @@ namespace Sekai.CustomMusicScoreManager
 				"WORD_DECIDE",
 				"WORD_CANCEL",
 				() => UploadAsync(entry, replaceId).Forget(),
-				() => SetStatus("已取消上传。"),
+				() => SetStatus(L10n.Get(Table, "upload.cancelled")),
 				DisplayLayerType.Layer_Dialog,
 				DialogSize.Manual,
 				true);
@@ -1105,7 +1119,7 @@ namespace Sekai.CustomMusicScoreManager
 			SetUploading(true);
 			try
 			{
-				SetStatus("正在打包谱面…");
+				SetStatus(L10n.Get(Table, "upload.packing"));
 				Directory.CreateDirectory(folder);
 				// The server keeps only manifest.json, the score, audio, jacket and MV, so the folder goes as it is.
 				await UniTask.RunOnThreadPool(() => CustomMusicScoreManagerService.ExportZip(entry, zipPath), cancellationToken: token);
@@ -1117,7 +1131,9 @@ namespace Sekai.CustomMusicScoreManager
 					if (percent != shown)
 					{
 						shown = percent;
-						SetStatus(percent >= 100 ? "服务器正在检查谱面包…" : "正在上传 " + percent + "%…");
+						SetStatus(percent >= 100
+							? L10n.Get(Table, "upload.serverChecking")
+							: L10n.Format(Table, "upload.progress", percent.ToString(CultureInfo.InvariantCulture)));
 					}
 				});
 				string id = await CommunityClient.UploadChartAsync(zipPath, replaceId, progress, token);
@@ -1131,19 +1147,25 @@ namespace Sekai.CustomMusicScoreManager
 				{
 				}
 				CommunityLibrary.RememberUpload(id, chart?.Revision ?? 1, entry.RootDirectory);
-				string number = chart != null ? "（#" + chart.NumberId + "）" : string.Empty;
-				SetStatus(replaceId == null ? "已上传到 Sekai Fanmade" + number + "。" : "已更新 Sekai Fanmade 上的谱面" + number + "。");
+				if (chart != null)
+				{
+					SetStatus(L10n.Format(Table, replaceId == null ? "upload.doneWithNumber" : "upload.updatedWithNumber", chart.NumberId));
+				}
+				else
+				{
+					SetStatus(L10n.Get(Table, replaceId == null ? "upload.done" : "upload.updated"));
+				}
 			}
 			catch (OperationCanceledException)
 			{
 			}
 			catch (CommunityException exception)
 			{
-				SetStatus("上传失败：" + exception.Message);
+				SetStatus(L10n.Format(Table, "upload.failed", exception.Message));
 			}
 			catch (Exception exception) when (exception is IOException || exception is UnauthorizedAccessException)
 			{
-				SetStatus("打包失败：" + exception.Message);
+				SetStatus(L10n.Format(Table, "upload.packFailed", exception.Message));
 			}
 			finally
 			{
@@ -1161,7 +1183,7 @@ namespace Sekai.CustomMusicScoreManager
 			}
 		}
 
-		private void ShowExportResult(PlatformFileDialog.ExportResult result, string path, string suffix, string writeFailedStatus = "导出失败。")
+		private void ShowExportResult(PlatformFileDialog.ExportResult result, string path, string suffix, string writeFailedStatus = null)
 		{
 			if (this == null)
 			{
@@ -1171,19 +1193,19 @@ namespace Sekai.CustomMusicScoreManager
 			switch (result)
 			{
 				case PlatformFileDialog.ExportResult.Exported:
-					SetStatus("已导出：" + path + suffix);
+					SetStatus(L10n.Format(Table, "export.done", path + suffix));
 					break;
 				case PlatformFileDialog.ExportResult.SavedInAppFolder:
-					SetStatus("当前平台不支持文件导出，已导出到：" + path + suffix);
+					SetStatus(L10n.Format(Table, "export.savedInAppFolder", path + suffix));
 					break;
 				case PlatformFileDialog.ExportResult.Busy:
-					SetStatus("文件选择器已经打开。");
+					SetStatus(L10n.Get(Table, "status.pickerBusy"));
 					break;
 				case PlatformFileDialog.ExportResult.WriteFailed:
-					SetStatus(writeFailedStatus);
+					SetStatus(writeFailedStatus ?? L10n.Get(Table, "export.failed"));
 					break;
 				default:
-					SetStatus(string.IsNullOrEmpty(path) ? "已取消导出。" : "导出已取消或失败。");
+					SetStatus(L10n.Get(Table, string.IsNullOrEmpty(path) ? "export.cancelled" : "export.cancelledOrFailed"));
 					break;
 			}
 		}
@@ -1195,7 +1217,7 @@ namespace Sekai.CustomMusicScoreManager
 
 		private void ImportEntry()
 		{
-			PickFile("导入自制谱ZIP", "导入已取消或失败。", "自制谱ZIP", new[] { "zip" }, path =>
+			PickFile(L10n.Get(Table, "import.zipTitle"), L10n.Get(Table, "import.cancelledOrFailed"), L10n.Get(Table, "import.zipFilter"), new[] { "zip" }, path =>
 			{
 				if (!string.IsNullOrEmpty(path))
 				{
@@ -1209,10 +1231,10 @@ namespace Sekai.CustomMusicScoreManager
 					return false;
 				}
 
-				string folder = PlatformFileDialog.PickFolder("导入自制谱文件夹");
+				string folder = PlatformFileDialog.PickFolder(L10n.Get(Table, "import.folderTitle"));
 				ApplyImportedEntry(string.IsNullOrEmpty(folder) ? null : CustomMusicScoreManagerService.ImportFolder(folder));
 				return true;
-			}, "当前平台暂不支持运行时导入，请手动复制谱面。");
+			}, L10n.Get(Table, "import.unsupported"));
 		}
 
 		private void ApplyImportedEntry(CustomMusicScoreEntry entry)
@@ -1221,48 +1243,45 @@ namespace Sekai.CustomMusicScoreManager
 			{
 				_selected = new CustomMusicScoreManagerItem(entry, DateTime.Now, true, File.Exists(entry.ScorePath), File.Exists(entry.AudioPath), File.Exists(entry.JacketPath));
 				RefreshList();
-				SetStatus("已导入谱面。");
+				SetStatus(L10n.Get(Table, "import.done"));
 			}
 			else
 			{
-				SetStatus("导入已取消或失败。");
+				SetStatus(L10n.Get(Table, "import.cancelledOrFailed"));
 			}
 		}
 
 		private void ReplaceSelectedAudio()
 		{
-			ReplaceSelectedFromPicker("导入音频文件", "已取消导入音频。", "音频文件", new[] { "ogg", "mp3", "wav" },
-				CustomMusicScoreManagerService.ReplaceAudioFile, "已导入音频", "当前平台暂不支持导入音频文件，请手动复制。");
+			ReplaceSelectedFromPicker("import.audio", new[] { "ogg", "mp3", "wav" }, CustomMusicScoreManagerService.ReplaceAudioFile);
 		}
 
 		private void ReplaceSelectedJacket()
 		{
-			ReplaceSelectedFromPicker("导入封面文件", "已取消导入封面。", "图片文件", new[] { "png", "jpg", "jpeg" },
-				CustomMusicScoreManagerService.ReplaceJacketFile, "已导入封面", "当前平台暂不支持导入封面文件，请手动复制。");
+			ReplaceSelectedFromPicker("import.jacket", new[] { "png", "jpg", "jpeg" }, CustomMusicScoreManagerService.ReplaceJacketFile);
 		}
 
 		private void ReplaceSelectedScore()
 		{
 			string warning = null;
-			ReplaceSelectedFromPicker("导入谱面文件", "已取消导入谱面。", "谱面文件", new[] { "json", "txt", "sus" },
-				(entry, path) => CustomMusicScoreManagerService.ReplaceScoreFile(entry, path, out warning), "已导入谱面", "当前平台暂不支持导入谱面文件，请手动复制。",
+			ReplaceSelectedFromPicker("import.score", new[] { "json", "txt", "sus" },
+				(entry, path) => CustomMusicScoreManagerService.ReplaceScoreFile(entry, path, out warning),
 				() => warning);
 		}
 
 		private void ReplaceSelectedVideo()
 		{
-			ReplaceSelectedFromPicker("导入2DMV视频", "已取消导入2DMV。", "MP4视频", new[] { "mp4" },
-				CustomMusicScoreManagerService.ReplaceVideoFile, "已导入2DMV", "当前平台暂不支持导入2DMV视频，请手动复制。");
+			ReplaceSelectedFromPicker("import.video", new[] { "mp4" }, CustomMusicScoreManagerService.ReplaceVideoFile);
 		}
 
+		/// <summary>
+		/// Picks a file and puts it in the selected chart. <paramref name="keyPrefix"/> names the ChartManager strings
+		/// (<c>.title</c>, <c>.cancelled</c>, <c>.filter</c>, <c>.done</c> with the file name, <c>.unsupported</c>).
+		/// </summary>
 		private void ReplaceSelectedFromPicker(
-			string title,
-			string cancelStatus,
-			string filterName,
+			string keyPrefix,
 			string[] extensions,
 			Func<CustomMusicScoreEntry, string, CustomMusicScoreEntry> replaceFile,
-			string successStatus,
-			string unsupportedStatus,
 			Func<string> getWarning = null)
 		{
 			if (_selected?.Entry == null)
@@ -1270,6 +1289,11 @@ namespace Sekai.CustomMusicScoreManager
 				return;
 			}
 
+			string title = L10n.Get(Table, keyPrefix + ".title");
+			string cancelStatus = L10n.Get(Table, keyPrefix + ".cancelled");
+			string filterName = L10n.Get(Table, keyPrefix + ".filter");
+			string successFormatKey = keyPrefix + ".done";
+			string unsupportedStatus = L10n.Get(Table, keyPrefix + ".unsupported");
 			PickFile(title, cancelStatus, filterName, extensions, path =>
 			{
 				if (string.IsNullOrEmpty(path) || _selected?.Entry == null)
@@ -1277,7 +1301,7 @@ namespace Sekai.CustomMusicScoreManager
 					return false;
 				}
 
-				ReplaceSelectedFile(path, replaceFile, successStatus, getWarning);
+				ReplaceSelectedFile(path, replaceFile, successFormatKey, getWarning);
 				return true;
 			}, unsupportedStatus);
 		}
@@ -1304,7 +1328,7 @@ namespace Sekai.CustomMusicScoreManager
 
 			if (result == PlatformFileDialog.PickResult.Busy)
 			{
-				SetStatus("文件选择器已经打开。");
+				SetStatus(L10n.Get(Table, "status.pickerBusy"));
 			}
 			else if (result == PlatformFileDialog.PickResult.Unsupported)
 			{
@@ -1315,7 +1339,7 @@ namespace Sekai.CustomMusicScoreManager
 		private void ReplaceSelectedFile(
 			string sourcePath,
 			Func<CustomMusicScoreEntry, string, CustomMusicScoreEntry> replaceFile,
-			string successStatus,
+			string successFormatKey,
 			Func<string> getWarning = null)
 		{
 			try
@@ -1323,7 +1347,7 @@ namespace Sekai.CustomMusicScoreManager
 				CustomMusicScoreEntry entry = replaceFile(_selected.Entry, sourcePath);
 				if (entry == null)
 				{
-					SetStatus("导入失败。");
+					SetStatus(L10n.Get(Table, "import.failed"));
 					return;
 				}
 
@@ -1336,7 +1360,7 @@ namespace Sekai.CustomMusicScoreManager
 					File.Exists(entry.JacketPath));
 				RefreshList();
 				string warning = getWarning?.Invoke();
-				SetStatus(successStatus + ": " + Path.GetFileName(sourcePath) + (string.IsNullOrEmpty(warning) ? string.Empty : "\n" + warning));
+				SetStatus(L10n.Format(Table, successFormatKey, Path.GetFileName(sourcePath)) + (string.IsNullOrEmpty(warning) ? string.Empty : "\n" + warning));
 			}
 			catch (Exception ex)
 			{
@@ -1347,7 +1371,7 @@ namespace Sekai.CustomMusicScoreManager
 		private void SaveSelectedManifest()
 		{
 			CustomMusicScoreEntry savedEntry = SaveSelectedManifestFromForm(refreshList: true);
-			SetStatus(savedEntry != null ? "配置已保存。" : "保存配置失败。");
+			SetStatus(L10n.Get(Table, savedEntry != null ? "manifest.saved" : "manifest.saveFailed"));
 		}
 
 		private CustomMusicScoreEntry SaveSelectedManifestFromForm(bool refreshList)

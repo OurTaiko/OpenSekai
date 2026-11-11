@@ -1,0 +1,524 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: ChartManager Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: ChartManager
+  m_TableCollectionNameGuidString: af4aae2454c714d1881b4822fe745c57
+  m_Entries:
+  - m_Id: 279961600
+    m_Key: list.localCharts
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961601
+    m_Key: header.newChart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961602
+    m_Key: list.empty.none
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961603
+    m_Key: list.empty.filtered
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961604
+    m_Key: rail.all
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961605
+    m_Key: create.hint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961606
+    m_Key: create.import
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961607
+    m_Key: create.blank
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961608
+    m_Key: actions.edit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961609
+    m_Key: actions.play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961610
+    m_Key: actions.auto
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961611
+    m_Key: detail.exportZip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961612
+    m_Key: detail.duplicate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961613
+    m_Key: detail.delete
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961614
+    m_Key: detail.emptyHint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961615
+    m_Key: detail.bestResult
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961616
+    m_Key: detail.noPlayRecord
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961617
+    m_Key: detail.noDescription
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961618
+    m_Key: detail.meta
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961619
+    m_Key: detail.toggle.overview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961620
+    m_Key: detail.toggle.editInfo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961621
+    m_Key: form.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961622
+    m_Key: form.scoreTitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961623
+    m_Key: form.noteDesigner
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961624
+    m_Key: form.composer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961625
+    m_Key: form.lyricist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961626
+    m_Key: form.arranger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961627
+    m_Key: form.singer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961628
+    m_Key: form.collaborationLabel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961629
+    m_Key: form.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961630
+    m_Key: form.difficulty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961631
+    m_Key: form.level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961632
+    m_Key: form.duration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961633
+    m_Key: form.filler
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155904
+    m_Key: form.audio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155905
+    m_Key: form.jacket
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155906
+    m_Key: form.score
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155907
+    m_Key: form.select
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155908
+    m_Key: form.save
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155909
+    m_Key: form.hint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155910
+    m_Key: top.upload
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155911
+    m_Key: top.exportSus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155912
+    m_Key: item.missingManifest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155913
+    m_Key: item.missingScore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155914
+    m_Key: item.missingAudio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155915
+    m_Key: item.missingJacket
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155916
+    m_Key: item.ready
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155917
+    m_Key: status.loaded
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155918
+    m_Key: status.created
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155919
+    m_Key: status.duplicated
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155920
+    m_Key: status.deleted
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155921
+    m_Key: status.loadFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155922
+    m_Key: status.startingAuto
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155923
+    m_Key: status.starting
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155924
+    m_Key: status.pickerBusy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155925
+    m_Key: delete.confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155926
+    m_Key: export.chooseLocation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155927
+    m_Key: export.zipTitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155928
+    m_Key: export.susTitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155929
+    m_Key: export.done
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155930
+    m_Key: export.savedInAppFolder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155931
+    m_Key: export.failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155932
+    m_Key: export.failedNoScore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155933
+    m_Key: export.cancelled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155934
+    m_Key: export.cancelledOrFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155935
+    m_Key: import.zipTitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155936
+    m_Key: import.zipFilter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155937
+    m_Key: import.folderTitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155938
+    m_Key: import.cancelledOrFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155939
+    m_Key: import.unsupported
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155940
+    m_Key: import.done
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155941
+    m_Key: import.failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155942
+    m_Key: import.audio.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155943
+    m_Key: import.audio.cancelled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155944
+    m_Key: import.audio.filter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155945
+    m_Key: import.audio.done
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155946
+    m_Key: import.audio.unsupported
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155947
+    m_Key: import.jacket.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155948
+    m_Key: import.jacket.cancelled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155949
+    m_Key: import.jacket.filter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155950
+    m_Key: import.jacket.done
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155951
+    m_Key: import.jacket.unsupported
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155952
+    m_Key: import.score.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155953
+    m_Key: import.score.cancelled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155954
+    m_Key: import.score.filter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155955
+    m_Key: import.score.done
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155956
+    m_Key: import.score.unsupported
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155957
+    m_Key: import.video.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155958
+    m_Key: import.video.cancelled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155959
+    m_Key: import.video.filter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155960
+    m_Key: import.video.done
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155961
+    m_Key: import.video.unsupported
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155962
+    m_Key: import.unsupportedScoreExtension
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155963
+    m_Key: import.unsupportedExtension
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155964
+    m_Key: import.unsupportedJacketData
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155965
+    m_Key: import.negativeWaveOffset
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155966
+    m_Key: manifest.saved
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155967
+    m_Key: manifest.saveFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155968
+    m_Key: upload.signInFirst
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155969
+    m_Key: upload.checking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155970
+    m_Key: upload.failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155971
+    m_Key: upload.packFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155972
+    m_Key: upload.confirmReplace
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155973
+    m_Key: upload.confirmFromOther
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155974
+    m_Key: upload.confirmNew
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155975
+    m_Key: upload.cancelled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155976
+    m_Key: upload.packing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155977
+    m_Key: upload.serverChecking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155978
+    m_Key: upload.progress
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155979
+    m_Key: upload.done
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155980
+    m_Key: upload.doneWithNumber
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155981
+    m_Key: upload.updated
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155982
+    m_Key: upload.updatedWithNumber
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155983
+    m_Key: launch.scoreMissing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155984
+    m_Key: launch.audioMissing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155985
+    m_Key: launch.scoreLoadFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155986
+    m_Key: launch.noNotes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155987
+    m_Key: launch.loadingAudio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155988
+    m_Key: launch.audioLoadFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155989
+    m_Key: launch.bootDataFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155990
+    m_Key: new.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155991
+    m_Key: new.scoreTitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155992
+    m_Key: duplicate.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155993
+    m_Key: duplicate.titleSuffix
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 8757538900985512053
+  references:
+    version: 2
+    RefIds:
+    - rid: 8757538900985512053
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1794374561486

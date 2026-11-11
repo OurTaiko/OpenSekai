@@ -1,0 +1,328 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: ChartEditor Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: ChartEditor
+  m_TableCollectionNameGuidString: 16ecc78bb1bcd4492a0ff3bcc7f2aead
+  m_Entries:
+  - m_Id: 409985024
+    m_Key: option.section.display
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373632
+    m_Key: option.section.operation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373633
+    m_Key: option.section.autoSave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373634
+    m_Key: option.section.displayLines
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373635
+    m_Key: option.section.audio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373636
+    m_Key: option.section.clockMenu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373637
+    m_Key: option.section.system
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373638
+    m_Key: option.section.clockMenuSections
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373639
+    m_Key: option.zoomTimelineStep
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373640
+    m_Key: option.zoomTimelineMax
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373641
+    m_Key: option.zoomTimelineMin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373642
+    m_Key: option.scoreDisplayScaleH
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373643
+    m_Key: option.scoreDisplayScaleV
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373644
+    m_Key: option.toolWindowChildScale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373645
+    m_Key: option.layoutPattern
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373646
+    m_Key: option.layoutPatternName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373647
+    m_Key: option.undoStackLimit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373648
+    m_Key: option.showFocusTicksRate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373649
+    m_Key: option.ticksPerScrollStep
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373650
+    m_Key: option.enableSwipeScroll
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373651
+    m_Key: option.autoSaveEnabled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373652
+    m_Key: option.autoSaveInterval
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373653
+    m_Key: option.showBarLines
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373654
+    m_Key: option.showBeatLines
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373655
+    m_Key: option.showQuantizeLines
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373656
+    m_Key: option.showWaveform
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373657
+    m_Key: option.playMusicSe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373658
+    m_Key: option.noteEdgeWidth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373659
+    m_Key: option.invalidPlacementCheck
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373660
+    m_Key: option.areaSelectPartialOverlap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373661
+    m_Key: option.noteYScaleStartThreshold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373662
+    m_Key: option.noteYScaleEndThreshold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373663
+    m_Key: option.noteYScaleMin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373664
+    m_Key: option.drawSmallerTickToBack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373665
+    m_Key: option.maxClipboardCacheCount
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373666
+    m_Key: option.resetSettingData
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373667
+    m_Key: option.clearClipboardCache
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373668
+    m_Key: option.optionDialog
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373669
+    m_Key: option.clockMenu.addNormalNote
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373670
+    m_Key: option.clockMenu.addLongNote
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373671
+    m_Key: option.clockMenu.addFlickNote
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373672
+    m_Key: option.clockMenu.addTraceNote
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373673
+    m_Key: option.clockMenu.addTraceLongNote
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373674
+    m_Key: option.clockMenu.addTraceFlickNote
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373675
+    m_Key: option.clockMenu.addGuideNote
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373676
+    m_Key: option.clockMenu.flipHorizontally
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373677
+    m_Key: option.clockMenu.flipVertically
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373678
+    m_Key: option.clockMenu.copyNotes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373679
+    m_Key: option.clockMenu.deleteNote
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373680
+    m_Key: option.clockMenu.editEventData
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373681
+    m_Key: option.clockMenu.deleteEventData
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373682
+    m_Key: option.clockMenu.addBpm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373683
+    m_Key: option.clockMenu.addTimeSignature
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373684
+    m_Key: option.clockMenu.addHighSpeed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373685
+    m_Key: option.clockMenu.paste
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373686
+    m_Key: option.clockMenuSection.addNote
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373687
+    m_Key: option.clockMenuSection.editNote
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373688
+    m_Key: option.clockMenuSection.editEventData
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373689
+    m_Key: option.clockMenuSection.addMusicEvent
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373690
+    m_Key: option.clockMenuSection.paste
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373691
+    m_Key: reset.confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373692
+    m_Key: idSearch.notFound
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373693
+    m_Key: saveData.overwrite
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373694
+    m_Key: sus.empty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373695
+    m_Key: sus.tooManyBpms
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373696
+    m_Key: sus.droppedChildren
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373697
+    m_Key: sus.sameStartOverlap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373698
+    m_Key: sus.isolatedRelay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373699
+    m_Key: sus.guideStyleLost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373700
+    m_Key: sus.guideOverlap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373701
+    m_Key: sus.tooManyLongNotes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373702
+    m_Key: sus.tooManyGuides
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373703
+    m_Key: sus.timeSignatureMoved
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373704
+    m_Key: sus.outOfRange
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373705
+    m_Key: sus.collision
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 8757538900985512052
+  references:
+    version: 2
+    RefIds:
+    - rid: 8757538900985512052
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1794374561223

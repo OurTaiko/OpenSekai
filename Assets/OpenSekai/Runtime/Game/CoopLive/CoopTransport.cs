@@ -33,7 +33,7 @@ namespace Sekai.CoopLive
 		{
 			if (HandlerFactory == null)
 			{
-				throw new CoopException("NO_HTTP2", "这个版本的游戏没有 HTTP/2 支持（YetAnotherHttpHandler），无法连接协力ライブ。");
+				throw new CoopException("NO_HTTP2", L10n.Get("CoopLive", "error.noHttp2"));
 			}
 			Uri uri = new Uri(address);
 			return GrpcChannel.ForAddress(uri, new GrpcChannelOptions

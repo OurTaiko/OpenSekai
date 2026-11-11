@@ -33,7 +33,7 @@ namespace Sekai.Community
 			}
 			catch (JsonException exception)
 			{
-				throw new CommunityException("RESPONSE_INVALID", "服务器返回的数据无法识别。", 0, exception);
+				throw new CommunityException("RESPONSE_INVALID", L10n.Get("Community", "error.responseInvalid"), 0, exception);
 			}
 		}
 
@@ -73,7 +73,7 @@ namespace Sekai.Community
 			}
 			if (request.downloadedBytes > MaxResponseBytes)
 			{
-				throw new CommunityException("RESPONSE_TOO_LARGE", "服务器返回的数据太大。");
+				throw new CommunityException("RESPONSE_TOO_LARGE", L10n.Get("Community", "error.responseTooLarge"));
 			}
 			return request.downloadHandler.text;
 		}
@@ -123,7 +123,7 @@ namespace Sekai.Community
 		{
 			if (status == 0)
 			{
-				return new CommunityException("NETWORK_ERROR", "无法连接到服务器，请检查网络。（" + transportError + "）");
+				return new CommunityException("NETWORK_ERROR", L10n.Format("Community", "error.network", transportError));
 			}
 
 			string code = "HTTP_" + status;
@@ -145,12 +145,12 @@ namespace Sekai.Community
 
 			message ??= status switch
 			{
-				401 => "登录已失效，请重新登录。",
-				403 => "没有权限。",
-				404 => "找不到这份谱面。",
-				429 => "操作太频繁，请稍后再试。",
-				_ when status >= 500 => "服务器暂时不可用，请稍后再试。",
-				_ => "请求失败（HTTP " + status + "）。",
+				401 => L10n.Get("Community", "error.http401"),
+				403 => L10n.Get("Community", "error.http403"),
+				404 => L10n.Get("Community", "error.http404"),
+				429 => L10n.Get("Community", "error.http429"),
+				_ when status >= 500 => L10n.Get("Community", "error.http5xx"),
+				_ => L10n.Format("Community", "error.httpOther", status),
 			};
 			return new CommunityException(code, message, status);
 		}

@@ -21,6 +21,8 @@ namespace Sekai.CoopLive
 	/// </summary>
 	public sealed class ScreenLayerCoopLive : ScreenLayer
 	{
+		private const string Table = "CoopLive";
+
 		[SerializeField]
 		private Sprite roundSprite;
 
@@ -127,8 +129,8 @@ namespace Sekai.CoopLive
 			bool inRoom = room != null;
 			_members.gameObject.SetActive(inRoom);
 			_stampBar.gameObject.SetActive(inRoom);
-			_roomCode.text = inRoom ? $"{(room.Public ? "公开" : "私人")}房间  ID <size=44>{room.Code}</size>" : string.Empty;
-			_title.text = "協力ライブ";
+			_roomCode.text = inRoom ? L10n.Format(Table, room.Public ? "header.publicRoom" : "header.privateRoom", room.Code) : string.Empty;
+			_title.text = L10n.Get(Table, "header.title");
 			_main.offsetMax = new Vector2(-24, inRoom ? -392 : -160);
 
 			if (!inRoom)
@@ -200,7 +202,7 @@ namespace Sekai.CoopLive
 				Image card = CoopUi.Image(_members, member != null ? "Member " + member.Slot : "Empty", member != null ? CoopUi.Panel : new Color(1, 1, 1, 0.45f));
 				if (member == null)
 				{
-					TextMeshProUGUI empty = CoopUi.Text(card.transform, "Empty", "募集中…", 28, CoopUi.SubInk, true, TextAlignmentOptions.Center);
+					TextMeshProUGUI empty = CoopUi.Text(card.transform, "Empty", L10n.Get(Table, "member.recruiting"), 28, CoopUi.SubInk, true, TextAlignmentOptions.Center);
 					empty.rectTransform.Stretch();
 					continue;
 				}
@@ -211,8 +213,8 @@ namespace Sekai.CoopLive
 				stripe.rectTransform.offsetMin = new Vector2(0, -14);
 				stripe.rectTransform.offsetMax = Vector2.zero;
 
-				string badges = (member.UserId == room.HostId ? "<color=#FFAA22>★ 房主</color>  " : string.Empty)
-					+ (member.UserId == CoopSession.MyUserId ? "<color=#33BBAA>你</color>" : string.Empty);
+				string badges = (member.UserId == room.HostId ? "<color=#FFAA22>" + L10n.Get(Table, "member.host") + "</color>  " : string.Empty)
+					+ (member.UserId == CoopSession.MyUserId ? "<color=#33BBAA>" + L10n.Get(Table, "member.you") + "</color>" : string.Empty);
 				TextMeshProUGUI badge = CoopUi.Text(card.transform, "Badges", badges, 22, CoopUi.SubInk, true);
 				badge.rectTransform.Place(new Vector2(0, 1), new Vector2(22, -30), new Vector2(320, 30), new Vector2(0, 1));
 				TextMeshProUGUI name = CoopUi.Text(card.transform, "Name", member.Nickname, 34, CoopUi.Ink, true);
@@ -226,7 +228,7 @@ namespace Sekai.CoopLive
 				if (room.Phase == Phase.Lobby && CoopSession.IsHost && member.UserId != CoopSession.MyUserId)
 				{
 					string target = member.UserId;
-					Button kick = CoopUi.Button(card.transform, "Kick", "移出", () => CoopSession.Kick(target), CoopUi.PanelSoft, CoopUi.Danger, 22);
+					Button kick = CoopUi.Button(card.transform, "Kick", L10n.Get(Table, "member.kick"), () => CoopSession.Kick(target), CoopUi.PanelSoft, CoopUi.Danger, 22);
 					kick.GetComponent<RectTransform>().Place(new Vector2(1, 0), new Vector2(-14, 14), new Vector2(96, 46), new Vector2(1, 0));
 				}
 			}
@@ -236,21 +238,21 @@ namespace Sekai.CoopLive
 		{
 			if (!m.Connected)
 			{
-				return "连接中断…";
+				return L10n.Get(Table, "member.disconnected");
 			}
 			switch (room.Phase)
 			{
 				case Phase.SongSelect:
-					return m.Picked ? "已选曲" : "选曲中…";
+					return L10n.Get(Table, m.Picked ? "member.picked" : "member.picking");
 				case Phase.SongDraw:
 				case Phase.Difficulty:
-					return m.Ready ? "準備完了" : "选择难度中…";
+					return L10n.Get(Table, m.Ready ? "member.ready" : "member.choosingDifficulty");
 				case Phase.Loading:
-					return !m.Playing ? "未参加" : m.Loaded ? "加载完成" : "加载中…";
+					return !m.Playing ? L10n.Get(Table, "member.notPlaying") : m.Loaded ? L10n.Get(Table, "member.loaded") : L10n.Get("Common", "loading");
 				case Phase.Playing:
-					return !m.Playing ? "观战" : m.Finished ? "FINISH" : "演奏中";
+					return !m.Playing ? L10n.Get(Table, "member.spectating") : m.Finished ? "FINISH" : L10n.Get(Table, "member.playing");
 				default:
-					return "等待中";
+					return L10n.Get(Table, "member.waiting");
 			}
 		}
 
@@ -330,14 +332,14 @@ namespace Sekai.CoopLive
 			RectTransform card = Card("Entrance");
 			card.Stretch(260, 60, 260, 60);
 
-			TextMeshProUGUI lead = CoopUi.Text(card, "Lead", "和其他玩家一起演奏社区谱面（最多 5 人）", 32, CoopUi.Ink, true, TextAlignmentOptions.Center);
+			TextMeshProUGUI lead = CoopUi.Text(card, "Lead", L10n.Get(Table, "entrance.lead"), 32, CoopUi.Ink, true, TextAlignmentOptions.Center);
 			lead.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0, -40), new Vector2(1200, 60));
 
 			if (!CommunityAccount.IsSignedIn)
 			{
-				TextMeshProUGUI need = CoopUi.Text(card, "SignIn", "需要登录 OurTaiko 账号（设置 › Additionals › アカウント）", 28, CoopUi.SubInk, false, TextAlignmentOptions.Center);
+				TextMeshProUGUI need = CoopUi.Text(card, "SignIn", L10n.Get(Table, "entrance.signInNeeded"), 28, CoopUi.SubInk, false, TextAlignmentOptions.Center);
 				need.rectTransform.Place(new Vector2(0.5f, 0.5f), new Vector2(0, 40), new Vector2(1200, 60));
-				Button settings = CoopUi.Button(card, "Settings", "打开设置", () =>
+				Button settings = CoopUi.Button(card, "Settings", L10n.Get(Table, "entrance.openSettings"), () =>
 				{
 					ScreenManager.Instance?.ShowDialog<OptionDialog>(DialogType.OptionDialog);
 				});
@@ -347,26 +349,26 @@ namespace Sekai.CoopLive
 				return;
 			}
 
-			Button quick = CoopUi.Button(card, "Quick", "フリールーム\n<size=22>加入公开房间</size>", () => Connect(CoopSession.QuickMatchAsync), CoopUi.Accent, Color.white, 40);
+			Button quick = CoopUi.Button(card, "Quick", L10n.Get(Table, "entrance.quickMatch"), () => Connect(CoopSession.QuickMatchAsync), CoopUi.Accent, Color.white, 40);
 			quick.GetComponent<RectTransform>().Place(new Vector2(0.5f, 0.5f), new Vector2(-330, 60), new Vector2(560, 170));
-			Button create = CoopUi.Button(card, "Create", "ルーム作成\n<size=22>创建私人房间</size>", () => Connect(CoopSession.CreatePrivateAsync), new Color32(0x66, 0x88, 0xEE, 0xFF), Color.white, 40);
+			Button create = CoopUi.Button(card, "Create", L10n.Get(Table, "entrance.createRoom"), () => Connect(CoopSession.CreatePrivateAsync), new Color32(0x66, 0x88, 0xEE, 0xFF), Color.white, 40);
 			create.GetComponent<RectTransform>().Place(new Vector2(0.5f, 0.5f), new Vector2(330, 60), new Vector2(560, 170));
 
-			TMP_InputField code = CoopUi.Input(card, "Code", "输入 5 位ルームID", TMP_InputField.ContentType.IntegerNumber, 5);
+			TMP_InputField code = CoopUi.Input(card, "Code", L10n.Get(Table, "entrance.codePlaceholder"), TMP_InputField.ContentType.IntegerNumber, 5);
 			code.GetComponent<RectTransform>().Place(new Vector2(0.5f, 0.5f), new Vector2(-150, -130), new Vector2(560, 90));
-			Button join = CoopUi.Button(card, "Join", "参加", () =>
+			Button join = CoopUi.Button(card, "Join", L10n.Get(Table, "entrance.join"), () =>
 			{
 				string value = code.text.Trim();
 				if (value.Length != 5)
 				{
-					Toast("ルームID 是 5 位数字。");
+					Toast(L10n.Get(Table, "entrance.codeInvalid"));
 					return;
 				}
 				Connect(ct => CoopSession.JoinAsync(value, ct));
 			}, CoopUi.AccentDark, Color.white, 34);
 			join.GetComponent<RectTransform>().Place(new Vector2(0.5f, 0.5f), new Vector2(290, -130), new Vector2(260, 90));
 
-			_status = CoopUi.Text(card, "Status", CoopTransport.HasHttp2 ? string.Empty : "（这个版本缺少 HTTP/2 支持，无法联机）", 26, CoopUi.SubInk, false, TextAlignmentOptions.Center);
+			_status = CoopUi.Text(card, "Status", CoopTransport.HasHttp2 ? string.Empty : L10n.Get(Table, "entrance.noHttp2"), 26, CoopUi.SubInk, false, TextAlignmentOptions.Center);
 			_status.rectTransform.Place(new Vector2(0.5f, 0), new Vector2(0, 30), new Vector2(1200, 50));
 		}
 
@@ -392,7 +394,7 @@ namespace Sekai.CoopLive
 			_busy = true;
 			if (_status != null)
 			{
-				_status.text = "连接中…";
+				_status.text = L10n.Get(Table, "entrance.connecting");
 			}
 			try
 			{
@@ -413,7 +415,7 @@ namespace Sekai.CoopLive
 			catch (Exception exception)
 			{
 				Debug.LogException(exception);
-				Fail("无法连接协力ライブ服务器。");
+				Fail(L10n.Get(Table, "entrance.connectFailed"));
 			}
 			finally
 			{
@@ -446,34 +448,34 @@ namespace Sekai.CoopLive
 				present += m.Connected ? 1 : 0;
 			}
 			string info = room.Public
-				? "フリールーム：凑够 2 人后 30 秒自动开始，也可以由房主提前开始。"
-				: $"私人房间：把ルームID <b>{room.Code}</b> 告诉朋友。人齐后由房主按「メンバー決定」。";
+				? L10n.Get(Table, "lobby.infoPublic")
+				: L10n.Format(Table, "lobby.infoPrivate", room.Code);
 			TextMeshProUGUI lead = CoopUi.Text(card, "Info", info, 30, CoopUi.Ink, true);
 			lead.rectTransform.Place(new Vector2(0, 1), new Vector2(40, -40), new Vector2(1500, 60), new Vector2(0, 1));
 			lead.textWrappingMode = TextWrappingModes.Normal;
 			Countdown(card);
 
-			string who = CoopSession.IsHost ? "你是房主。" : "等待房主开始…";
-			_status = CoopUi.Text(card, "Status", $"{present} / {room.MaxMembers} 人　{who}", 28, CoopUi.SubInk);
+			string who = L10n.Get(Table, CoopSession.IsHost ? "lobby.youAreHost" : "lobby.waitingForHost");
+			_status = CoopUi.Text(card, "Status", L10n.Format(Table, "lobby.count", present, room.MaxMembers, who), 28, CoopUi.SubInk);
 			_status.rectTransform.Place(new Vector2(0, 1), new Vector2(40, -120), new Vector2(1200, 50), new Vector2(0, 1));
 
 			if (CoopSession.IsHost)
 			{
-				Button lockMembers = CoopUi.Button(card, "Lock", "メンバー決定", CoopSession.LockMembers, CoopUi.Accent, Color.white, 38);
+				Button lockMembers = CoopUi.Button(card, "Lock", L10n.Get(Table, "lobby.confirmMembers"), CoopSession.LockMembers, CoopUi.Accent, Color.white, 38);
 				UIClickSound.Add(lockMembers, SeType.Other, "SE_MULTILIVE_MEMBER_DECIDE");
 				lockMembers.GetComponent<RectTransform>().Place(new Vector2(0.5f, 0), new Vector2(0, 50), new Vector2(520, 110));
 				lockMembers.interactable = present >= 2;
 				_hostButtons.Add(lockMembers);
 				if (!room.Public)
 				{
-					Button open = CoopUi.Button(card, "Open", "ルーム解放（公开）", CoopSession.OpenRoom, CoopUi.PanelSoft, CoopUi.Ink, 26);
+					Button open = CoopUi.Button(card, "Open", L10n.Get(Table, "lobby.openRoom"), CoopSession.OpenRoom, CoopUi.PanelSoft, CoopUi.Ink, 26);
 					open.GetComponent<RectTransform>().Place(new Vector2(1, 0), new Vector2(-40, 50), new Vector2(330, 80), new Vector2(1, 0));
 				}
 			}
 			if (room.Result != null && room.Result.Round > 0)
 			{
 				int round = room.Result.Round;
-				Button last = CoopUi.Button(card, "LastResult", "上一局结果", () => CoopResultSceneArgs.Open(round), CoopUi.PanelSoft, CoopUi.Ink, 26);
+				Button last = CoopUi.Button(card, "LastResult", L10n.Get(Table, "lobby.lastResult"), () => CoopResultSceneArgs.Open(round), CoopUi.PanelSoft, CoopUi.Ink, 26);
 				last.GetComponent<RectTransform>().Place(new Vector2(0, 0), new Vector2(40, 50), new Vector2(260, 80), new Vector2(0, 0));
 			}
 		}
@@ -488,10 +490,10 @@ namespace Sekai.CoopLive
 			listCard.offsetMin = Vector2.zero;
 			listCard.offsetMax = new Vector2(-10, 0);
 
-			_search = CoopUi.Input(listCard, "Search", "搜索曲名 / 作者 / #编号", TMP_InputField.ContentType.Standard, 60);
+			_search = CoopUi.Input(listCard, "Search", L10n.Get(Table, "songSelect.searchPlaceholder"), TMP_InputField.ContentType.Standard, 60);
 			_search.GetComponent<RectTransform>().Place(new Vector2(0, 1), new Vector2(24, -20), new Vector2(760, 76), new Vector2(0, 1));
 			_search.onSubmit.AddListener(_ => LoadChartsAsync().Forget());
-			Button go = CoopUi.Button(listCard, "Go", "搜索", () => LoadChartsAsync().Forget(), CoopUi.AccentDark, Color.white, 28);
+			Button go = CoopUi.Button(listCard, "Go", L10n.Get(Table, "songSelect.search"), () => LoadChartsAsync().Forget(), CoopUi.AccentDark, Color.white, 28);
 			go.GetComponent<RectTransform>().Place(new Vector2(0, 1), new Vector2(800, -20), new Vector2(160, 76), new Vector2(0, 1));
 
 			RectTransform list = CoopUi.ScrollList(listCard, "List", 8, out _);
@@ -503,15 +505,15 @@ namespace Sekai.CoopLive
 			side.anchorMax = new Vector2(1, 1);
 			side.offsetMin = new Vector2(10, 0);
 			side.offsetMax = Vector2.zero;
-			TextMeshProUGUI title = CoopUi.Text(side, "Title", "楽曲選択", 40, CoopUi.Ink, true);
+			TextMeshProUGUI title = CoopUi.Text(side, "Title", L10n.Get(Table, "songSelect.title"), 40, CoopUi.Ink, true);
 			title.rectTransform.Place(new Vector2(0, 1), new Vector2(30, -30), new Vector2(400, 60), new Vector2(0, 1));
 			Countdown(side);
-			TextMeshProUGUI hint = CoopUi.Text(side, "Hint", "从大家选的歌里抽一首。", 24, CoopUi.SubInk);
+			TextMeshProUGUI hint = CoopUi.Text(side, "Hint", L10n.Get(Table, "songSelect.hint"), 24, CoopUi.SubInk);
 			hint.rectTransform.Place(new Vector2(0, 1), new Vector2(30, -100), new Vector2(560, 40), new Vector2(0, 1));
-			_pickLabel = CoopUi.Text(side, "MyPick", "还没有选", 30, CoopUi.Ink, true, TextAlignmentOptions.Center);
+			_pickLabel = CoopUi.Text(side, "MyPick", L10n.Get(Table, "songSelect.noPick"), 30, CoopUi.Ink, true, TextAlignmentOptions.Center);
 			_pickLabel.rectTransform.Place(new Vector2(0.5f, 0.5f), new Vector2(0, 30), new Vector2(560, 120));
 			_pickLabel.textWrappingMode = TextWrappingModes.Normal;
-			Button omakase = CoopUi.Button(side, "Omakase", "おまかせ", () =>
+			Button omakase = CoopUi.Button(side, "Omakase", L10n.Get(Table, "songSelect.random"), () =>
 			{
 				_myPick = string.Empty;
 				CoopSession.PickSong(string.Empty);
@@ -541,7 +543,7 @@ namespace Sekai.CoopLive
 			{
 				if (request == _listRequest && list != null)
 				{
-					CoopUi.Text(list, "Error", "谱面列表加载失败。", 28, CoopUi.Danger);
+					CoopUi.Text(list, "Error", L10n.Get(Table, "songSelect.loadFailed"), 28, CoopUi.Danger);
 				}
 				return;
 			}
@@ -551,7 +553,7 @@ namespace Sekai.CoopLive
 			}
 			if (page.Items.Count == 0)
 			{
-				CoopUi.Size(CoopUi.Text(list, "Empty", "没有找到谱面。", 28, CoopUi.SubInk), height: 60);
+				CoopUi.Size(CoopUi.Text(list, "Empty", L10n.Get(Table, "songSelect.empty"), 28, CoopUi.SubInk), height: 60);
 			}
 			foreach (CommunityChart chart in page.Items)
 			{
@@ -573,7 +575,7 @@ namespace Sekai.CoopLive
 				levelText.rectTransform.Stretch();
 				TextMeshProUGUI name = CoopUi.Text(row.transform, "Title", c.Title, 30, CoopUi.Ink, true);
 				name.rectTransform.Place(new Vector2(0, 1), new Vector2(184, -10), new Vector2(760, 40), new Vector2(0, 1));
-				TextMeshProUGUI sub = CoopUi.Text(row.transform, "Sub", $"#{c.NumberId}  {c.ArtistLine}  ·  谱师 {c.Uploader?.Nickname}", 22, CoopUi.SubInk);
+				TextMeshProUGUI sub = CoopUi.Text(row.transform, "Sub", L10n.Format(Table, "songSelect.chartSub", c.NumberId, c.ArtistLine, c.Uploader?.Nickname), 22, CoopUi.SubInk);
 				sub.rectTransform.Place(new Vector2(0, 0), new Vector2(184, 10), new Vector2(760, 32), new Vector2(0, 0));
 				_chartRows[c.Id] = row;
 			}
@@ -585,7 +587,7 @@ namespace Sekai.CoopLive
 			if (_pickLabel != null)
 			{
 				_pickLabel.text = chart == null
-					? "<color=#FF77AA>おまかせ</color>\n<size=24>交给随机</size>"
+					? L10n.Get(Table, "songSelect.randomPicked")
 					: $"{chart.Title}\n<size=24><color=#{UnityEngine.ColorUtility.ToHtmlStringRGB(CoopUi.DifficultyColor(chart.Difficulty))}>{CoopUi.DifficultyLabel(chart.Difficulty)} {chart.PlayLevel}</color></size>";
 			}
 			HighlightPick();
@@ -610,8 +612,8 @@ namespace Sekai.CoopLive
 			card.Stretch();
 			ChartInfo song = room.Song;
 			Member picker = CoopSession.Find(room.SongPickedBy);
-			string by = picker != null ? $"{picker.Nickname} 选的歌" : "おまかせ";
-			TextMeshProUGUI head = CoopUi.Text(card, "Head", room.Phase == Phase.SongDraw ? "抽选结果" : "難易度選択", 30, CoopUi.SubInk, true);
+			string by = picker != null ? L10n.Format(Table, "difficulty.pickedBy", picker.Nickname) : L10n.Get(Table, "songSelect.random");
+			TextMeshProUGUI head = CoopUi.Text(card, "Head", L10n.Get(Table, room.Phase == Phase.SongDraw ? "difficulty.drawTitle" : "difficulty.title"), 30, CoopUi.SubInk, true);
 			head.rectTransform.Place(new Vector2(0, 1), new Vector2(40, -30), new Vector2(600, 44), new Vector2(0, 1));
 			TextMeshProUGUI title = CoopUi.Text(card, "Song", song != null ? song.Title : "?", 52, CoopUi.Ink, true);
 			title.rectTransform.Place(new Vector2(0, 1), new Vector2(40, -80), new Vector2(1500, 70), new Vector2(0, 1));
@@ -650,7 +652,7 @@ namespace Sekai.CoopLive
 			}
 
 			bool ready = me != null && me.Ready;
-			Button readyButton = CoopUi.Button(card, "Ready", ready ? "準備完了 ✓" : "準備完了", () => CoopSession.SetReady(!ready),
+			Button readyButton = CoopUi.Button(card, "Ready", L10n.Get(Table, ready ? "difficulty.readyDone" : "difficulty.ready"), () => CoopSession.SetReady(!ready),
 				ready ? CoopUi.AccentDark : CoopUi.Accent, Color.white, 38);
 			readyButton.GetComponent<RectTransform>().Place(new Vector2(1, 0), new Vector2(-40, 40), new Vector2(420, 110), new Vector2(1, 0));
 		}
@@ -676,13 +678,13 @@ namespace Sekai.CoopLive
 			Member me = CoopSession.Me;
 			if (room.Phase == Phase.Playing)
 			{
-				return me != null && me.Playing ? "演奏中…" : "这一局开始了，你没能及时加载。下一局再一起吧。";
+				return L10n.Get(Table, me != null && me.Playing ? "loading.playing" : "loading.missed");
 			}
 			if (me == null || !me.Playing)
 			{
-				return "这一局你不参加，等待结束…";
+				return L10n.Get(Table, "loading.sittingOut");
 			}
-			return me.Loaded ? "等待其他成员…" : "准备中…";
+			return L10n.Get(Table, me.Loaded ? "loading.waitingOthers" : "loading.preparing");
 		}
 
 		private void OnLaunchStatus(string text)

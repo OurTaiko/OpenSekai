@@ -1,0 +1,325 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: ChartEditor_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 16ecc78bb1bcd4492a0ff3bcc7f2aead, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 409985024
+    m_Localized: Display
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373632
+    m_Localized: Controls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373633
+    m_Localized: Auto Save
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373634
+    m_Localized: Guide Lines
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373635
+    m_Localized: Audio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373636
+    m_Localized: Clock Menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373637
+    m_Localized: System
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373638
+    m_Localized: Clock Menu Sections
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373639
+    m_Localized: Timeline Zoom Step
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373640
+    m_Localized: Timeline Zoom Max
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373641
+    m_Localized: Timeline Zoom Min
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373642
+    m_Localized: Chart Scale (Horizontal)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373643
+    m_Localized: Chart Scale (Vertical)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373644
+    m_Localized: Tool Window Item Scale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373645
+    m_Localized: Layout Pattern
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373646
+    m_Localized: Pattern {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373647
+    m_Localized: Max Undo History
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373648
+    m_Localized: Focus Line Position in View
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373649
+    m_Localized: Ticks per Scroll Step
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373650
+    m_Localized: Swipe Scrolling
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373651
+    m_Localized: Auto Save ON/OFF
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373652
+    m_Localized: Auto Save Interval (s)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373653
+    m_Localized: Show Bar Lines
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373654
+    m_Localized: Show Beat Lines
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373655
+    m_Localized: Show Grid Lines
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373656
+    m_Localized: Show Waveform
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373657
+    m_Localized: Play SE During Playback
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373658
+    m_Localized: Note Edge Grab Width
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373659
+    m_Localized: Check Invalid Placement
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373660
+    m_Localized: Area Select Partial Overlap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373661
+    m_Localized: Note Y Shrink Start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373662
+    m_Localized: Note Y Shrink End
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373663
+    m_Localized: Note Y Scale Min
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373664
+    m_Localized: Draw Earlier Notes Behind
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373665
+    m_Localized: Max Clipboard Cache
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373666
+    m_Localized: Reset Settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373667
+    m_Localized: Clear Clipboard Cache
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373668
+    m_Localized: Options Dialog
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373669
+    m_Localized: Add Tap Note
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373670
+    m_Localized: Add Hold Note
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373671
+    m_Localized: Add Flick Note
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373672
+    m_Localized: Add Trace Note
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373673
+    m_Localized: Add Trace Hold Note
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373674
+    m_Localized: Add Trace Flick Note
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373675
+    m_Localized: Add Guide Note
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373676
+    m_Localized: Flip Horizontally
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373677
+    m_Localized: Flip Vertically
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373678
+    m_Localized: Copy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373679
+    m_Localized: Delete
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373680
+    m_Localized: Edit Event
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373681
+    m_Localized: Delete Event
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373682
+    m_Localized: Add BPM
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373683
+    m_Localized: Add Time Signature
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373684
+    m_Localized: Add Speed Change
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373685
+    m_Localized: Paste
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373686
+    m_Localized: Show Add Note Section
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373687
+    m_Localized: Show Edit Note Section
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373688
+    m_Localized: Show Edit Event Section
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373689
+    m_Localized: Show Add Song Event Section
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373690
+    m_Localized: Show Paste Section
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373691
+    m_Localized: 'Reset the chart? All notes will be removed.
+
+      You can undo this.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373692
+    m_Localized: Chart not found.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373693
+    m_Localized: Overwrite
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373694
+    m_Localized: The chart has no data.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373695
+    m_Localized: More distinct BPMs than SUS allows; the extra BPM changes were not exported.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373696
+    m_Localized: '{0} notes attached to non-hold notes were not exported (they never appear in game either).'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373697
+    m_Localized: More than {0} notes share one time and start lane; the extra {1} will be merged when imported back.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373698
+    m_Localized: '{0} isolated relay points were not exported.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373699
+    m_Localized: The color or curve of {0} guide points cannot be stored in SUS and may differ when imported back.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373700
+    m_Localized: '{0} guide points overlap too many others and will be merged when imported back.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373701
+    m_Localized: More than {0} hold notes at once; {1} were not exported.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373702
+    m_Localized: More than {0} guides at once; {1} were not exported.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373703
+    m_Localized: Moved {0} time signature changes that were off a bar line to the next bar (note timing unchanged).
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373704
+    m_Localized: '{0} notes or events past the SUS limit of 999 bars were not exported.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418373705
+    m_Localized: '{0} notes or events exactly overlapped another of the same kind; only one was exported.'
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

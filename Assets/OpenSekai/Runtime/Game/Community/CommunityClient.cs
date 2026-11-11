@@ -93,7 +93,7 @@ namespace Sekai.Community
 			string session = await CommunityAccount.GetSessionAsync(ct);
 			if (session == null)
 			{
-				throw new CommunityException("AUTH_REQUIRED", "请先登录 OurTaiko 账号。", 401);
+				throw new CommunityException("AUTH_REQUIRED", L10n.Get("Community", "error.signInRequired"), 401);
 			}
 			string text;
 			try
@@ -120,7 +120,7 @@ namespace Sekai.Community
 			}
 			if (string.IsNullOrEmpty(reply?.Id))
 			{
-				throw new CommunityException("RESPONSE_INVALID", "服务器返回的数据无法识别。");
+				throw new CommunityException("RESPONSE_INVALID", L10n.Get("Community", "error.responseInvalid"));
 			}
 			return reply.Id;
 		}
@@ -129,7 +129,7 @@ namespace Sekai.Community
 		public static async UniTask<VoteReply> SetVoteAsync(string id, int value, CancellationToken ct = default)
 		{
 			return await SendWithSessionAsync<VoteReply>("PUT", Server + "/api/v1/charts/" + id + "/vote", new { value }, ct)
-				?? throw new CommunityException("RESPONSE_INVALID", "服务器返回的数据无法识别。");
+				?? throw new CommunityException("RESPONSE_INVALID", L10n.Get("Community", "error.responseInvalid"));
 		}
 
 		public static async UniTask SetBookmarkAsync(string id, bool saved, CancellationToken ct = default)
@@ -212,7 +212,7 @@ namespace Sekai.Community
 			string session = await CommunityAccount.GetSessionAsync(ct);
 			if (session == null)
 			{
-				throw new CommunityException("AUTH_REQUIRED", "请先登录 OurTaiko 账号。", 401);
+				throw new CommunityException("AUTH_REQUIRED", L10n.Get("Community", "error.signInRequired"), 401);
 			}
 			try
 			{

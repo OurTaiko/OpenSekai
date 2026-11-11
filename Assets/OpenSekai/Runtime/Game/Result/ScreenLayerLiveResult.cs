@@ -28,6 +28,7 @@ namespace Sekai
 	/// </summary>
 	public sealed class ScreenLayerLiveResult : ScreenLayer
 	{
+		private const string Table = "Result";
 		private const float HeaderHeight = 180f;
 		private const float CardWidth = 372f;
 		private const float CardHeight = 520f;
@@ -238,7 +239,7 @@ namespace Sekai
 			_difficultyPill.color = CoopUi.DifficultyColor(difficulty);
 			_jacketFrame.color = CoopUi.DifficultyColor(difficulty);
 			_difficultyLabel.text = CoopUi.DifficultyLabel(difficulty);
-			_levelLabel.text = level > 0 ? $"<size=22>楽曲Lv.</size>{level}" : "<size=22>楽曲Lv.</size>-";
+			_levelLabel.text = L10n.Format(Table, "header.level", level > 0 ? level.ToString() : "-");
 			ScoreRank rank = LiveResultData.RankOf(score, players);
 			_rankLetter.text = rank.ToString();
 			_rankLetter.color = Sekai.ColorUtility.GetScoreRankColor(rank);
@@ -413,7 +414,7 @@ namespace Sekai
 		{
 			RectTransform bar = CoopUi.Rect("Buttons", _pageRoot);
 			bar.Place(new Vector2(1, 0), new Vector2(-70, 50), new Vector2(980, 104), new Vector2(1, 0));
-			Button next = CoopUi.Button(bar, "Next", "次へ", OnNext, new Color32(0x6E, 0xEB, 0xD9, 0xFF), HeaderInk, 40);
+			Button next = CoopUi.Button(bar, "Next", L10n.Get(Table, "next"), OnNext, new Color32(0x6E, 0xEB, 0xD9, 0xFF), HeaderInk, 40);
 			next.GetComponent<RectTransform>().Place(new Vector2(1, 0.5f), Vector2.zero, new Vector2(440, 104));
 			if (secondary != null)
 			{
@@ -558,9 +559,9 @@ namespace Sekai
 				scroll.horizontalNormalizedPosition = 0f;
 			}
 
-			Button stamp = CoopUi.Button(_pageRoot, "StampButton", "スタンプ", ToggleStamps, Color.white, HeaderInk, 30);
+			Button stamp = CoopUi.Button(_pageRoot, "StampButton", L10n.Get(Table, "stamps"), ToggleStamps, Color.white, HeaderInk, 30);
 			stamp.GetComponent<RectTransform>().Place(new Vector2(0, 0), new Vector2(70, 58), new Vector2(220, 88), new Vector2(0, 0));
-			BottomButtons("メンバーの成績", ShowMemberScores);
+			BottomButtons(L10n.Get(Table, "memberScores"), ShowMemberScores);
 		}
 
 		private static string Shape(List<Entry> entries, LiveResult result)
@@ -604,7 +605,7 @@ namespace Sekai
 				_statusLine.text = $"TEAM SCORE  <size=40>{result.TeamScore:N0}</size>　　{fever}";
 				return;
 			}
-			_statusLine.text = CoopSession.Room != null ? "等待其他成员结束演奏…" : "<color=#FF8899>已经和房间断开，没能拿到这一局的结果。</color>";
+			_statusLine.text = L10n.Get(Table, CoopSession.Room != null ? "status.waiting" : "status.disconnected");
 		}
 
 		private void BuildCard(RectTransform parent, Entry entry)
@@ -697,7 +698,7 @@ namespace Sekai
 			{
 				Image shade = CoopUi.Image(slot, "Disconnected", new Color32(0x50, 0x4C, 0x70, 0xB0));
 				shade.rectTransform.Stretch(0, RibbonSpace, 0, 0);
-				TextMeshProUGUI cut = CoopUi.Text(shade.transform, "Label", "切断されました", 38, Color.white, true, TextAlignmentOptions.Center);
+				TextMeshProUGUI cut = CoopUi.Text(shade.transform, "Label", L10n.Get(Table, "card.disconnected"), 38, Color.white, true, TextAlignmentOptions.Center);
 				cut.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0, -CardArtHeight + 70), new Vector2(CardWidth, 60), new Vector2(0.5f, 1));
 			}
 
@@ -709,7 +710,7 @@ namespace Sekai
 		private static void UpdateCard(CardView view, Entry entry)
 		{
 			view.Score.text = Digits(entry.Status.Score, 8);
-			view.State.text = entry.Tags ?? (entry.Disconnected ? "<color=#EE5577>切断</color>" : entry.Finished ? "<color=#22AA99>FINISH</color>" : "演奏中…");
+			view.State.text = entry.Tags ?? (entry.Disconnected ? "<color=#EE5577>" + L10n.Get(Table, "card.disconnectedState") + "</color>" : entry.Finished ? "<color=#22AA99>FINISH</color>" : L10n.Get(Table, "card.playing"));
 		}
 
 		private static ChartInfo FindChart(string chartId)
@@ -755,7 +756,7 @@ namespace Sekai
 		private void ShowMemberScores()
 		{
 			List<Entry> entries = Entries(out _);
-			RectTransform panel = OpenModal(new Vector2(1500, 170 + 86 * Mathf.Max(1, entries.Count)), "メンバーの成績");
+			RectTransform panel = OpenModal(new Vector2(1500, 170 + 86 * Mathf.Max(1, entries.Count)), L10n.Get(Table, "memberScores"));
 			string[] heads = { "", "SCORE", "PERFECT", "GREAT", "GOOD", "BAD", "MISS", "COMBO" };
 			float[] xs = { 40, 520, 700, 840, 980, 1110, 1230, 1360 };
 			Color[] colors = { HeaderInk, HeaderInk, new Color32(0xFF, 0x66, 0xCC, 0xFF), new Color32(0xCC, 0x55, 0xEE, 0xFF), new Color32(0x33, 0x99, 0xEE, 0xFF), new Color32(0x55, 0xBB, 0x55, 0xFF), CoopUi.SubInk, HeaderInk };
@@ -825,14 +826,14 @@ namespace Sekai
 			RectTransform left = CoopUi.Rect("Detail", _pageRoot);
 			left.Place(new Vector2(0, 0.5f), new Vector2(230, -10), new Vector2(880, 760), new Vector2(0, 0.5f));
 
-			TextMeshProUGUI scoreLabel = CoopUi.Text(left, "ScoreLabel", "スコア", 68, Color.white, true);
+			TextMeshProUGUI scoreLabel = CoopUi.Text(left, "ScoreLabel", L10n.Get(Table, "detail.score"), 68, Color.white, true);
 			scoreLabel.rectTransform.Place(new Vector2(0, 1), new Vector2(0, -30), new Vector2(220, 100), new Vector2(0, 1));
 			TextMeshProUGUI scoreValue = CoopUi.Text(left, "Score", Digits(0, 8, ScorePink), 124, ScorePink, true, TextAlignmentOptions.Right);
 			scoreValue.rectTransform.Place(new Vector2(1, 1), new Vector2(0, 0), new Vector2(680, 140), new Vector2(1, 1));
 			scoreValue.characterSpacing = 2;
 			DOVirtual.Int(0, score.totalScore, 1.0f, v => scoreValue.text = Digits(v, 8, ScorePink)).SetEase(Ease.OutCubic).SetTarget(this);
 
-			TextMeshProUGUI highLabel = CoopUi.Text(left, "HighLabel", "ハイスコア", 38, Color.white, true);
+			TextMeshProUGUI highLabel = CoopUi.Text(left, "HighLabel", L10n.Get(Table, "detail.highScore"), 38, Color.white, true);
 			highLabel.rectTransform.Place(new Vector2(0, 1), new Vector2(0, -160), new Vector2(300, 60), new Vector2(0, 1));
 			TextMeshProUGUI highValue = CoopUi.Text(left, "HighScore", data.HighScore > 0 ? Digits(data.HighScore, 8) : "--------", 64, Color.white, true, TextAlignmentOptions.Right);
 			highValue.rectTransform.Place(new Vector2(1, 1), new Vector2(0, -146), new Vector2(560, 80), new Vector2(1, 1));
@@ -910,7 +911,7 @@ namespace Sekai
 			BuildDetailArt(data);
 			if (_coop)
 			{
-				BottomButtons("メンバーの成績", () => ShowPage(Page.Members));
+				BottomButtons(L10n.Get(Table, "memberScores"), () => ShowPage(Page.Members));
 			}
 			else
 			{
@@ -994,14 +995,14 @@ namespace Sekai
 		private void AskBackToRoom()
 		{
 			bool inRoom = CoopSession.Room != null;
-			RectTransform panel = OpenModal(new Vector2(960, 420), inRoom ? "要回到房间吗？" : "已经和房间断开");
-			TextMeshProUGUI body = CoopUi.Text(panel, "Body", inRoom ? "回到房间后可以和大家继续下一首。" : "回到協力ライブ，重新加入或开个新房间。", 30, CoopUi.SubInk, false, TextAlignmentOptions.Center);
+			RectTransform panel = OpenModal(new Vector2(960, 420), L10n.Get(Table, inRoom ? "backToRoom.title" : "disconnected.title"));
+			TextMeshProUGUI body = CoopUi.Text(panel, "Body", L10n.Get(Table, inRoom ? "backToRoom.body" : "disconnected.body"), 30, CoopUi.SubInk, false, TextAlignmentOptions.Center);
 			body.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0, -120), new Vector2(860, 100), new Vector2(0.5f, 1));
 			body.textWrappingMode = TextWrappingModes.Normal;
-			Button leave = CoopUi.Button(panel, "Leave", inRoom ? "退出房间" : "回到首页", LeaveToHome, CoopUi.PanelSoft, HeaderInk, 32);
+			Button leave = CoopUi.Button(panel, "Leave", L10n.Get(Table, inRoom ? "backToRoom.leave" : "disconnected.home"), LeaveToHome, CoopUi.PanelSoft, HeaderInk, 32);
 			UIClickSound.Add(leave, SeType.Cancel);
 			leave.GetComponent<RectTransform>().Place(new Vector2(0.5f, 0), new Vector2(-200, 40), new Vector2(360, 96), new Vector2(0.5f, 0));
-			Button back = CoopUi.Button(panel, "Back", inRoom ? "回到房间" : "協力ライブ", BackToRoom, CoopUi.Accent, Color.white, 32);
+			Button back = CoopUi.Button(panel, "Back", L10n.Get(Table, inRoom ? "backToRoom.back" : "disconnected.coopLive"), BackToRoom, CoopUi.Accent, Color.white, 32);
 			back.GetComponent<RectTransform>().Place(new Vector2(0.5f, 0), new Vector2(200, 40), new Vector2(360, 96), new Vector2(0.5f, 0));
 		}
 
@@ -1088,7 +1089,7 @@ namespace Sekai
 				return;
 			}
 			Member member = CoopSession.Find(stamp.UserId);
-			Toast($"{member?.Nickname ?? "?"}：{text}");
+			Toast(L10n.Format(Table, "toast.stamp", member?.Nickname ?? "?", text));
 		}
 
 		private void Update()

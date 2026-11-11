@@ -217,7 +217,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 			if (_saveButtonText != null)
 			{
 				bool overwrite = Array.Exists(_scoreNames ?? Array.Empty<(string name, DateTime lastWriteTime)>(), score => score.name == _selectedFile);
-				_saveButtonText.SetText(overwrite ? "Overwrite" : "Save");
+				_saveButtonText.SetText(overwrite ? L10n.Get("ChartEditor", "saveData.overwrite") : L10n.Get("Common", "save"));
 			}
 		}
 	}

@@ -1,0 +1,80 @@
+key,zh-Hans,ja,en,comment
+tab.live,Live,ライブ,Live,Option dialog tab
+tab.volume,音量,音量,Volume,Option dialog tab
+tab.system,系统,システム,System,Option dialog tab
+tab.additionals,扩展,追加設定,Extras,Option dialog tab with OpenSekai's own settings
+live.section.notes,音符设置,ノーツ設定,Notes,Section header on the Live tab
+live.noteSpeed,音符速度,ノーツの速さ,Note Speed,Stepper row
+live.timing,时机调整,タイミング調整,Timing Offset,Stepper row (judgement timing offset)
+live.notePreview,在预览中详细设置,プレビューで詳細設定,Fine-Tune in Preview,Button under the lane preview; opens the note detail dialog
+live.noteSkin,音符皮肤,ノーツスキン,Note Skin,Skin carousel row
+live.longAlpha,长条不透明度,ロングノーツの不透明度,Hold Note Opacity,Percent row
+live.guideAlpha,引导线不透明度,ガイドの不透明度,Guide Opacity,Percent row
+live.noteSe,音符音效,ノーツのSE,Note Sounds,Selector row
+live.noteSeName,音效{0:00},サウンド{0:00},Sound {0:00},"Selector value, {0} = 1-based number"
+live.seTest.tap,♪ 点击,♪ タップ,♪ Tap,Button that plays the tap note sound
+live.seTest.flick,♪ 滑键,♪ フリック,♪ Flick,Button that plays the flick note sound
+live.seTest.long,♪ 长条,♪ ロング,♪ Hold,Button that plays the hold note sound
+live.seTest.trace,♪ 描摹,♪ トレース,♪ Trace,Button that plays the trace note sound
+live.section.display,视觉与演出设置,見やすさ・演出設定,Display & Effects,Section header on the Live tab
+live.brightness,背景亮度,背景の明るさ,Background Brightness,Percent row
+live.laneAlpha,轨道不透明度,レーンの不透明度,Lane Opacity,Percent row
+live.tapEffect,点击特效,タップエフェクト,Tap Effects,Radio row
+live.tapEffect.normal,标准,標準,Normal,Radio option
+live.tapEffect.subtle,简约,控えめ,Subtle,Radio option
+live.cutIn,插入演出,カットイン演出,Cut-in Effects,Toggle row
+live.fever,FEVER演出,FEVER演出,FEVER Effects,Radio row
+live.fever.normal,标准,標準,Normal,Radio option
+live.fever.light,轻量,軽量,Light,Radio option
+live.skillDisplay,技能・表现显示,スキル・活躍表示,Skill Display,Toggle row
+live.fps,流畅度(FPS),滑らかさ(FPS),Frame Rate (FPS),Radio row: 60 / 120 / Unlimited
+live.fps.unlimited,不限,Unlimited,Unlimited,Radio option of the frame-rate row
+live.section.assist,Live辅助设置,ライブ補助設定,Live Assist,Section header on the Live tab
+live.simultaneousLine,同时按压线,同時押しライン,Simultaneous Line,Toggle row: line joining notes hit together
+live.apEffect,AP持续演出,AP継続演出,AP Streak Effect,Toggle row
+live.mirror,镜像谱面,ミラー譜面,Mirror Chart,Toggle row
+live.vibration,点击时振动,タップ時の振動,Vibrate on Tap,Toggle row
+live.section.mv,MV设置,MV設定,MV,Section header on the Live tab
+live.mvMode,模式,モード,Mode,Radio row: 3DMV / 2DMV / original MV / light
+live.mvMode.original,原曲MV,原曲MV,Original MV,Radio option
+live.mvMode.light,轻量,軽量,Light,Radio option
+live.mvQuality,3DMV画质,3DMV品質,3DMV Quality,Radio row
+live.mvQuality.high,高画质,高品質,High,Radio option
+live.mvQuality.normal,标准,標準,Normal,Radio option
+volume.section.live,Live音量,ライブ音量,Live Volume,Section header on the Volume tab
+volume.section.system,系统音量,システム音量,System Volume,Section header on the Volume tab
+volume.voice,语音,ボイス,Voice,Volume row (BGM and SE are not translated)
+system.section.system,系统,システム,System,Section header on the System tab
+system.defaultVocal,默认乐曲,デフォルト楽曲,Default Version,Radio row: which vocal version of a song plays by default
+system.defaultVocal.sekai,世界ver.,セカイver.,SEKAI ver.,Radio option
+system.defaultVocal.virtualSinger,虚拟歌手ver.,バーチャル・シンガーver.,Virtual Singer ver.,Radio option
+system.screenLock,画面固定,画面固定,Lock Orientation,Toggle row
+system.confirmBeforeLive,Live前确认设置,ライブ前設定確認,Confirm Settings Before Live,Toggle row
+system.onlineStatus,在线显示,オンライン表示,Show Online Status,Toggle row
+system.liveBonusNotify,Live Bonus完全恢复通知,ライブボーナス全回復通知,Live Bonus Refill Alert,Toggle row
+system.section.data,数据管理,データ管理,Data,Section header on the System tab
+system.vocalData,Vocal ver.数据,ボーカルver.データ,Vocal Version Data,Button row label
+system.mvData,MV数据,MVデータ,MV Data,Button row label
+system.manageStorage,容量管理,容量管理,Manage,Button
+system.section.download,批量下载,一括ダウンロード,Download All,Section header on the System tab
+system.downloadVoice,基本语音,基本ボイス,Basic Voices,Button row label
+system.downloadMusic,乐曲,楽曲,Songs,Button row label
+system.downloadMv,3D・2D・原曲MV,3D・2D・原曲MV,3D / 2D / Original MVs,Button row label
+system.download,批量下载,一括ダウンロード,Download,Button
+additionals.section.opensekai,OpenSekai,OpenSekai,OpenSekai,Section header on the Extras tab
+additionals.musicInfo,乐曲信息显示,曲情報の表示,Song Info Display,Radio row: how the live shows the song info
+additionals.musicInfo.custom,自制谱,自作譜面,Custom,Radio option: show the custom chart's info (charter etc.)
+additionals.musicInfo.normal,普通,通常,Normal,Radio option: the original game's display
+additionals.liveBackground,Live背景,ライブ背景,Live Background,Radio row for custom-chart lives
+additionals.liveBackground.jacket,封面,ジャケット,Jacket,Radio option
+additionals.liveBackground.mv2d,2DMV,2DMV,2DMV,Radio option
+additionals.fullscreen,全屏,フルスクリーン,Fullscreen,Toggle row (desktop only)
+additionals.language,语言,言語,Language,Radio row; the options are each language's own name
+additionals.section.account,账号,アカウント,Account,Section header on the Extras tab
+additionals.ourtaikoAccount,OurTaiko 账号,OurTaiko アカウント,OurTaiko Account,Button row label
+additionals.signIn,登录,ログイン,Sign In,Button (shows the nickname when signed in)
+detail.noteSpeed,音符速度,ノーツの速さ,Note Speed,Section header of the note detail dialog
+detail.startPosition,音符开始位置,ノーツの開始位置,Note Start Position,Section header of the note detail dialog
+detail.timing,时机调整,タイミング調整,Timing Offset,Section header of the note detail dialog
+detail.timingHelp,请配合声音点击，调整时机。,音に合わせてタップし、タイミングをあわせてください。,Tap along with the sound to adjust the timing.,Explanation in the note detail dialog
+detail.timingHint,音符在判定线上方时请向「＋」调整，\n在下方时请向「－」调整。,判定ラインより上の場合は「＋」に、\n下の場合は「－」に調整してください。,"If notes land above the judgement line, adjust toward +;\nif below, toward −.",Pink hint in the note detail dialog

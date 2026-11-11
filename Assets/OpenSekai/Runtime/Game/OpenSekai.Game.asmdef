@@ -27,7 +27,9 @@
         "Unity.Timeline",
         "Unity.Mathematics",
         "Unity.Collections",
-        "unity.webp"
+        "unity.webp",
+        "Unity.Localization",
+        "Unity.ResourceManager"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

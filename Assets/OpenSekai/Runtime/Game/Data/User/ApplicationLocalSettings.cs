@@ -40,6 +40,8 @@ namespace Sekai
 		public VolumeSettings LiveVolume;
 		public bool? FullscreenEnabled;
 		public SystemOptionSettings SystemOptions = new SystemOptionSettings();
+		/// <summary>The language picked in Additionals > 言語 (an <see cref="L10n.LanguageCodes"/> code); null follows the system.</summary>
+		public string Language;
 
 		public static ApplicationLocalSettings LoadFromStorage()
 		{

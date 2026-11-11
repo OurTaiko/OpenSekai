@@ -1,0 +1,3 @@
+key,zh-Hans,ja,en,comment
+testPlay.fullComboSuccess,达成了FULL COMBO,フルコンボに成功しました,Full combo achieved,Dialog after a chart editor test play
+testPlay.fullComboFailed,未能达成FULL COMBO,フルコンボに失敗しました,Full combo missed,Dialog after a chart editor test play

@@ -16,6 +16,8 @@ namespace Sekai.CoopLive
 	/// </summary>
 	public static class CoopRoundLauncher
 	{
+		private const string Table = "CoopLive";
+
 		private static int _launchedRound;
 
 		/// <summary>Progress for the room screen ("下载中 42%").</summary>
@@ -52,11 +54,11 @@ namespace Sekai.CoopLive
 			IsLaunching = true;
 			try
 			{
-				StatusChanged?.Invoke("正在获取谱面…");
+				StatusChanged?.Invoke(L10n.Get(Table, "launch.fetching"));
 				CommunityChart chart = await CommunityClient.GetAsync(chartId, ct);
 				if (chart == null)
 				{
-					Fail("谱面已经被删除。");
+					Fail(L10n.Get(Table, "launch.chartDeleted"));
 					return;
 				}
 
@@ -65,7 +67,7 @@ namespace Sekai.CoopLive
 					: null;
 				if (entry == null)
 				{
-					var progress = new Progress<float>(p => StatusChanged?.Invoke($"下载谱面 {Mathf.RoundToInt(p * 100)}%"));
+					var progress = new Progress<float>(p => StatusChanged?.Invoke(L10n.Format(Table, "launch.downloading", Mathf.RoundToInt(p * 100))));
 					entry = await CommunityLibrary.DownloadAsync(chart, progress, ct);
 				}
 				if (CoopSession.Room == null || CoopSession.Room.Round != round || CoopSession.Room.Phase != Phase.Loading)
@@ -83,12 +85,12 @@ namespace Sekai.CoopLive
 			}
 			catch (OperationCanceledException)
 			{
-				Fail("已取消。");
+				Fail(L10n.Get(Table, "launch.cancelled"));
 			}
 			catch (Exception exception)
 			{
 				Debug.LogException(exception);
-				Fail(exception is CommunityException ? exception.Message : "加载谱面失败。");
+				Fail(exception is CommunityException ? exception.Message : L10n.Get(Table, "launch.failed"));
 			}
 			finally
 			{

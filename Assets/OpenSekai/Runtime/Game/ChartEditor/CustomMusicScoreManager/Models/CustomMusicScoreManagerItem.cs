@@ -23,21 +23,21 @@ namespace Sekai.CustomMusicScoreManager
 			{
 				if (!HasManifest)
 				{
-					return "缺少配置";
+					return L10n.Get("ChartManager", "item.missingManifest");
 				}
 				if (!HasScore)
 				{
-					return "缺少谱面";
+					return L10n.Get("ChartManager", "item.missingScore");
 				}
 				if (!HasAudio)
 				{
-					return "缺少音频";
+					return L10n.Get("ChartManager", "item.missingAudio");
 				}
 				if (!HasJacket)
 				{
-					return "缺少封面";
+					return L10n.Get("ChartManager", "item.missingJacket");
 				}
-				return "就绪";
+				return L10n.Get("ChartManager", "item.ready");
 			}
 		}
 

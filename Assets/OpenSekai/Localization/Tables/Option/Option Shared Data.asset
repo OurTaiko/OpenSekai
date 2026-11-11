@@ -1,0 +1,344 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Option Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: Option
+  m_TableCollectionNameGuidString: 6f25e8676e6e7499fa27ba4994b92883
+  m_Entries:
+  - m_Id: 284155904
+    m_Key: tab.live
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155905
+    m_Key: tab.volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155906
+    m_Key: tab.system
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155907
+    m_Key: tab.additionals
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155908
+    m_Key: live.section.notes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155909
+    m_Key: live.noteSpeed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155910
+    m_Key: live.timing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155911
+    m_Key: live.notePreview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155912
+    m_Key: live.noteSkin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155913
+    m_Key: live.longAlpha
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155914
+    m_Key: live.guideAlpha
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155915
+    m_Key: live.noteSe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155916
+    m_Key: live.noteSeName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155917
+    m_Key: live.seTest.tap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155918
+    m_Key: live.seTest.flick
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155919
+    m_Key: live.seTest.long
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155920
+    m_Key: live.seTest.trace
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155921
+    m_Key: live.section.display
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155922
+    m_Key: live.brightness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155923
+    m_Key: live.laneAlpha
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155924
+    m_Key: live.tapEffect
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155925
+    m_Key: live.tapEffect.normal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155926
+    m_Key: live.tapEffect.subtle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155927
+    m_Key: live.cutIn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155928
+    m_Key: live.fever
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155929
+    m_Key: live.fever.normal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155930
+    m_Key: live.fever.light
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155931
+    m_Key: live.skillDisplay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155932
+    m_Key: live.fps
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155933
+    m_Key: live.fps.unlimited
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155934
+    m_Key: live.section.assist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155935
+    m_Key: live.simultaneousLine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155936
+    m_Key: live.apEffect
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155937
+    m_Key: live.mirror
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155938
+    m_Key: live.vibration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155939
+    m_Key: live.section.mv
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155940
+    m_Key: live.mvMode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155941
+    m_Key: live.mvMode.original
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155942
+    m_Key: live.mvMode.light
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155943
+    m_Key: live.mvQuality
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155944
+    m_Key: live.mvQuality.high
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155945
+    m_Key: live.mvQuality.normal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155946
+    m_Key: volume.section.live
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155947
+    m_Key: volume.section.system
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155948
+    m_Key: volume.voice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155949
+    m_Key: system.section.system
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155950
+    m_Key: system.defaultVocal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155951
+    m_Key: system.defaultVocal.sekai
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155952
+    m_Key: system.defaultVocal.virtualSinger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155953
+    m_Key: system.screenLock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155954
+    m_Key: system.confirmBeforeLive
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155955
+    m_Key: system.onlineStatus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155956
+    m_Key: system.liveBonusNotify
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155957
+    m_Key: system.section.data
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155958
+    m_Key: system.vocalData
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155959
+    m_Key: system.mvData
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155960
+    m_Key: system.manageStorage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155961
+    m_Key: system.section.download
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155962
+    m_Key: system.downloadVoice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155963
+    m_Key: system.downloadMusic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155964
+    m_Key: system.downloadMv
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155965
+    m_Key: system.download
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155966
+    m_Key: additionals.section.opensekai
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155967
+    m_Key: additionals.musicInfo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155968
+    m_Key: additionals.musicInfo.custom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155969
+    m_Key: additionals.musicInfo.normal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155970
+    m_Key: additionals.liveBackground
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155971
+    m_Key: additionals.liveBackground.jacket
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155972
+    m_Key: additionals.liveBackground.mv2d
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155973
+    m_Key: additionals.fullscreen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155974
+    m_Key: additionals.language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155975
+    m_Key: additionals.section.account
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155976
+    m_Key: additionals.ourtaikoAccount
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155977
+    m_Key: additionals.signIn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155978
+    m_Key: detail.noteSpeed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155979
+    m_Key: detail.startPosition
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155980
+    m_Key: detail.timing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155981
+    m_Key: detail.timingHelp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155982
+    m_Key: detail.timingHint
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 8757538900985512057
+  references:
+    version: 2
+    RefIds:
+    - rid: 8757538900985512057
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1794374562349

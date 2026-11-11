@@ -17,6 +17,8 @@ namespace Sekai.CoopLive
 	/// </summary>
 	public static class CoopSession
 	{
+		private const string Table = "CoopLive";
+
 		public const int Protocol = 1;
 
 		/// <summary>Development override of the co-op server, e.g. http://127.0.0.1:50051.</summary>
@@ -130,11 +132,11 @@ namespace Sekai.CoopLive
 			CommunityMeta meta = await CommunityClient.GetMetaAsync(ct);
 			if (meta?.Multiplay == null || string.IsNullOrWhiteSpace(meta.Multiplay.Url))
 			{
-				throw new CoopException("NOT_AVAILABLE", "这个社区服务器没有开放协力ライブ。");
+				throw new CoopException("NOT_AVAILABLE", L10n.Get(Table, "error.notAvailable"));
 			}
 			if (meta.Multiplay.Protocol > Protocol)
 			{
-				throw new CoopException("UPDATE_REQUIRED", "协力ライブ已更新，请更新游戏。");
+				throw new CoopException("UPDATE_REQUIRED", L10n.Get(Table, "error.updateRequired"));
 			}
 			return meta.Multiplay.Url.Trim().TrimEnd('/');
 		}
@@ -155,11 +157,11 @@ namespace Sekai.CoopLive
 		{
 			if (IsConnected)
 			{
-				throw new CoopException("ALREADY_IN_ROOM", "已经在房间里了。");
+				throw new CoopException("ALREADY_IN_ROOM", L10n.Get(Table, "error.alreadyInRoom"));
 			}
 			if (!CommunityAccount.IsSignedIn)
 			{
-				throw new CoopException("AUTH_REQUIRED", "请先在设置 › Additionals 里登录 OurTaiko 账号。");
+				throw new CoopException("AUTH_REQUIRED", L10n.Get(Table, "error.signInInOptions"));
 			}
 			_address ??= await ResolveAddressAsync(ct);
 			_leaving = false;
@@ -179,7 +181,7 @@ namespace Sekai.CoopLive
 			string session = await CommunityAccount.GetSessionAsync(ct, forceNewSession);
 			if (string.IsNullOrEmpty(session))
 			{
-				throw new CoopException("AUTH_REQUIRED", "请先登录 OurTaiko 账号。");
+				throw new CoopException("AUTH_REQUIRED", L10n.Get(Table, "error.signIn"));
 			}
 
 			CloseTransport();
@@ -202,7 +204,7 @@ namespace Sekai.CoopLive
 				catch (TimeoutException)
 				{
 					CloseTransport();
-					throw new CoopException("TIMEOUT", "连接协力ライブ服务器超时。");
+					throw new CoopException("TIMEOUT", L10n.Get(Table, "error.timeout"));
 				}
 				catch
 				{
@@ -251,14 +253,14 @@ namespace Sekai.CoopLive
 			{
 				return;
 			}
-			if (joined.TrySetException(failure ?? new CoopException("CLOSED", "服务器关闭了连接。")))
+			if (joined.TrySetException(failure ?? new CoopException("CLOSED", L10n.Get(Table, "error.serverClosed"))))
 			{
 				// Failed while joining; ConnectAsync reports it.
 				return;
 			}
 			if (_leaving)
 			{
-				EndSession("LEFT", "已离开房间。");
+				EndSession("LEFT", L10n.Get(Table, "notice.left"));
 				return;
 			}
 			Debug.LogWarning($"Co-op live connection lost: {failure?.Message ?? "stream ended"}");
@@ -276,7 +278,7 @@ namespace Sekai.CoopLive
 				try
 				{
 					await OpenAsync(new Join { RoomCode = code, Protocol = Protocol }, forceNewSession: false, CancellationToken.None);
-					NoticeReceived?.Invoke(new Notice { Code = "RECONNECTED", Message = "已重新连接。" });
+					NoticeReceived?.Invoke(new Notice { Code = "RECONNECTED", Message = L10n.Get(Table, "notice.reconnected") });
 					return;
 				}
 				catch (CoopException exception) when (exception.Code == "ROOM_NOT_FOUND" || exception.Code == "ROOM_BUSY" || exception.Code == "ROOM_CLOSED")
@@ -288,7 +290,7 @@ namespace Sekai.CoopLive
 					Debug.LogWarning($"Co-op live reconnect {attempt} failed: {exception.Message}");
 				}
 			}
-			EndSession("CONNECTION_LOST", "与协力ライブ服务器的连接已断开。");
+			EndSession("CONNECTION_LOST", L10n.Get(Table, "error.connectionLost"));
 		}
 
 		private static async UniTaskVoid PingLoopAsync(int generation)
@@ -396,7 +398,7 @@ namespace Sekai.CoopLive
 		{
 			if (!IsConnected)
 			{
-				EndSession("LEFT", "已离开房间。");
+				EndSession("LEFT", L10n.Get(Table, "notice.left"));
 				return;
 			}
 			_leaving = true;
@@ -406,7 +408,7 @@ namespace Sekai.CoopLive
 			await UniTask.WaitUntil(() => generation != _generation || !IsConnected).TimeoutWithoutException(TimeSpan.FromSeconds(2));
 			if (generation == _generation)
 			{
-				EndSession("LEFT", "已离开房间。");
+				EndSession("LEFT", L10n.Get(Table, "notice.left"));
 			}
 		}
 

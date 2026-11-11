@@ -711,6 +711,7 @@ GameObject:
   - component: {fileID: 946186428467635432}
   - component: {fileID: 930092453508858364}
   - component: {fileID: 1924744433958230983}
+  - component: {fileID: 8846921965988348651}
   m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
@@ -837,6 +838,20 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &8846921965988348651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1222327280008261526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bae688c7ffa6a457a978703e06e375ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.LocalizedText
+  table: Community
+  key: login.username
 --- !u!1 &1495209722257027769
 GameObject:
   m_ObjectHideFlags: 0
@@ -887,6 +902,7 @@ GameObject:
   - component: {fileID: 5506692782800053003}
   - component: {fileID: 3556473166404769361}
   - component: {fileID: 7576979111142275343}
+  - component: {fileID: 1892983600772067044}
   m_Layer: 5
   m_Name: Placeholder
   m_TagString: Untagged
@@ -1013,6 +1029,20 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1892983600772067044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1518925994501075162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bae688c7ffa6a457a978703e06e375ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.LocalizedText
+  table: Community
+  key: login.usernamePlaceholder
 --- !u!1 &1552091805434608529
 GameObject:
   m_ObjectHideFlags: 0
@@ -1177,6 +1207,7 @@ GameObject:
   - component: {fileID: 2849263101682458418}
   - component: {fileID: 3140111416438058313}
   - component: {fileID: 5252350088949993010}
+  - component: {fileID: 5441694629088199593}
   m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
@@ -1303,6 +1334,20 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5441694629088199593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1606465321533190520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bae688c7ffa6a457a978703e06e375ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.LocalizedText
+  table: Community
+  key: login.forgot
 --- !u!1 &1610627850570251759
 GameObject:
   m_ObjectHideFlags: 0
@@ -1464,6 +1509,7 @@ GameObject:
   - component: {fileID: 5926367368850592090}
   - component: {fileID: 4393521806154534586}
   - component: {fileID: 3396324884208483139}
+  - component: {fileID: 9152836007950181259}
   m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
@@ -1590,6 +1636,20 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &9152836007950181259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2455380707895332612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bae688c7ffa6a457a978703e06e375ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.LocalizedText
+  table: Community
+  key: login.password
 --- !u!1 &2483139478688795417
 GameObject:
   m_ObjectHideFlags: 0
@@ -2859,6 +2919,7 @@ GameObject:
   - component: {fileID: 3497396526095135380}
   - component: {fileID: 2496083664072919326}
   - component: {fileID: 7472703829689122746}
+  - component: {fileID: 7935470589835479041}
   m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
@@ -2985,6 +3046,20 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &7935470589835479041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4743822169816052896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bae688c7ffa6a457a978703e06e375ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.LocalizedText
+  table: Community
+  key: login.register
 --- !u!1 &5054173792859816367
 GameObject:
   m_ObjectHideFlags: 0
@@ -3463,6 +3538,7 @@ GameObject:
   - component: {fileID: 5690147298112353475}
   - component: {fileID: 4943535474471160759}
   - component: {fileID: 527478423940452945}
+  - component: {fileID: 7177152165909018028}
   m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
@@ -3589,6 +3665,20 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &7177152165909018028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6196615130241901835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bae688c7ffa6a457a978703e06e375ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.LocalizedText
+  table: Community
+  key: login.accountCenter
 --- !u!1 &6386490221088289157
 GameObject:
   m_ObjectHideFlags: 0
@@ -4327,6 +4417,7 @@ GameObject:
   - component: {fileID: 911838170881639189}
   - component: {fileID: 6741728528269573017}
   - component: {fileID: 2661678549186397033}
+  - component: {fileID: 1028173177156758820}
   m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
@@ -4453,6 +4544,20 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1028173177156758820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7859237347494068232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bae688c7ffa6a457a978703e06e375ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.LocalizedText
+  table: Community
+  key: login.signOut
 --- !u!1 &7961915915149318284
 GameObject:
   m_ObjectHideFlags: 0
@@ -4863,6 +4968,7 @@ GameObject:
   - component: {fileID: 1790200642730303051}
   - component: {fileID: 7566481188292451840}
   - component: {fileID: 1970158181996745354}
+  - component: {fileID: 5648824444195438401}
   m_Layer: 5
   m_Name: Placeholder
   m_TagString: Untagged
@@ -4989,3 +5095,17 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5648824444195438401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9218743108310106775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bae688c7ffa6a457a978703e06e375ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.LocalizedText
+  table: Community
+  key: login.passwordPlaceholder

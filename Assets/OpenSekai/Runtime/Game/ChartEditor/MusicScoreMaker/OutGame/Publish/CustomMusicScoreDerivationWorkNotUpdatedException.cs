@@ -13,8 +13,7 @@ namespace Sekai.MusicScoreMaker.OutGame.Publish
 
 		public string GetLocalizedMessage()
 		{
-			// TODO(original): call WordingManager.Get(WORDING_KEY) once WordingManager is restored.
-			return WORDING_KEY;
+			return WordingManager.Get(WORDING_KEY);
 		}
 	}
 }

@@ -7487,7 +7487,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Presenters
 				null,
 				DisplayLayerType.Layer_Dialog,
 				DialogSize.Manual,
-				allowCloseExternal: true)?.SetMessageBodyText("是否确认重置谱面？将会清空所有音符\n可使用撤销恢复");
+				allowCloseExternal: true)?.SetMessageBodyText(L10n.Get("ChartEditor", "reset.confirm"));
 		}
 
 		private void SaveAndPostMusicScore(SaveAndPostMusicScoreEvent e)

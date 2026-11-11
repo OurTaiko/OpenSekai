@@ -14,6 +14,8 @@ namespace Sekai.CustomMusicScoreManager
 	/// </summary>
 	public static class CustomMusicScorePlayLauncher
 	{
+		private const string Table = "ChartManager";
+
 		/// <summary>Returns null once the live is starting, otherwise why it cannot start.</summary>
 		public static async UniTask<string> PlayAsync(
 			CustomMusicScoreEntry entry,
@@ -25,37 +27,37 @@ namespace Sekai.CustomMusicScoreManager
 		{
 			if (entry == null)
 			{
-				return "无法加载谱面。";
+				return L10n.Get(Table, "status.loadFailed");
 			}
 			if (!File.Exists(entry.ScorePath))
 			{
-				return "找不到谱面文件。";
+				return L10n.Get(Table, "launch.scoreMissing");
 			}
 			if (!File.Exists(entry.AudioPath))
 			{
-				return "找不到音频文件。";
+				return L10n.Get(Table, "launch.audioMissing");
 			}
 
 			MusicScoreMakerData scoreData = entry.LoadScore();
 			if (scoreData == null)
 			{
-				return "无法加载谱面文件。";
+				return L10n.Get(Table, "launch.scoreLoadFailed");
 			}
 			if (scoreData.NoteList == null || !scoreData.NoteList.Exists(note => note != null))
 			{
-				return "没有可游玩的音符。";
+				return L10n.Get(Table, "launch.noNotes");
 			}
 
-			setStatus?.Invoke("正在加载音频...");
+			setStatus?.Invoke(L10n.Get(Table, "launch.loadingAudio"));
 			if (!await entry.RegisterAudioAsync(ct))
 			{
-				return "无法加载音频文件。";
+				return L10n.Get(Table, "launch.audioLoadFailed");
 			}
 
 			FreeLiveBootData bootData = ScreenLayerCustomMusicScoreManager.CreateDirectPlayBootData(entry, scoreData, isAuto, returnScreenType);
 			if (bootData == null)
 			{
-				return "无法创建游玩启动数据。";
+				return L10n.Get(Table, "launch.bootDataFailed");
 			}
 
 			Sekai.Core.CoreSceneArgs.Prepare(playMode, bootData);

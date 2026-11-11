@@ -12,7 +12,8 @@ settings.
 It is built the way OurTaikoPlay builds its settings overlay:
 
 - `OptionCatalog` declares every page, section, block (its layout) and row (its kind, labels, range and the getter and
-  setter on `OptionSettings`). To add or move a setting, edit the catalog.
+  setter on `OptionSettings`). To add or move a setting, edit the catalog. Its labels are keys of the `Option` string
+  table (see "Localization"); the Japanese names below are the ja text.
 - `OptionSettings` loads `LiveSettingData` and `ApplicationLocalSettings`, and `Commit()` saves and applies them.
 - `OptionPageView` builds a page from the catalog. Each row is an instance of the prefab for its kind, listed in
   `Assets/OpenSekai/Prefabs/Option/OptionRowLibrary.asset`. The row prefabs (`OptionStepperRow`, `OptionRadioRow`, ...)
@@ -52,6 +53,31 @@ Also note:
   (`live/tap_se/custom01`, `custom02`) that ship in the project. The original has more.
 - The ノーツスキン page for custom01 is put together from that skin's note sprites. custom02 uses the official
   `note_preview/custom02` strip.
+
+## Localization
+
+The game is in 简体中文 (`zh-Hans`), 日本語 (`ja`) and English (`en`), through Unity Localization (`com.unity.localization`,
+which brings Addressables; Addressables builds its content with every player build, set in its settings).
+
+- **The CSV files in `Assets/OpenSekai/Localization/Strings/` are the source of every string.** One file per string
+  table, columns `key,zh-Hans,ja,en,comment`, RFC 4180 quoting, `\n` for a line break. Saving a CSV re-imports its table
+  (`StringTableImporter`, also `OpenSekai/Localization/Import String Tables`, which reports empty values); the generated
+  tables in `Localization/Tables/` are committed but never edited by hand. Every key needs all three languages, except
+  in `Wording`.
+- Tables: `Common` (OK, キャンセル, 閉じる, ...), `Option`, `Community` (Home and 在线谱面), `ChartManager` (自制谱管理),
+  `ChartEditor`, `CoopLive`, `Result`, `Live`, and `Wording`: the original game's whole wording (ja and zh from its files,
+  English only for the keys OpenSekai shows; the rest fall back to Japanese through the `en` locale's fallback).
+  `WordingManager.Get` and the original's `CustomText` / `CustomTextMesh` wording keys read `Wording`.
+- In code: `L10n.Get(table, key)` and `L10n.Format(table, key, args)` (`string.Format` placeholders). Every table is
+  preloaded, so lookups are synchronous. A missing key logs a warning and shows the key.
+- Fixed prefab labels carry `LocalizedText` (table and key; the prefab keeps its Chinese or Japanese text for the
+  Editor). Labels that code sets have none: localize the code. `LocalizedTextBinder.BindCsv` binds labels in bulk from
+  a `prefab,text,table,key` list.
+- The language is chosen in Additionals > 言語 (`ApplicationLocalSettings.Language`); until then
+  `SavedLanguageSelector` follows the system (any Chinese → zh-Hans, otherwise ja or en). Screens built in code read their
+  text once, so a language change rebuilds the option dialog and, when it closes, loads the current scene again.
+- Fonts: every language uses the same TMP fonts. The `FOT-RodinNTLGPro-DB/EB.otf` files are in fact Source Han Sans SC
+  Medium / Bold, so Japanese shows Chinese glyph forms for some kanji. Nothing is in an Asset Table yet.
 
 ## UI sounds
 
@@ -216,7 +242,7 @@ screen data `Resources/screen/data/ScreenLayerCoopLive.asset` in `EntryScreenLay
     favor of the mesh. To use the original sprites, put them on those renderers and remove the texts.
   - `UI/ScreenLayerCoopLive` builds the room screen in code (it changes with every phase), with `CoopUi` helpers (`StampBar`,
     `Toast` and the builders are shared with the result screen); the two sprites of each screen are serialized on the scene object.
-    Stamp texts are in `CoopStamps`.
+    Stamp texts are `stamp.<id>` in the `CoopLive` string table (`CoopStamps.Count` of them).
 - gRPC: NuGet `Grpc.Net.Client` 2.85 and `Google.Protobuf` 3.36 (`Assets/packages.config`). Unity's HttpClient has no HTTP/2, so
   the transport is **YetAnotherHttpHandler** (UPM `com.cysharp.yetanotherhttphandler`, native, all five platforms). Its code is in
   the separate assembly `Runtime/CoopLiveHttp2` (define constraint `OPENSEKAI_YAHH`, set by a version define when the package is

@@ -53,6 +53,7 @@ namespace Sekai
 		private OptionSettings settings;
 		private readonly Dictionary<string, OptionRow> rows = new Dictionary<string, OptionRow>();
 		private readonly List<OptionRowView> views = new List<OptionRowView>();
+		private string openedLanguage;
 		private string loadedSeBundle;
 		private uint longSePlaybackId;
 		private Coroutine stopLongSeRoutine;
@@ -65,15 +66,33 @@ namespace Sekai
 			Initialize(null, null, null, dialogSize, allowCloseExternal);
 			FitContentHeight(this, contentRoot, DialogChromeHeight);
 			settings = OptionSettings.Load();
+			openedLanguage = L10n.Language;
 			BuildPages(OptionCatalog.Pages());
 			RefreshRows();
 			SetupTabs();
 			Community.CommunityAccount.Changed -= RefreshRows;
 			Community.CommunityAccount.Changed += RefreshRows;
+			L10n.LanguageChanged -= OnLanguageChanged;
+			L10n.LanguageChanged += OnLanguageChanged;
+		}
+
+		/// <summary>The pages are built from the catalog's text, so a new language builds them again.</summary>
+		private void OnLanguageChanged()
+		{
+			foreach (RectTransform content in pageContents)
+			{
+				for (int i = content.childCount - 1; i >= 0; i--)
+				{
+					Destroy(content.GetChild(i).gameObject);
+				}
+			}
+			BuildPages(OptionCatalog.Pages());
+			RefreshRows();
 		}
 
 		private void BuildPages(IReadOnlyList<OptionPage> pages)
 		{
+			views.Clear();
 			rows.Clear();
 			foreach (OptionPage page in pages)
 			{
@@ -266,12 +285,19 @@ namespace Sekai
 		{
 			StopLongSeTest();
 			Community.CommunityAccount.Changed -= RefreshRows;
+			L10n.LanguageChanged -= OnLanguageChanged;
 			if (loginPanel != null)
 			{
 				Destroy(loginPanel.gameObject);
 				loginPanel = null;
 			}
 			base.OnDisable();
+			// Screens built in code keep the old language's text, so the screen under the dialog is loaded again.
+			if (openedLanguage != null && openedLanguage != L10n.Language && SceneManager.Instance != null && !SceneManager.Instance.IsSwitching)
+			{
+				openedLanguage = null;
+				SceneManager.Instance.RequestScene(SceneManager.Instance.CurrentScene);
+			}
 		}
 	}
 }

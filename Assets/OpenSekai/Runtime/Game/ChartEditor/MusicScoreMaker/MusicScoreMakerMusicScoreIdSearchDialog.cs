@@ -170,7 +170,7 @@ namespace Sekai.MusicScoreMaker
 			Debug.LogWarning($"Music score not found: {_musicScoreId}");
 			try
 			{
-				ScreenManager.Instance?.ShowSubWindowDialog<SubWindowDialog>("Music score not found.");
+				ScreenManager.Instance?.ShowSubWindowDialog<SubWindowDialog>(L10n.Get("ChartEditor", "idSearch.notFound"));
 			}
 			catch (Exception ex)
 			{

@@ -1,0 +1,15 @@
+key,zh-Hans,ja,en,comment
+ok,确定,OK,OK,Generic confirm button
+cancel,取消,キャンセル,Cancel,Generic cancel button
+close,关闭,閉じる,Close,Generic close button
+back,返回,戻る,Back,Generic back button
+yes,是,はい,Yes,Answer button
+no,否,いいえ,No,Answer button
+decide,决定,決定,Confirm,The original's 決定 button
+delete,删除,削除,Delete,Button
+save,保存,保存,Save,Button
+retry,重试,リトライ,Retry,Button
+on,ON,ON,ON,Toggle option
+off,OFF,OFF,OFF,Toggle option
+error,错误,エラー,Error,Dialog title
+loading,加载中…,読み込み中…,Loading…,Status text

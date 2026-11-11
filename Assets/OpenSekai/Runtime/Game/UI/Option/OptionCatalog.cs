@@ -292,8 +292,12 @@ namespace Sekai
 		public const int NoteSeCount = 2;
 		private const float MinNoteAlphaPercent = 10f;
 
-		private static readonly string[] OnOff = { "ON", "OFF" };
+		/// <summary>The string table of every label here (Localization/Strings/Option.csv).</summary>
+		public const string Table = "Option";
 
+		private static string T(string key) => L10n.Get(Table, key);
+
+		/// <summary>Built for the selected language: build again after it changes.</summary>
 		public static IReadOnlyList<OptionPage> Pages()
 		{
 			return new[] { Live(), Volume(), SystemPage(), Additionals() };
@@ -301,77 +305,77 @@ namespace Sekai
 
 		private static OptionPage Live()
 		{
-			return new OptionPage("live", "ライブ",
-				new OptionSection("ノーツ設定",
+			return new OptionPage("live", T("tab.live"),
+				new OptionSection(T("live.section.notes"),
 					new OptionBlock(OptionBlockLayout.Split,
-						OptionRow.Stepper("note-speed", "ノーツの速さ", new[] { -1f, -0.1f, 0.1f, 1f }, 1f, 12f, "0.00", "",
+						OptionRow.Stepper("note-speed", T("live.noteSpeed"), new[] { -1f, -0.1f, 0.1f, 1f }, 1f, 12f, "0.00", "",
 							s => s.Live.NoteSpeed, (s, v) => s.Live.NoteSpeed = v),
-						OptionRow.Stepper("timing", "タイミング調整", new[] { -1f, -0.1f, 0.1f, 1f }, -20f, 20f, "0.00", "",
+						OptionRow.Stepper("timing", T("live.timing"), new[] { -1f, -0.1f, 0.1f, 1f }, -20f, 20f, "0.00", "",
 							s => s.Live.TimingAdjustData, (s, v) => s.Live.TimingAdjustData = v),
-						OptionRow.NotePreview("note-preview", "プレビューで詳細設定", ActionNoteDetail).Side()),
+						OptionRow.NotePreview("note-preview", T("live.notePreview"), ActionNoteDetail).Side()),
 					new OptionBlock(OptionBlockLayout.Full,
-						OptionRow.Skin("note-skin", "ノーツスキン", NoteSkinCount, s => s.Live.NoteSkinIndex, (s, i) => s.Live.NoteSkinIndex = i)),
+						OptionRow.Skin("note-skin", T("live.noteSkin"), NoteSkinCount, s => s.Live.NoteSkinIndex, (s, i) => s.Live.NoteSkinIndex = i)),
 					new OptionBlock(OptionBlockLayout.Split,
-						OptionRow.Percent("long-alpha", "ロングノーツの不透明度", MinNoteAlphaPercent,
+						OptionRow.Percent("long-alpha", T("live.longAlpha"), MinNoteAlphaPercent,
 							s => s.Live.GetNoteAlpha() * 100f, (s, v) => s.Live.NoteAlpha = v / 100f),
 						OptionRow.LanePreview("long-preview", "long-alpha", "longNoteLine_0").Side()),
 					new OptionBlock(OptionBlockLayout.Split,
-						OptionRow.Percent("guide-alpha", "ガイドの不透明度", MinNoteAlphaPercent,
+						OptionRow.Percent("guide-alpha", T("live.guideAlpha"), MinNoteAlphaPercent,
 							s => s.Live.GetGuideAlpha() * 100f, (s, v) => s.Live.GuideAlpha = v / 100f),
 						OptionRow.LanePreview("guide-preview", "guide-alpha", "longNoteLine_1").Side()),
 					new OptionBlock(OptionBlockLayout.Split,
-						OptionRow.Selector("note-se", "ノーツのSE", SoundNames(), s => s.Live.NoteSeIndex, (s, i) => s.Live.NoteSeIndex = i),
-						OptionRow.ButtonGrid("se-test", new[] { "♪ タップ", "♪ フリック", "♪ ロング", "♪ トレース" },
+						OptionRow.Selector("note-se", T("live.noteSe"), SoundNames(), s => s.Live.NoteSeIndex, (s, i) => s.Live.NoteSeIndex = i),
+						OptionRow.ButtonGrid("se-test", new[] { T("live.seTest.tap"), T("live.seTest.flick"), T("live.seTest.long"), T("live.seTest.trace") },
 							new[] { ActionSeTap, ActionSeFlick, ActionSeLong, ActionSeTrace }).Side())),
-				new OptionSection("見やすさ・演出設定",
+				new OptionSection(T("live.section.display"),
 					new OptionBlock(OptionBlockLayout.Columns,
-						OptionRow.Percent("brightness", "背景の明るさ", 50f, s => s.Live.Brightness * 100f, (s, v) => s.Live.Brightness = v / 100f),
-						OptionRow.Percent("lane-alpha", "レーンの不透明度", 0f, s => s.Live.LaneTransparent * 100f, (s, v) => s.Live.LaneTransparent = v / 100f),
-						OptionRow.Radio("tap-effect", "タップエフェクト", new[] { "標準", "控えめ" }, s => s.Live.NoteEffect, (s, i) => s.Live.NoteEffect = i),
-						OptionRow.Toggle("cut-in", "カットイン演出", s => s.Live.UseCutIn, (s, on) => s.Live.UseCutIn = on)
+						OptionRow.Percent("brightness", T("live.brightness"), 50f, s => s.Live.Brightness * 100f, (s, v) => s.Live.Brightness = v / 100f),
+						OptionRow.Percent("lane-alpha", T("live.laneAlpha"), 0f, s => s.Live.LaneTransparent * 100f, (s, v) => s.Live.LaneTransparent = v / 100f),
+						OptionRow.Radio("tap-effect", T("live.tapEffect"), new[] { T("live.tapEffect.normal"), T("live.tapEffect.subtle") }, s => s.Live.NoteEffect, (s, i) => s.Live.NoteEffect = i),
+						OptionRow.Toggle("cut-in", T("live.cutIn"), s => s.Live.UseCutIn, (s, on) => s.Live.UseCutIn = on)
 							.Placeholder("Nothing reads LiveSettingData.UseCutIn."),
-						OptionRow.Radio("fever", "FEVER演出", new[] { "標準", "軽量" }, s => s.Live.FeverEffectTypeIndex, (s, i) => s.Live.FeverEffectTypeIndex = i)
+						OptionRow.Radio("fever", T("live.fever"), new[] { T("live.fever.normal"), T("live.fever.light") }, s => s.Live.FeverEffectTypeIndex, (s, i) => s.Live.FeverEffectTypeIndex = i)
 							.Placeholder("No effect_asset/live/fever bundle exists."),
-						OptionRow.Toggle("skill-display", "スキル・活躍表示", s => !s.Live.HiddenSkillAndPraise, (s, on) => s.Live.HiddenSkillAndPraise = !on)
+						OptionRow.Toggle("skill-display", T("live.skillDisplay"), s => !s.Live.HiddenSkillAndPraise, (s, on) => s.Live.HiddenSkillAndPraise = !on)
 							.Placeholder("Nothing reads LiveSettingData.HiddenSkillAndPraise."),
 						// OpenSekai offers 60 / 120 / Unlimited in place of the original's 高品質 / 標準. Three options need
 						// about 410px (a 54px circle, 17px gap and the text each; "Unlimited" alone is ~143px), more than one
 						// 320px cell, so the row takes two cells; it is alone on its line.
-						OptionRow.Radio("fps", "滑らかさ(FPS)", new[] { "60", "120", "Unlimited" },
+						OptionRow.Radio("fps", T("live.fps"), new[] { "60", "120", T("live.fps.unlimited") },
 							s => s.Live.LiveFrameRateMode, (s, i) => s.Live.FrameRateMode = i).Wide(220f))),
-				new OptionSection("ライブ補助設定",
+				new OptionSection(T("live.section.assist"),
 					new OptionBlock(OptionBlockLayout.Columns,
-						OptionRow.Toggle("simultaneous-line", "同時押しライン", s => s.Live.UseSimultaneousPushingLine, (s, on) => s.Live.UseSimultaneousPushingLine = on),
-						OptionRow.Toggle("ap-effect", "AP継続演出", s => s.Live.UseAllPerfectEffect, (s, on) => s.Live.UseAllPerfectEffect = on),
+						OptionRow.Toggle("simultaneous-line", T("live.simultaneousLine"), s => s.Live.UseSimultaneousPushingLine, (s, on) => s.Live.UseSimultaneousPushingLine = on),
+						OptionRow.Toggle("ap-effect", T("live.apEffect"), s => s.Live.UseAllPerfectEffect, (s, on) => s.Live.UseAllPerfectEffect = on),
 						OptionRow.Toggle("fast-late-flick", "LATE/FAST/FLICK", s => s.Live.IsFastLateFlick, (s, on) => s.Live.IsFastLateFlick = on),
-						OptionRow.Toggle("mirror", "ミラー譜面", s => s.Live.IsMirror, (s, on) => s.Live.IsMirror = on),
-						OptionRow.Toggle("vibration", "タップ時の振動", s => s.Live.UseVibration, (s, on) => s.Live.UseVibration = on))),
-				new OptionSection("MV設定",
+						OptionRow.Toggle("mirror", T("live.mirror"), s => s.Live.IsMirror, (s, on) => s.Live.IsMirror = on),
+						OptionRow.Toggle("vibration", T("live.vibration"), s => s.Live.UseVibration, (s, on) => s.Live.UseVibration = on))),
+				new OptionSection(T("live.section.mv"),
 					new OptionBlock(OptionBlockLayout.Inline,
-						OptionRow.Radio("mv-mode", "モード", new[] { "3DMV", "2DMV", "原曲MV", "軽量" },
+						OptionRow.Radio("mv-mode", T("live.mvMode"), new[] { "3DMV", "2DMV", T("live.mvMode.original"), T("live.mvMode.light") },
 							s => LiveModeToIndex(s.Live.LiveMode), (s, i) => s.Live.LiveMode = IndexToLiveMode(i))
 							.Slots(205f).Placeholder("Custom charts take their background from Additionals > ライブ背景."),
-						OptionRow.Radio("mv-quality", "3DMV品質", new[] { "高品質", "標準" },
+						OptionRow.Radio("mv-quality", T("live.mvQuality"), new[] { T("live.mvQuality.high"), T("live.mvQuality.normal") },
 							s => s.Live.QualityType == MVQualityType.High ? 0 : 1, (s, i) => s.Live.QualityType = i == 0 ? MVQualityType.High : MVQualityType.Default)
 							.Slots(205f))));
 		}
 
 		private static OptionPage Volume()
 		{
-			return new OptionPage("volume", "音量",
-				new OptionSection("ライブ音量",
+			return new OptionPage("volume", T("tab.volume"),
+				new OptionSection(T("volume.section.live"),
 					new OptionBlock(OptionBlockLayout.Volume,
 						OptionRow.Volume("live-bgm", "BGM", s => s.LiveVolume.Bgm, (s, v) => s.LiveVolume.Bgm = v),
 						OptionRow.Volume("live-se", "SE", s => s.LiveVolume.Se, (s, v) => s.LiveVolume.Se = v)
 							.PreviewWith("SE_VOLCHANGE_SE_INGAME"),
-						OptionRow.Volume("live-voice", "ボイス", s => s.LiveVolume.Voice, (s, v) => s.LiveVolume.Voice = v)
+						OptionRow.Volume("live-voice", T("volume.voice"), s => s.LiveVolume.Voice, (s, v) => s.LiveVolume.Voice = v)
 							.PreviewWith("SE_VOLCHANGE_VOX_INGAME", voice: true))),
-				new OptionSection("システム音量",
+				new OptionSection(T("volume.section.system"),
 					new OptionBlock(OptionBlockLayout.Volume,
 						OptionRow.Volume("system-bgm", "BGM", s => s.SystemVolume.Bgm, (s, v) => s.SystemVolume.Bgm = v),
 						OptionRow.Volume("system-se", "SE", s => s.SystemVolume.Se, (s, v) => s.SystemVolume.Se = v)
 							.PreviewWith("SE_VOLCHANGE_SE_UI"),
-						OptionRow.Volume("system-voice", "ボイス", s => s.SystemVolume.Voice, (s, v) => s.SystemVolume.Voice = v)
+						OptionRow.Volume("system-voice", T("volume.voice"), s => s.SystemVolume.Voice, (s, v) => s.SystemVolume.Voice = v)
 							.PreviewWith("SE_VOLCHANGE_VOX_SCENARIO", voice: true))));
 		}
 
@@ -379,74 +383,80 @@ namespace Sekai
 		{
 			const string unused = "Stored in ApplicationLocalSettings.SystemOptions; nothing reads it.";
 			const string noHandler = "The button has no handler.";
-			return new OptionPage("system", "システム",
-				new OptionSection("システム",
+			return new OptionPage("system", T("tab.system"),
+				new OptionSection(T("system.section.system"),
 					new OptionBlock(OptionBlockLayout.Columns,
-						OptionRow.Radio("default-vocal", "デフォルト楽曲", new[] { "セカイver.", "バーチャル・シンガーver." },
+						OptionRow.Radio("default-vocal", T("system.defaultVocal"), new[] { T("system.defaultVocal.sekai"), T("system.defaultVocal.virtualSinger") },
 							s => s.SystemOptions.DefaultVocalType, (s, i) => s.SystemOptions.DefaultVocalType = i).Wide(229f).Placeholder(unused),
-						OptionRow.Toggle("screen-lock", "画面固定", s => s.SystemOptions.LockScreenOrientation, (s, on) => s.SystemOptions.LockScreenOrientation = on)
+						OptionRow.Toggle("screen-lock", T("system.screenLock"), s => s.SystemOptions.LockScreenOrientation, (s, on) => s.SystemOptions.LockScreenOrientation = on)
 							.Placeholder(unused),
-						OptionRow.Toggle("confirm-before-live", "ライブ前設定確認", s => s.SystemOptions.ConfirmSettingsBeforeLive, (s, on) => s.SystemOptions.ConfirmSettingsBeforeLive = on)
+						OptionRow.Toggle("confirm-before-live", T("system.confirmBeforeLive"), s => s.SystemOptions.ConfirmSettingsBeforeLive, (s, on) => s.SystemOptions.ConfirmSettingsBeforeLive = on)
 							.Placeholder(unused),
-						OptionRow.Toggle("online-status", "オンライン表示", s => s.SystemOptions.ShowOnlineStatus, (s, on) => s.SystemOptions.ShowOnlineStatus = on)
+						OptionRow.Toggle("online-status", T("system.onlineStatus"), s => s.SystemOptions.ShowOnlineStatus, (s, on) => s.SystemOptions.ShowOnlineStatus = on)
 							.Placeholder(unused),
-						OptionRow.Toggle("live-bonus-notify", "ライブボーナス全回復通知", s => s.SystemOptions.NotifyLiveBonusFullRecovery, (s, on) => s.SystemOptions.NotifyLiveBonusFullRecovery = on)
+						OptionRow.Toggle("live-bonus-notify", T("system.liveBonusNotify"), s => s.SystemOptions.NotifyLiveBonusFullRecovery, (s, on) => s.SystemOptions.NotifyLiveBonusFullRecovery = on)
 							.Placeholder(unused))),
-				new OptionSection("データ管理",
+				new OptionSection(T("system.section.data"),
 					new OptionBlock(OptionBlockLayout.Columns,
-						OptionRow.Button("vocal-data", "ボーカルver.データ", "容量管理", ActionNone).Placeholder(noHandler),
-						OptionRow.Button("mv-data", "MVデータ", "容量管理", ActionNone).Placeholder(noHandler))),
-				new OptionSection("一括ダウンロード",
+						OptionRow.Button("vocal-data", T("system.vocalData"), T("system.manageStorage"), ActionNone).Placeholder(noHandler),
+						OptionRow.Button("mv-data", T("system.mvData"), T("system.manageStorage"), ActionNone).Placeholder(noHandler))),
+				new OptionSection(T("system.section.download"),
 					new OptionBlock(OptionBlockLayout.Columns,
-						OptionRow.Button("download-voice", "基本ボイス", "一括ダウンロード", ActionNone).Placeholder(noHandler),
-						OptionRow.Button("download-music", "楽曲", "一括ダウンロード", ActionNone).Placeholder(noHandler),
-						OptionRow.Button("download-mv", "3D・2D・原曲MV", "一括ダウンロード", ActionNone).Placeholder(noHandler))));
+						OptionRow.Button("download-voice", T("system.downloadVoice"), T("system.download"), ActionNone).Placeholder(noHandler),
+						OptionRow.Button("download-music", T("system.downloadMusic"), T("system.download"), ActionNone).Placeholder(noHandler),
+						OptionRow.Button("download-mv", T("system.downloadMv"), T("system.download"), ActionNone).Placeholder(noHandler))));
 		}
 
 		private static OptionPage Additionals()
 		{
-			return new OptionPage("additionals", "Additionals",
-				new OptionSection("OpenSekai",
+			return new OptionPage("additionals", T("tab.additionals"),
+				new OptionSection(T("additionals.section.opensekai"),
 					new OptionBlock(OptionBlockLayout.Halves,
-						OptionRow.Radio("music-info", "曲情報の表示", new[] { "自作譜面", "通常" },
+						OptionRow.Radio("music-info", T("additionals.musicInfo"), new[] { T("additionals.musicInfo.custom"), T("additionals.musicInfo.normal") },
 							s => s.Live.UsesCustomMusicScoreMusicInfoDisplay ? 0 : 1,
 							(s, i) => s.Live.CustomMusicScoreMusicInfoDisplayMode = i == 0
 								? LiveSettingData.MusicInfoDisplayModeCustomScore
 								: LiveSettingData.MusicInfoDisplayModeNormal).Slots(229f),
-						OptionRow.Radio("live-background", "ライブ背景", new[] { "ジャケット", "2DMV" },
+						OptionRow.Radio("live-background", T("additionals.liveBackground"), new[] { T("additionals.liveBackground.jacket"), T("additionals.liveBackground.mv2d") },
 							s => (s.Live.CustomMusicScoreLiveBackgroundMode ?? LiveSettingData.CustomMusicScoreBackgroundMode2DMV)
 								== LiveSettingData.CustomMusicScoreBackgroundModeJacket ? 0 : 1,
 							(s, i) => s.Live.CustomMusicScoreLiveBackgroundMode = i == 0
 								? LiveSettingData.CustomMusicScoreBackgroundModeJacket
 								: LiveSettingData.CustomMusicScoreBackgroundMode2DMV).Slots(250f),
-						OptionRow.Toggle("fullscreen", "フルスクリーン",
+						OptionRow.Toggle("fullscreen", T("additionals.fullscreen"),
 							s => s.Local.FullscreenEnabled ?? Screen.fullScreen, (s, on) => s.Local.FullscreenEnabled = on)
-							.Slots(229f).HiddenWhen(!OptionSettings.SupportsFullscreen))),
+							.Slots(229f).HiddenWhen(!OptionSettings.SupportsFullscreen)),
+					// Each language's own name; the game follows the system's language until one is picked here. Three
+					// options need two cells, as 滑らかさ(FPS) does.
+					new OptionBlock(OptionBlockLayout.Columns,
+						OptionRow.Radio("language", T("additionals.language"), L10n.LanguageNames,
+							s => Mathf.Max(0, Array.IndexOf(L10n.LanguageCodes, L10n.Supported(s.Local.Language) ?? L10n.Language)),
+							(s, i) => s.Local.Language = L10n.LanguageCodes[i]).Wide(220f))),
 				// Sign-in for the online charts (CommunityCharts); the button opens CommunityLoginPanel.
-				new OptionSection("アカウント",
+				new OptionSection(T("additionals.section.account"),
 					new OptionBlock(OptionBlockLayout.Halves,
-						OptionRow.Button("community-account", "OurTaiko 账号", "登录", ActionCommunityAccount)
-							.ButtonTextFrom(() => Community.CommunityAccount.IsSignedIn ? Community.CommunityAccount.Nickname : "登录"))));
+						OptionRow.Button("community-account", T("additionals.ourtaikoAccount"), T("additionals.signIn"), ActionCommunityAccount)
+							.ButtonTextFrom(() => Community.CommunityAccount.IsSignedIn ? Community.CommunityAccount.Nickname : T("additionals.signIn")))));
 		}
 
 		/// <summary>The プレビューで詳細設定 dialog: note speed and timing down to 0.01, and ノーツの開始位置.</summary>
 		public static OptionPage NoteDetail()
 		{
 			return new OptionPage("note-detail", string.Empty,
-				new OptionSection("ノーツの速さ",
+				new OptionSection(T("detail.noteSpeed"),
 					new OptionBlock(OptionBlockLayout.Centered,
 						OptionRow.Stepper("note-speed", string.Empty, new[] { -1f, -0.1f, -0.01f, 0.01f, 0.1f, 1f }, 1f, 12f, "0.00", "",
 							s => s.Live.NoteSpeed, (s, v) => s.Live.NoteSpeed = v))),
-				new OptionSection("ノーツの開始位置",
+				new OptionSection(T("detail.startPosition"),
 					new OptionBlock(OptionBlockLayout.Centered,
 						OptionRow.Stepper("start-position", string.Empty, new[] { -10f, -1f, 1f, 10f }, 0f, 100f, "0", "",
 							s => s.Live._noteShowRate * 100f, (s, v) => s.Live.SetNoteShowRate(v)))),
-				new OptionSection("タイミング調整",
+				new OptionSection(T("detail.timing"),
 					new OptionBlock(OptionBlockLayout.Centered,
-						OptionRow.Text("timing-help", "音に合わせてタップし、タイミングをあわせてください。"),
+						OptionRow.Text("timing-help", T("detail.timingHelp")),
 						OptionRow.Stepper("timing", string.Empty, new[] { -1f, -0.1f, -0.01f, 0.01f, 0.1f, 1f }, -20f, 20f, "0.00", "",
 							s => s.Live.TimingAdjustData, (s, v) => s.Live.TimingAdjustData = v),
-						OptionRow.Text("timing-hint", "判定ラインより上の場合は「＋」に、\n下の場合は「－」に調整してください。", true))));
+						OptionRow.Text("timing-hint", T("detail.timingHint"), true))));
 		}
 
 		private static string[] SoundNames()
@@ -454,7 +464,7 @@ namespace Sekai
 			var names = new string[NoteSeCount];
 			for (int i = 0; i < NoteSeCount; i++)
 			{
-				names[i] = string.Format("サウンド{0:00}", i + 1);
+				names[i] = L10n.Format(Table, "live.noteSeName", i + 1);
 			}
 			return names;
 		}

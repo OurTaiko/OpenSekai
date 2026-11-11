@@ -95,15 +95,15 @@ namespace Sekai.Community
 			}
 			catch (CommunityException exception) when (exception.Code == "LOGIN_INVALID" || exception.Status == 401)
 			{
-				throw new CommunityException("LOGIN_INVALID", "用户名或密码错误，或账号还没有激活。", exception.Status);
+				throw new CommunityException("LOGIN_INVALID", L10n.Get("Community", "error.loginInvalid"), exception.Status);
 			}
 			catch (CommunityException exception) when (exception.Code == "RATE_LIMITED" || exception.Status == 429)
 			{
-				throw new CommunityException("RATE_LIMITED", "登录尝试太多次，请过一会儿再试。", exception.Status);
+				throw new CommunityException("RATE_LIMITED", L10n.Get("Community", "error.loginRateLimited"), exception.Status);
 			}
 			if (!IsHex(reply?.Token, 64) || reply.User == null || !IsHex(reply.User.Id, 32))
 			{
-				throw new CommunityException("RESPONSE_INVALID", "账号中心返回的数据无法识别。");
+				throw new CommunityException("RESPONSE_INVALID", L10n.Get("Community", "error.ssoResponseInvalid"));
 			}
 
 			_stored = new Stored
@@ -211,11 +211,11 @@ namespace Sekai.Community
 			catch (CommunityException exception) when (exception.Status == 401)
 			{
 				ForgetLocally();
-				throw new CommunityException("AUTH_REQUIRED", "登录已过期，请重新登录。", 401);
+				throw new CommunityException("AUTH_REQUIRED", L10n.Get("Community", "error.signInExpired"), 401);
 			}
 			if (!IsHex(reply?.AccessToken, 64))
 			{
-				throw new CommunityException("RESPONSE_INVALID", "账号中心返回的数据无法识别。");
+				throw new CommunityException("RESPONSE_INVALID", L10n.Get("Community", "error.ssoResponseInvalid"));
 			}
 			stored.SessionToken = reply.AccessToken;
 			stored.SessionService = meta.Sso.Service;

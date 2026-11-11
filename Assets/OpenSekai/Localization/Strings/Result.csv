@@ -1,0 +1,21 @@
+key,zh-Hans,ja,en,comment
+header.level,<size=22>乐曲Lv.</size>{0},<size=22>楽曲Lv.</size>{0},<size=22>Lv.</size>{0},"Header: song level, {0} = level or -"
+next,下一步,次へ,Next,Bottom button
+stamps,贴图,スタンプ,Stamps,Members page: opens the stamp bar (220 px)
+memberScores,成员成绩,メンバーの成績,Member Scores,Button and dialog title: everyone's judgements
+status.waiting,等待其他成员结束演奏…,ほかのメンバーのプレイ終了を待っています…,Waiting for the others to finish…,Members page status line
+status.disconnected,<color=#FF8899>已经和房间断开，没能拿到这一局的结果。</color>,<color=#FF8899>ルームとの接続が切れたため、このライブのリザルトを取得できませんでした。</color>,<color=#FF8899>Disconnected from the room; this round's result is unavailable.</color>,Members page status line
+card.disconnected,已断开,切断されました,Disconnected,Shade over a disconnected player's card
+card.disconnectedState,断开,切断,Disconnected,Card state line
+card.playing,演奏中…,プレイ中…,Playing…,Card state line: still playing
+detail.score,分数,スコア,Score,Detail page label (220 px at large size)
+detail.highScore,高分,ハイスコア,High Score,Detail page label
+backToRoom.title,要回到房间吗？,ルームに戻りますか？,Back to the room?,Dialog title after a co-op live
+backToRoom.body,回到房间后可以和大家继续下一首。,ルームに戻ると、みんなと次の曲をプレイできます。,Go back to play the next song together.,Dialog body
+backToRoom.leave,退出房间,退室する,Leave Room,Dialog button
+backToRoom.back,回到房间,ルームに戻る,Back to Room,Dialog button
+disconnected.title,已经和房间断开,ルームとの接続が切れました,Disconnected from the room,Dialog title when the room is gone
+disconnected.body,回到协力Live，重新加入或开个新房间。,協力ライブに戻って、もう一度参加するか新しいルームを作りましょう。,Go back to Co-op Live to rejoin or open a new room.,Dialog body
+disconnected.home,回到首页,ホームへ,Home,Dialog button
+disconnected.coopLive,协力Live,協力ライブ,Co-op Live,Dialog button: back to the co-op screen
+toast.stamp,{0}：{1},{0}：{1},{0}: {1},"Toast for a stamp: {0} nickname, {1} stamp text"

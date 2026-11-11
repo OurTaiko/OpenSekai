@@ -44,6 +44,8 @@ namespace Sekai.Community
 
 		private const float PreviewSeconds = 20f;
 
+		private const string Table = "Community";
+
 		[Header("Header")]
 		[SerializeField]
 		private Button backButton;
@@ -328,7 +330,7 @@ namespace Sekai.Community
 		{
 			if (tab == Tab.MyList && !CommunityAccount.IsSignedIn)
 			{
-				loginPanel.Show("登录后才能使用マイリスト。", () => SelectTab(Tab.MyList));
+				loginPanel.Show(L10n.Get(Table, "signIn.forMyList"), () => SelectTab(Tab.MyList));
 				return;
 			}
 			if (tab == _tab && tab != Tab.Search)
@@ -379,11 +381,11 @@ namespace Sekai.Community
 			{
 				listCountLabel.text = _tab switch
 				{
-					Tab.Recommended => "おすすめ",
-					Tab.Ranking => _rankingDaily ? "デイリー" : "総合",
-					Tab.New => "新着",
-					Tab.Search => "検索結果",
-					_ => "マイリスト",
+					Tab.Recommended => L10n.Get(Table, "tab.recommended"),
+					Tab.Ranking => _rankingDaily ? L10n.Get(Table, "ranking.daily") : L10n.Get(Table, "ranking.total"),
+					Tab.New => L10n.Get(Table, "tab.new"),
+					Tab.Search => L10n.Get(Table, "list.searchResults"),
+					_ => L10n.Get(Table, "tab.myList"),
 				};
 			}
 			UpdateDifficultyVisuals();
@@ -477,7 +479,7 @@ namespace Sekai.Community
 			bool isId = text.Length == 32 && System.Text.RegularExpressions.Regex.IsMatch(text, "^[0-9a-fA-F]{32}$");
 			if (!isNumber && !isId)
 			{
-				SetStatus("请输入谱面编号（数字）。");
+				SetStatus(L10n.Get(Table, "search.enterNumber"));
 				return;
 			}
 			string id = isNumber ? number.ToString(CultureInfo.InvariantCulture) : text.ToLowerInvariant();
@@ -489,7 +491,7 @@ namespace Sekai.Community
 				{
 					_searchSubmitted = false;
 					ApplyTabLayout();
-					SetStatus("找不到谱面 #" + id + "。");
+					SetStatus(L10n.Format(Table, "search.notFound", id));
 					return;
 				}
 				_idResult = chart;
@@ -515,7 +517,7 @@ namespace Sekai.Community
 				List<CommunityTagCount> tags = await CommunityClient.ListTagsAsync(DestroyToken);
 				searchTagHint.text = tags.Count == 0
 					? string.Empty
-					: "常用：" + string.Join("、", tags.GetRange(0, Math.Min(8, tags.Count)).ConvertAll(t => t.Tag));
+					: L10n.Format(Table, "search.commonTags", string.Join(L10n.Get(Table, "search.tagSeparator"), tags.GetRange(0, Math.Min(8, tags.Count)).ConvertAll(t => t.Tag)));
 			}
 			catch (Exception exception) when (exception is CommunityException || exception is OperationCanceledException)
 			{
@@ -578,7 +580,7 @@ namespace Sekai.Community
 			_loading = true;
 			if (page == 1)
 			{
-				SetStatus("正在加载…");
+				SetStatus(L10n.Get("Common", "loading"));
 			}
 			try
 			{
@@ -610,9 +612,9 @@ namespace Sekai.Community
 				emptyText.gameObject.SetActive(_rows.Count == 0);
 				emptyText.text = _tab switch
 				{
-					Tab.MyList => "マイリスト还是空的。\n在谱面详情里点「登録」加入。",
-					Tab.Search => "没有符合条件的谱面。",
-					_ => "还没有谱面。",
+					Tab.MyList => L10n.Get(Table, "list.emptyMyList"),
+					Tab.Search => L10n.Get(Table, "list.emptySearch"),
+					_ => L10n.Get(Table, "list.empty"),
 				};
 				SetStatus(string.Empty);
 				if (_selected == null && _rows.Count > 0)
@@ -632,10 +634,10 @@ namespace Sekai.Community
 				if (exception.Code == "AUTH_REQUIRED" && _tab == Tab.MyList)
 				{
 					SelectTab(Tab.Recommended);
-					loginPanel.Show("登录已过期，请重新登录。", () => SelectTab(Tab.MyList));
+					loginPanel.Show(L10n.Get(Table, "error.signInExpired"), () => SelectTab(Tab.MyList));
 				}
 				emptyText.gameObject.SetActive(_rows.Count == 0);
-				emptyText.text = "无法加载谱面。";
+				emptyText.text = L10n.Get(Table, "list.loadFailed");
 				SetStatus(exception.Message);
 			}
 			finally
@@ -696,19 +698,19 @@ namespace Sekai.Community
 			string badges = string.Empty;
 			if (!string.IsNullOrEmpty(chart.ParentChartId))
 			{
-				badges += "   <color=#67DDCD>親譜面あり</color>";
+				badges += "   <color=#67DDCD>" + L10n.Get(Table, "badge.hasParent") + "</color>";
 			}
 			if (chart.AllowDerivative)
 			{
-				badges += "   <color=#FF8FB8>二次利用OK</color>";
+				badges += "   <color=#FF8FB8>" + L10n.Get(Table, "badge.derivativeAllowed") + "</color>";
 			}
 			switch (CommunityLibrary.GetState(chart))
 			{
 				case CommunityInstallState.Installed:
-					badges += "   <color=#A9E879>已下载</color>";
+					badges += "   <color=#A9E879>" + L10n.Get(Table, "badge.downloaded") + "</color>";
 					break;
 				case CommunityInstallState.Outdated:
-					badges += "   <color=#FFC04D>有更新</color>";
+					badges += "   <color=#FFC04D>" + L10n.Get(Table, "badge.updateAvailable") + "</color>";
 					break;
 			}
 			return badges;
@@ -763,7 +765,7 @@ namespace Sekai.Community
 				windowTitleText.text = "NOT FOUND";
 				if (detailEmptyHint != null)
 				{
-					detailEmptyHint.text = _loading ? "正在加载…" : "选择左侧的谱面。";
+					detailEmptyHint.text = _loading ? L10n.Get("Common", "loading") : L10n.Get(Table, "detail.emptyHint");
 				}
 				jacketImage.sprite = null;
 				jacketImage.color = Color.clear;
@@ -773,7 +775,7 @@ namespace Sekai.Community
 
 			windowTitleText.text = string.IsNullOrWhiteSpace(chart.ArtistLine) ? chart.Title : chart.Title + " - " + chart.ArtistLine;
 			detailTitle.text = string.IsNullOrWhiteSpace(chart.ScoreTitle) ? chart.Title : chart.ScoreTitle;
-			detailStatus.text = "<color=#9C98C8>谱师</color>  " + chart.Uploader.Nickname + BadgesLine(chart);
+			detailStatus.text = "<color=#9C98C8>" + L10n.Get(Table, "detail.charter") + "</color>  " + chart.Uploader.Nickname + BadgesLine(chart);
 			detailBadge?.Set(chart.Difficulty, chart.PlayLevel);
 			List<string> credits = new List<string>();
 			void Credit(string label, string value)
@@ -783,21 +785,21 @@ namespace Sekai.Community
 					credits.Add("<color=#9C98C8>" + label + "</color>  " + value);
 				}
 			}
-			Credit("曲名", chart.ScoreTitle != chart.Title ? chart.Title : null);
-			Credit("歌手", chart.Singer);
-			Credit("作曲", chart.Composer);
-			Credit("作词", chart.Lyricist);
-			Credit("编曲", chart.Arranger);
-			Credit("标签", chart.Tags.Count > 0 ? string.Join(" · ", chart.Tags) : null);
+			Credit(L10n.Get(Table, "detail.creditTitle"), chart.ScoreTitle != chart.Title ? chart.Title : null);
+			Credit(L10n.Get(Table, "detail.creditSinger"), chart.Singer);
+			Credit(L10n.Get(Table, "detail.creditComposer"), chart.Composer);
+			Credit(L10n.Get(Table, "detail.creditLyricist"), chart.Lyricist);
+			Credit(L10n.Get(Table, "detail.creditArranger"), chart.Arranger);
+			Credit(L10n.Get(Table, "detail.creditTags"), chart.Tags.Count > 0 ? string.Join(" · ", chart.Tags) : null);
 			detailMeta.text = string.Join("\n", credits);
-			infoLabel.text = "谱面信息";
-			infoLeft.text = "<color=#9C98C8>游玩</color>  " + chart.PlayCount
-				+ "\n<color=#9C98C8>得分</color>  " + chart.Score + "  <color=#9C98C8>(▲" + chart.Upvotes + " ▼" + chart.Downvotes + ")</color>";
+			infoLabel.text = L10n.Get(Table, "detail.info");
+			infoLeft.text = "<color=#9C98C8>" + L10n.Get(Table, "detail.plays") + "</color>  " + chart.PlayCount
+				+ "\n<color=#9C98C8>" + L10n.Get(Table, "detail.votes") + "</color>  " + chart.Score + "  <color=#9C98C8>(▲" + chart.Upvotes + " ▼" + chart.Downvotes + ")</color>";
 			// Two lines each: a third one runs past the info box.
-			infoRight.text = "<color=#9C98C8>更新</color>  " + chart.UpdatedAt.ToLocalTime().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
-				+ "\n<color=#9C98C8>大小</color>  " + (chart.PackageSize / 1024f / 1024f).ToString("0.0", CultureInfo.InvariantCulture) + " MB"
+			infoRight.text = "<color=#9C98C8>" + L10n.Get(Table, "detail.updated") + "</color>  " + chart.UpdatedAt.ToLocalTime().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+				+ "\n<color=#9C98C8>" + L10n.Get(Table, "detail.size") + "</color>  " + (chart.PackageSize / 1024f / 1024f).ToString("0.0", CultureInfo.InvariantCulture) + " MB"
 				+ (chart.HasVideo ? "  · MV" : string.Empty);
-			detailDescription.text = string.IsNullOrWhiteSpace(chart.Description) ? "<color=#8F8BB8>（没有简介）</color>" : chart.Description;
+			detailDescription.text = string.IsNullOrWhiteSpace(chart.Description) ? "<color=#8F8BB8>" + L10n.Get(Table, "detail.noDescription") + "</color>" : chart.Description;
 			jacketImage.color = Color.clear;
 			LoadDetailJacketAsync(chart).Forget();
 			UpdateActionButtons();
@@ -819,23 +821,23 @@ namespace Sekai.Community
 			bool has = chart != null;
 			parentButton.interactable = has && !string.IsNullOrEmpty(chart.ParentChartId) && !_downloading;
 			bookmarkButton.interactable = has && !_downloading;
-			bookmarkLabel.text = has && chart.Bookmarked == true ? "登録済み" : "登録";
+			bookmarkLabel.text = has && chart.Bookmarked == true ? L10n.Get(Table, "action.bookmarked") : L10n.Get(Table, "action.bookmark");
 			playButton.interactable = has && !_downloading;
 			if (!_downloading)
 			{
 				playLabel.text = !has
-					? "プレイ"
+					? L10n.Get(Table, "action.play")
 					: CommunityLibrary.GetState(chart) switch
 					{
-						CommunityInstallState.Installed => "プレイ",
-						CommunityInstallState.Outdated => "更新",
-						_ => "ダウンロード",
+						CommunityInstallState.Installed => L10n.Get(Table, "action.play"),
+						CommunityInstallState.Outdated => L10n.Get(Table, "action.update"),
+						_ => L10n.Get(Table, "action.download"),
 					};
 			}
 			if (playIcon != null)
 			{
 				// The label needs the icon's room for ダウンロード and the download progress.
-				playIcon.SetActive(playLabel.text == "プレイ");
+				playIcon.SetActive(playLabel.text == L10n.Get(Table, "action.play"));
 			}
 			upvoteButton.interactable = has;
 			downvoteButton.interactable = has;
@@ -845,7 +847,7 @@ namespace Sekai.Community
 			webPageButton.interactable = has;
 			if (previewLabel != null && _previewCts == null)
 			{
-				previewLabel.text = "试听";
+				previewLabel.text = L10n.Get(Table, "preview.play");
 			}
 			foreach (Button button in new[] { parentButton, bookmarkButton, playButton, upvoteButton, downvoteButton, previewButton, webPageButton })
 			{
@@ -895,7 +897,7 @@ namespace Sekai.Community
 		private async UniTaskVoid VoteAsync(int direction)
 		{
 			CommunityChart chart = _selected;
-			if (chart == null || !RequireLogin(direction > 0 ? "登录后才能赞。" : "登录后才能踩。", () => VoteAsync(direction).Forget()))
+			if (chart == null || !RequireLogin(direction > 0 ? L10n.Get(Table, "signIn.forUpvote") : L10n.Get(Table, "signIn.forDownvote"), () => VoteAsync(direction).Forget()))
 			{
 				return;
 			}
@@ -931,7 +933,7 @@ namespace Sekai.Community
 		private async UniTaskVoid ToggleBookmarkAsync()
 		{
 			CommunityChart chart = _selected;
-			if (chart == null || !RequireLogin("登录后才能加入マイリスト。", () => ToggleBookmarkAsync().Forget()))
+			if (chart == null || !RequireLogin(L10n.Get(Table, "signIn.forBookmark"), () => ToggleBookmarkAsync().Forget()))
 			{
 				return;
 			}
@@ -941,7 +943,7 @@ namespace Sekai.Community
 				await CommunityClient.SetBookmarkAsync(chart.Id, saved, DestroyToken);
 				chart.Bookmarked = saved;
 				RefreshRowFor(chart);
-				SetStatus(saved ? "已加入マイリスト。" : "已从マイリスト移除。");
+				SetStatus(saved ? L10n.Get(Table, "bookmark.added") : L10n.Get(Table, "bookmark.removed"));
 				UpdateActionButtons();
 			}
 			catch (CommunityException exception)
@@ -962,11 +964,11 @@ namespace Sekai.Community
 				CommunityChart parent = await CommunityClient.GetAsync(chart.ParentChartId, DestroyToken);
 				if (parent == null)
 				{
-					SetStatus("親譜面已经不在了。");
+					SetStatus(L10n.Get(Table, "parent.gone"));
 					return;
 				}
 				UpdateSelection(parent);
-				SetStatus("正在显示親譜面「" + parent.ScoreTitle + "」。");
+				SetStatus(L10n.Format(Table, "parent.showing", parent.ScoreTitle));
 			}
 			catch (CommunityException exception)
 			{
@@ -986,7 +988,7 @@ namespace Sekai.Community
 				StopPreview();
 				string error = await CustomMusicScorePlayLauncher.PlayAsync(
 					CommunityLibrary.GetEntry(chart), false, MenuScreenType.CommunityCharts, SetStatus, DestroyToken);
-				SetStatus(error ?? "正在开始游玩...");
+				SetStatus(error ?? L10n.Get(Table, "play.starting"));
 				return;
 			}
 
@@ -1006,10 +1008,10 @@ namespace Sekai.Community
 				{
 					playIcon.SetActive(false);
 				}
-				SetStatus("正在下载 " + chart.ScoreTitle + "…");
+				SetStatus(L10n.Format(Table, "download.progress", chart.ScoreTitle));
 				await CommunityLibrary.DownloadAsync(chart, progress, DestroyToken);
 				chart.DownloadCount++;
-				SetStatus("已下载，可以在自制谱管理里找到它。");
+				SetStatus(L10n.Get(Table, "download.done"));
 			}
 			catch (OperationCanceledException)
 			{
@@ -1037,7 +1039,7 @@ namespace Sekai.Community
 		{
 			if (exception.Code == "AUTH_REQUIRED")
 			{
-				loginPanel.Show("登录已过期，请重新登录。");
+				loginPanel.Show(L10n.Get(Table, "error.signInExpired"));
 				return;
 			}
 			SetStatus(exception.Message);
@@ -1080,7 +1082,7 @@ namespace Sekai.Community
 
 		private async UniTaskVoid PlayPreviewAsync(CommunityChart chart, CancellationToken ct)
 		{
-			previewLabel.text = "加载中…";
+			previewLabel.text = L10n.Get("Common", "loading");
 			try
 			{
 				if (_previewClip == null || _previewUrl != chart.AudioUrl)
@@ -1097,12 +1099,12 @@ namespace Sekai.Community
 				}
 				if (_previewClip == null)
 				{
-					throw new CommunityException("PREVIEW_FAILED", "无法播放试听。");
+					throw new CommunityException("PREVIEW_FAILED", L10n.Get(Table, "preview.failed"));
 				}
 				previewSource.clip = _previewClip;
 				previewSource.time = Mathf.Clamp(chart.PreviewStartSec, 0f, Mathf.Max(0f, _previewClip.length - 1f));
 				previewSource.Play();
-				previewLabel.text = "停止";
+				previewLabel.text = L10n.Get(Table, "preview.stop");
 				float until = Time.unscaledTime + PreviewSeconds;
 				while (previewSource.isPlaying && Time.unscaledTime < until)
 				{
@@ -1115,7 +1117,7 @@ namespace Sekai.Community
 			}
 			catch (Exception exception) when (exception is CommunityException || exception is UnityWebRequestException)
 			{
-				SetStatus("无法播放试听。");
+				SetStatus(L10n.Get(Table, "preview.failed"));
 			}
 			StopPreview();
 		}
@@ -1134,7 +1136,7 @@ namespace Sekai.Community
 			}
 			if (previewLabel != null)
 			{
-				previewLabel.text = "试听";
+				previewLabel.text = L10n.Get(Table, "preview.play");
 			}
 		}
 

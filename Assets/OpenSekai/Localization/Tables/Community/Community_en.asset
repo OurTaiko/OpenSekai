@@ -1,0 +1,455 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Community_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: c17d0eba571fd48468c25ec511cfc779, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 284155904
+    m_Localized: Home
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155905
+    m_Localized: My Charts
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155906
+    m_Localized: Co-op Live
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155907
+    m_Localized: Online Charts
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155908
+    m_Localized: Featured
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155909
+    m_Localized: Ranking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155910
+    m_Localized: New
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155911
+    m_Localized: Search
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155912
+    m_Localized: My List
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155913
+    m_Localized: Daily
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155914
+    m_Localized: Overall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155915
+    m_Localized: Results
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155916
+    m_Localized: "My List is empty.\nTap \u201CAdd\u201D in a chart's details to add it."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155917
+    m_Localized: No charts match your search.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155918
+    m_Localized: No charts yet.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155919
+    m_Localized: Could not load charts.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155920
+    m_Localized: Has Parent
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155921
+    m_Localized: Remix OK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155922
+    m_Localized: Downloaded
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155923
+    m_Localized: Update available
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155924
+    m_Localized: "\u2190 Edit Search"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155925
+    m_Localized: Search by ID
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155926
+    m_Localized: Chart ID (e.g. 12)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155927
+    m_Localized: Song
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155928
+    m_Localized: Song, creator or charter name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155929
+    m_Localized: Tag
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155930
+    m_Localized: Search by tag
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155931
+    m_Localized: 'Popular: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155932
+    m_Localized: ', '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155933
+    m_Localized: Difficulty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155934
+    m_Localized: All
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155935
+    m_Localized: Sort By
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155936
+    m_Localized: Popular
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155937
+    m_Localized: Hardest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155938
+    m_Localized: Random
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155939
+    m_Localized: Enter a chart number.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155940
+    m_Localized: Chart #{0} not found.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155941
+    m_Localized: Choose a chart on the left.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155942
+    m_Localized: Charter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155943
+    m_Localized: Song
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155944
+    m_Localized: Vocals
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155945
+    m_Localized: Music
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155946
+    m_Localized: Lyrics
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155947
+    m_Localized: Arrangement
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155948
+    m_Localized: Tags
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155949
+    m_Localized: Chart Info
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155950
+    m_Localized: Plays
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155951
+    m_Localized: Votes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155952
+    m_Localized: Updated
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155953
+    m_Localized: Size
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155954
+    m_Localized: (No description)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155955
+    m_Localized: Parent
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155956
+    m_Localized: Web Page
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155957
+    m_Localized: Add
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155958
+    m_Localized: Added
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155959
+    m_Localized: Play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155960
+    m_Localized: Update
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155961
+    m_Localized: Download
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155962
+    m_Localized: Preview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155963
+    m_Localized: Stop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155964
+    m_Localized: Could not play the preview.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155965
+    m_Localized: Sign in to use My List.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155966
+    m_Localized: Sign in to upvote.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155967
+    m_Localized: Sign in to downvote.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155968
+    m_Localized: Sign in to add charts to My List.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155969
+    m_Localized: Added to My List.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155970
+    m_Localized: Removed from My List.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155971
+    m_Localized: The parent chart no longer exists.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155972
+    m_Localized: "Showing the parent chart \u201C{0}\u201D."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155973
+    m_Localized: "Starting\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155974
+    m_Localized: "Downloading {0}\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155975
+    m_Localized: Downloaded. You can also find it in My Charts.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155976
+    m_Localized: OurTaiko Account
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155977
+    m_Localized: Sign In to OurTaiko
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155978
+    m_Localized: Sign in to vote on charts and add them to My List.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155979
+    m_Localized: Enter your username and password.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155980
+    m_Localized: "Signing in\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155981
+    m_Localized: Signed out.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155982
+    m_Localized: Sign In
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155983
+    m_Localized: "Signing In\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155984
+    m_Localized: Username
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155985
+    m_Localized: OurTaiko username
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155986
+    m_Localized: Password
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155987
+    m_Localized: Sent only to the OurTaiko account center
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155988
+    m_Localized: Forgot Password
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155989
+    m_Localized: Register
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155990
+    m_Localized: Open Account Center (nickname, avatar, password)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155991
+    m_Localized: Sign Out
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155992
+    m_Localized: The server sent data that could not be read.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155993
+    m_Localized: The server's response is too large.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155994
+    m_Localized: Could not connect to the server. Check your connection. ({0})
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155995
+    m_Localized: Your sign-in is no longer valid. Please sign in again.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155996
+    m_Localized: You don't have permission.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155997
+    m_Localized: Chart not found.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155998
+    m_Localized: Too many requests. Please try again later.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155999
+    m_Localized: The server is temporarily unavailable. Please try again later.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156000
+    m_Localized: Request failed (HTTP {0}).
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156001
+    m_Localized: Wrong username or password, or the account is not activated yet.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156002
+    m_Localized: Too many sign-in attempts. Please try again later.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156003
+    m_Localized: The account center sent data that could not be read.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156004
+    m_Localized: Your sign-in has expired. Please sign in again.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156005
+    m_Localized: Please sign in with your OurTaiko account first.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156006
+    m_Localized: This chart is still being prepared. Please try again later.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156007
+    m_Localized: The chart package contains an invalid file name.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156008
+    m_Localized: The chart could not be imported.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156009
+    m_Localized: This chart's files are no longer available.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156010
+    m_Localized: 'Download failed: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156011
+    m_Localized: '{0} did not download completely. Please try again.'
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

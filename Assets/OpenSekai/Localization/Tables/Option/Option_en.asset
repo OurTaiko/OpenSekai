@@ -1,0 +1,339 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Option_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 6f25e8676e6e7499fa27ba4994b92883, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 284155904
+    m_Localized: Live
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155905
+    m_Localized: Volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155906
+    m_Localized: System
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155907
+    m_Localized: Extras
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155908
+    m_Localized: Notes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155909
+    m_Localized: Note Speed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155910
+    m_Localized: Timing Offset
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155911
+    m_Localized: Fine-Tune in Preview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155912
+    m_Localized: Note Skin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155913
+    m_Localized: Hold Note Opacity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155914
+    m_Localized: Guide Opacity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155915
+    m_Localized: Note Sounds
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155916
+    m_Localized: Sound {0:00}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155917
+    m_Localized: "\u266A Tap"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155918
+    m_Localized: "\u266A Flick"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155919
+    m_Localized: "\u266A Hold"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155920
+    m_Localized: "\u266A Trace"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155921
+    m_Localized: Display & Effects
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155922
+    m_Localized: Background Brightness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155923
+    m_Localized: Lane Opacity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155924
+    m_Localized: Tap Effects
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155925
+    m_Localized: Normal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155926
+    m_Localized: Subtle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155927
+    m_Localized: Cut-in Effects
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155928
+    m_Localized: FEVER Effects
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155929
+    m_Localized: Normal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155930
+    m_Localized: Light
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155931
+    m_Localized: Skill Display
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155932
+    m_Localized: Frame Rate (FPS)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155933
+    m_Localized: Unlimited
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155934
+    m_Localized: Live Assist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155935
+    m_Localized: Simultaneous Line
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155936
+    m_Localized: AP Streak Effect
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155937
+    m_Localized: Mirror Chart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155938
+    m_Localized: Vibrate on Tap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155939
+    m_Localized: MV
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155940
+    m_Localized: Mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155941
+    m_Localized: Original MV
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155942
+    m_Localized: Light
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155943
+    m_Localized: 3DMV Quality
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155944
+    m_Localized: High
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155945
+    m_Localized: Normal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155946
+    m_Localized: Live Volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155947
+    m_Localized: System Volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155948
+    m_Localized: Voice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155949
+    m_Localized: System
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155950
+    m_Localized: Default Version
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155951
+    m_Localized: SEKAI ver.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155952
+    m_Localized: Virtual Singer ver.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155953
+    m_Localized: Lock Orientation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155954
+    m_Localized: Confirm Settings Before Live
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155955
+    m_Localized: Show Online Status
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155956
+    m_Localized: Live Bonus Refill Alert
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155957
+    m_Localized: Data
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155958
+    m_Localized: Vocal Version Data
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155959
+    m_Localized: MV Data
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155960
+    m_Localized: Manage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155961
+    m_Localized: Download All
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155962
+    m_Localized: Basic Voices
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155963
+    m_Localized: Songs
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155964
+    m_Localized: 3D / 2D / Original MVs
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155965
+    m_Localized: Download
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155966
+    m_Localized: OpenSekai
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155967
+    m_Localized: Song Info Display
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155968
+    m_Localized: Custom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155969
+    m_Localized: Normal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155970
+    m_Localized: Live Background
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155971
+    m_Localized: Jacket
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155972
+    m_Localized: 2DMV
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155973
+    m_Localized: Fullscreen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155974
+    m_Localized: Language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155975
+    m_Localized: Account
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155976
+    m_Localized: OurTaiko Account
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155977
+    m_Localized: Sign In
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155978
+    m_Localized: Note Speed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155979
+    m_Localized: Note Start Position
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155980
+    m_Localized: Timing Offset
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155981
+    m_Localized: Tap along with the sound to adjust the timing.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155982
+    m_Localized: "If notes land above the judgement line, adjust toward +;\nif below, toward \u2212."
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

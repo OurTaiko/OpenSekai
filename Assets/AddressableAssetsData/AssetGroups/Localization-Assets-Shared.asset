@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Localization-Assets-Shared
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Localization-Assets-Shared
+  m_GUID: e8fd3aba01d7340ad911580630ee740d
+  m_SerializeEntries:
+  - m_GUID: 16ecc78bb1bcd4492a0ff3bcc7f2aead
+    m_Address: Assets/OpenSekai/Localization/Tables/ChartEditor/ChartEditor Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 203fad070bdbc4f939ef41a3a3d4af5d
+    m_Address: Assets/OpenSekai/Localization/Tables/Wording/Wording Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 42e995251c9f24aac8431f500041cd9f
+    m_Address: Assets/OpenSekai/Localization/Tables/Common/Common Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6f25e8676e6e7499fa27ba4994b92883
+    m_Address: Assets/OpenSekai/Localization/Tables/Option/Option Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 900fb4667d1834723a345af6a61781e5
+    m_Address: Assets/OpenSekai/Localization/Tables/Result/Result Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: acc29a27946d647f1b95256b5abf99a5
+    m_Address: Assets/OpenSekai/Localization/Tables/CoopLive/CoopLive Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: af4aae2454c714d1881b4822fe745c57
+    m_Address: Assets/OpenSekai/Localization/Tables/ChartManager/ChartManager Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c17d0eba571fd48468c25ec511cfc779
+    m_Address: Assets/OpenSekai/Localization/Tables/Community/Community Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d23c80428575d424b83d6eff51c0114f
+    m_Address: Assets/OpenSekai/Localization/Tables/Live/Live Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 1
+  m_Settings: {fileID: 11400000, guid: 4c593facf91c142119f95f446df8a66b, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 5f193915ac346449e8f55eaca6408d85, type: 2}
+    - {fileID: 11400000, guid: e6d747f0d093f469eb1aa3f9533af1a6, type: 2}
+    - {fileID: 11400000, guid: 7653ed413a1be4c01a85fe06f5aaddad, type: 2}

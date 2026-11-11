@@ -1,0 +1,353 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: CoopLive_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: acc29a27946d647f1b95256b5abf99a5, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 288350208
+    m_Localized: Co-op Live
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350209
+    m_Localized: Public Room  ID <size=44>{0}</size>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350210
+    m_Localized: Private Room  ID <size=44>{0}</size>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350211
+    m_Localized: "Recruiting\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350212
+    m_Localized: "\u2605 Host"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350213
+    m_Localized: You
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350214
+    m_Localized: Kick
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350215
+    m_Localized: "Disconnected\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350216
+    m_Localized: Song picked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350217
+    m_Localized: "Picking\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350218
+    m_Localized: Ready
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350219
+    m_Localized: "Choosing\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350220
+    m_Localized: Sitting out
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350221
+    m_Localized: Loaded
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350222
+    m_Localized: Watching
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350223
+    m_Localized: Playing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350224
+    m_Localized: Waiting
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350225
+    m_Localized: Play online charts with other players (up to 5)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350226
+    m_Localized: "Requires an OurTaiko account (Options \u203A Extras \u203A Account)"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350227
+    m_Localized: Open Options
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350228
+    m_Localized: 'Free Room
+
+      <size=22>Join a public room</size>'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350229
+    m_Localized: 'Create Room
+
+      <size=22>Open a private room</size>'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350230
+    m_Localized: Enter the 5-digit Room ID
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350231
+    m_Localized: Join
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350232
+    m_Localized: The Room ID has 5 digits.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350233
+    m_Localized: (This build lacks HTTP/2 support and cannot play online)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350234
+    m_Localized: "Connecting\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350235
+    m_Localized: Can't reach the Co-op Live server.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350236
+    m_Localized: 'Free Room: starts 30 s after 2 players are in. The host can start sooner.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350237
+    m_Localized: 'Private room: share Room ID <b>{0}</b> with friends. When everyone is in, the host presses Confirm Members.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350238
+    m_Localized: You are the host.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350239
+    m_Localized: "Waiting for the host\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350240
+    m_Localized: '{0} / {1} players   {2}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350241
+    m_Localized: Confirm Members
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350242
+    m_Localized: Open to Public
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350243
+    m_Localized: Last Result
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350244
+    m_Localized: Song Select
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350245
+    m_Localized: One song is drawn from everyone's picks.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350246
+    m_Localized: Search title / artist / #number
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350247
+    m_Localized: Search
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350248
+    m_Localized: Couldn't load the chart list.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350249
+    m_Localized: No charts found.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350250
+    m_Localized: "#{0}  {1}  \xB7  Charter {2}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350251
+    m_Localized: Nothing picked yet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350252
+    m_Localized: Random
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350253
+    m_Localized: '<color=#FF77AA>Random</color>
+
+      <size=24>Leave it to chance</size>'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350254
+    m_Localized: Draw Result
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350255
+    m_Localized: Choose Difficulty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350256
+    m_Localized: Picked by {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350257
+    m_Localized: Ready
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350258
+    m_Localized: "Ready \u2713"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350259
+    m_Localized: "Playing\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350260
+    m_Localized: The live started before you finished loading. Join the next one!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350261
+    m_Localized: "You're sitting out this round. Waiting for it to end\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350262
+    m_Localized: "Waiting for the others\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350263
+    m_Localized: "Preparing\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350264
+    m_Localized: "Fetching the chart\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350265
+    m_Localized: Downloading chart {0}%
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350266
+    m_Localized: The chart has been deleted.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350267
+    m_Localized: Cancelled.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350268
+    m_Localized: Couldn't load the chart.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350269
+    m_Localized: "Waiting for the others to load\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350270
+    m_Localized: This community server doesn't offer Co-op Live.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350271
+    m_Localized: Co-op Live has been updated. Please update the game.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350272
+    m_Localized: You're already in a room.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350273
+    m_Localized: "Sign in to your OurTaiko account first (Options \u203A Extras)."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350274
+    m_Localized: Sign in to your OurTaiko account first.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350275
+    m_Localized: Connecting to the Co-op Live server timed out.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350276
+    m_Localized: The server closed the connection.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350277
+    m_Localized: Lost the connection to the Co-op Live server.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350278
+    m_Localized: This build has no HTTP/2 support (YetAnotherHttpHandler) and can't connect to Co-op Live.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350279
+    m_Localized: You left the room.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350280
+    m_Localized: Reconnected.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350281
+    m_Localized: Hello!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350282
+    m_Localized: Thanks!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350283
+    m_Localized: Good game!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350284
+    m_Localized: Nice!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350285
+    m_Localized: Let's do it!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350286
+    m_Localized: One more!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350287
+    m_Localized: Great!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350288
+    m_Localized: Sorry!
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -14,6 +15,8 @@ namespace Sekai.CustomMusicScoreManager
 {
 	public static class CustomMusicScoreManagerService
 	{
+		private const string Table = "ChartManager";
+
 		private const string ExportDirectoryName = "Exports";
 
 		private const int JacketTextureSize = 740;
@@ -78,8 +81,8 @@ namespace Sekai.CustomMusicScoreManager
 			CustomMusicScoreManifest manifest = new CustomMusicScoreManifest
 			{
 				id = CustomMusicScoreStorage.GenerateShortId(),
-				title = "未命名",
-				scoreTitle = "未命名谱面",
+				title = L10n.Get(Table, "new.title"),
+				scoreTitle = L10n.Get(Table, "new.scoreTitle"),
 				noteDesigner = DefaultNoteDesigner(),
 				composer = string.Empty,
 				lyricist = string.Empty,
@@ -114,7 +117,9 @@ namespace Sekai.CustomMusicScoreManager
 
 			CustomMusicScoreManifest manifest = CloneManifest(source.Manifest);
 			manifest.id = CustomMusicScoreStorage.GenerateShortId();
-			manifest.scoreTitle = string.IsNullOrWhiteSpace(manifest.scoreTitle) ? "副本" : manifest.scoreTitle + " 副本";
+			manifest.scoreTitle = string.IsNullOrWhiteSpace(manifest.scoreTitle)
+				? L10n.Get(Table, "duplicate.title")
+				: L10n.Format(Table, "duplicate.titleSuffix", manifest.scoreTitle);
 			manifest.Normalize();
 
 			string destination = GetUniqueDirectory(Path.Combine(CustomMusicScoreStorage.RootDirectory, CustomMusicScoreStorage.CreateFolderName(manifest)));
@@ -318,7 +323,7 @@ namespace Sekai.CustomMusicScoreManager
 			string extension = Path.GetExtension(sourcePath);
 			if (string.IsNullOrEmpty(extension) || !ScoreExtensions.Contains(extension))
 			{
-				throw new InvalidOperationException("不支持的谱面文件扩展名：" + extension);
+				throw new InvalidOperationException(L10n.Format(Table, "import.unsupportedScoreExtension", extension));
 			}
 
 			Directory.CreateDirectory(entry.RootDirectory);
@@ -355,7 +360,11 @@ namespace Sekai.CustomMusicScoreManager
 						float fillerSec = -waveOffset;
 						if (fillerSec < 0f)
 						{
-							warning = $"#WAVEOFFSET {waveOffset:0.###} 表示谱面比音频早开始 {-fillerSec:0.###} 秒，偏移不能为负，已设为 0。";
+							warning = L10n.Format(
+								Table,
+								"import.negativeWaveOffset",
+								waveOffset.ToString("0.###", CultureInfo.InvariantCulture),
+								(-fillerSec).ToString("0.###", CultureInfo.InvariantCulture));
 							fillerSec = 0f;
 						}
 						manifest.fillerSec = fillerSec;
@@ -478,7 +487,7 @@ namespace Sekai.CustomMusicScoreManager
 			string extension = ResolveSupportedExtension(sourcePath, allowedExtensions);
 			if (string.IsNullOrEmpty(extension) || !allowedExtensions.Contains(extension))
 			{
-				throw new InvalidOperationException("不支持的文件扩展名：" + extension);
+				throw new InvalidOperationException(L10n.Format(Table, "import.unsupportedExtension", extension));
 			}
 
 			Directory.CreateDirectory(entry.RootDirectory);
@@ -526,7 +535,7 @@ namespace Sekai.CustomMusicScoreManager
 			if (!sourceTexture.LoadImage(sourceBytes))
 			{
 				UnityEngine.Object.Destroy(sourceTexture);
-				throw new InvalidOperationException("不支持的封面图片数据。");
+				throw new InvalidOperationException(L10n.Get(Table, "import.unsupportedJacketData"));
 			}
 
 			RenderTexture previous = RenderTexture.active;

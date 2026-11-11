@@ -1,0 +1,535 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: ChartManager_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: af4aae2454c714d1881b4822fe745c57, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 279961600
+    m_Localized: Local Charts
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961601
+    m_Localized: New Chart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961602
+    m_Localized: 'No charts yet.
+
+      Tap New Chart at the top right to create or import one.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961603
+    m_Localized: No charts match this filter.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961604
+    m_Localized: All
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961605
+    m_Localized: Choose how to create a chart.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961606
+    m_Localized: Import Chart (ZIP / Folder)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961607
+    m_Localized: Start from Scratch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961608
+    m_Localized: Edit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961609
+    m_Localized: Play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961610
+    m_Localized: Auto
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961611
+    m_Localized: Export ZIP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961612
+    m_Localized: Copy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961613
+    m_Localized: Delete
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961614
+    m_Localized: Pick a chart on the left, or create a new one.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961615
+    m_Localized: Best Result
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961616
+    m_Localized: No plays yet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961617
+    m_Localized: <color=#8F8BB8>(No description)</color>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961618
+    m_Localized: '<color=#9C98C8>Charter</color>  {0}
+
+      <color=#9C98C8>Updated</color>  {1}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961619
+    m_Localized: Overview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961620
+    m_Localized: Edit Info
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961621
+    m_Localized: Song Title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961622
+    m_Localized: Chart Title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961623
+    m_Localized: Charter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961624
+    m_Localized: Composer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961625
+    m_Localized: Lyricist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961626
+    m_Localized: Arranger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961627
+    m_Localized: Vocals
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961628
+    m_Localized: Collab Label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961629
+    m_Localized: Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961630
+    m_Localized: Difficulty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961631
+    m_Localized: Level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961632
+    m_Localized: Edit Length (s)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961633
+    m_Localized: Offset (s)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155904
+    m_Localized: Audio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155905
+    m_Localized: Jacket
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155906
+    m_Localized: Chart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155907
+    m_Localized: Select
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155908
+    m_Localized: Save Info
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155909
+    m_Localized: Tap Save Info after editing. It also saves automatically before playing.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155910
+    m_Localized: Upload
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155911
+    m_Localized: Export SUS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155912
+    m_Localized: No Info
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155913
+    m_Localized: No Chart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155914
+    m_Localized: No Audio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155915
+    m_Localized: No Jacket
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155916
+    m_Localized: Ready
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155917
+    m_Localized: Loaded {0} charts.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155918
+    m_Localized: Chart created.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155919
+    m_Localized: Chart duplicated.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155920
+    m_Localized: Deleted {0}.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155921
+    m_Localized: Couldn't load the chart.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155922
+    m_Localized: Starting auto play...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155923
+    m_Localized: Starting play...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155924
+    m_Localized: The file picker is already open.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155925
+    m_Localized: 'Delete this chart?
+
+
+      {0}
+
+
+      This can''t be undone.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155926
+    m_Localized: Choose where to export...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155927
+    m_Localized: Export Custom Chart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155928
+    m_Localized: Export SUS Chart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155929
+    m_Localized: 'Exported: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155930
+    m_Localized: 'Can''t export files on this platform; saved to: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155931
+    m_Localized: Export failed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155932
+    m_Localized: 'Export failed: no chart data.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155933
+    m_Localized: Export cancelled.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155934
+    m_Localized: Export was cancelled or failed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155935
+    m_Localized: Import Custom Chart ZIP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155936
+    m_Localized: Custom chart ZIP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155937
+    m_Localized: Import Custom Chart Folder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155938
+    m_Localized: Import was cancelled or failed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155939
+    m_Localized: Importing isn't supported on this platform. Copy the chart in manually.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155940
+    m_Localized: Chart imported.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155941
+    m_Localized: Import failed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155942
+    m_Localized: Import Audio File
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155943
+    m_Localized: Audio import cancelled.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155944
+    m_Localized: Audio files
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155945
+    m_Localized: 'Audio imported: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155946
+    m_Localized: Importing audio isn't supported on this platform. Copy it in manually.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155947
+    m_Localized: Import Jacket Image
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155948
+    m_Localized: Jacket import cancelled.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155949
+    m_Localized: Image files
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155950
+    m_Localized: 'Jacket imported: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155951
+    m_Localized: Importing jackets isn't supported on this platform. Copy it in manually.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155952
+    m_Localized: Import Chart File
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155953
+    m_Localized: Chart import cancelled.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155954
+    m_Localized: Chart files
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155955
+    m_Localized: 'Chart imported: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155956
+    m_Localized: Importing charts isn't supported on this platform. Copy it in manually.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155957
+    m_Localized: Import 2DMV Video
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155958
+    m_Localized: 2DMV import cancelled.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155959
+    m_Localized: MP4 video
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155960
+    m_Localized: '2DMV imported: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155961
+    m_Localized: Importing 2DMV videos isn't supported on this platform. Copy it in manually.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155962
+    m_Localized: 'Unsupported chart file extension: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155963
+    m_Localized: 'Unsupported file extension: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155964
+    m_Localized: Unsupported jacket image data.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155965
+    m_Localized: '#WAVEOFFSET {0} starts the chart {1} s before the audio. The offset can''t be negative, so it was set to 0.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155966
+    m_Localized: Info saved.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155967
+    m_Localized: Couldn't save the info.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155968
+    m_Localized: "Sign in with your OurTaiko account before uploading: top-right menu \u203A Extras \u203A Account."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155969
+    m_Localized: "Checking the online chart\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155970
+    m_Localized: 'Upload failed: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155971
+    m_Localized: 'Packing failed: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155972
+    m_Localized: 'Update "{0}" (#{1}) on Sekai Fanmade with this version?
+
+      Its description, tags, score and comments are kept.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155973
+    m_Localized: '"{0}" was downloaded from Sekai Fanmade (charter: {1}) and goes up as a new chart.
+
+      Before remixing someone else''s chart, check that they allow it.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155974
+    m_Localized: 'Upload "{0}" to Sekai Fanmade?
+
+      Anyone can download it. Only upload what you have the right to share.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155975
+    m_Localized: Upload cancelled.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155976
+    m_Localized: "Packing the chart\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155977
+    m_Localized: "The server is checking the chart\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155978
+    m_Localized: "Uploading {0}%\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155979
+    m_Localized: Uploaded to Sekai Fanmade.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155980
+    m_Localized: Uploaded to Sekai Fanmade (#{0}).
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155981
+    m_Localized: Updated the chart on Sekai Fanmade.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155982
+    m_Localized: Updated the chart on Sekai Fanmade (#{0}).
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155983
+    m_Localized: Chart file not found.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155984
+    m_Localized: Audio file not found.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155985
+    m_Localized: Couldn't load the chart file.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155986
+    m_Localized: The chart has no notes to play.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155987
+    m_Localized: Loading audio...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155988
+    m_Localized: Couldn't load the audio file.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155989
+    m_Localized: Couldn't prepare the live.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155990
+    m_Localized: Untitled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155991
+    m_Localized: Untitled Chart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155992
+    m_Localized: Copy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155993
+    m_Localized: '{0} (Copy)'
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

@@ -14,6 +14,8 @@ namespace Sekai.Community
 	/// </summary>
 	public sealed class CommunityLoginPanel : MonoBehaviour
 	{
+		private const string Table = "Community";
+
 		[SerializeField]
 		private TextMeshProUGUI titleText;
 
@@ -109,7 +111,7 @@ namespace Sekai.Community
 		private void Refresh(string message = null)
 		{
 			bool signedIn = CommunityAccount.IsSignedIn;
-			titleText.text = signedIn ? "OurTaiko 账号" : "登录 OurTaiko 账号";
+			titleText.text = signedIn ? L10n.Get(Table, "login.titleSignedIn") : L10n.Get(Table, "login.titleSignIn");
 			signInGroup.SetActive(!signedIn);
 			signedInGroup.SetActive(signedIn);
 			if (signedIn)
@@ -119,7 +121,7 @@ namespace Sekai.Community
 					? CommunityAccount.Nickname
 					: CommunityAccount.Nickname + "\n<size=70%><color=#9C98C8>@" + username + "</color></size>";
 			}
-			SetStatus(message ?? (signedIn ? string.Empty : "登录后可以给谱面赞踩，并把谱面加入マイリスト。"));
+			SetStatus(message ?? (signedIn ? string.Empty : L10n.Get(Table, "login.hint")));
 			SetBusy(false);
 		}
 
@@ -132,12 +134,12 @@ namespace Sekai.Community
 			string username = usernameInput.text.Trim();
 			if (username.Length == 0 || passwordInput.text.Length == 0)
 			{
-				SetStatus("请输入用户名和密码。", true);
+				SetStatus(L10n.Get(Table, "login.enterCredentials"), true);
 				return;
 			}
 
 			SetBusy(true);
-			SetStatus("正在登录…");
+			SetStatus(L10n.Get(Table, "login.signingIn"));
 			try
 			{
 				await CommunityAccount.LoginAsync(username, passwordInput.text, _busy.Token);
@@ -174,7 +176,7 @@ namespace Sekai.Community
 			{
 				SetBusy(false);
 			}
-			Refresh("已退出登录。");
+			Refresh(L10n.Get(Table, "login.signedOut"));
 		}
 
 		private async UniTaskVoid OpenAccountPageAsync(Func<CommunityMeta, string> url)
@@ -207,7 +209,7 @@ namespace Sekai.Community
 			passwordInput.interactable = !busy;
 			if (loginLabel != null)
 			{
-				loginLabel.text = busy ? "登录中…" : "登录";
+				loginLabel.text = busy ? L10n.Get(Table, "login.buttonBusy") : L10n.Get(Table, "login.button");
 			}
 			foreach (Button button in new[] { loginButton, logoutButton })
 			{

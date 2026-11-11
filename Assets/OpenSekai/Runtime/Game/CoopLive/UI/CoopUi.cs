@@ -253,10 +253,10 @@ namespace Sekai.CoopLive
 			header.rectTransform.pivot = new Vector2(0.5f, 1);
 			header.rectTransform.offsetMin = new Vector2(0, -132);
 			header.rectTransform.offsetMax = Vector2.zero;
-			Button back = Button(header.transform, "Back", "‹ 返回", onBack, Color.white, Ink, 28);
+			Button back = Button(header.transform, "Back", "‹ " + L10n.Get("Common", "back"), onBack, Color.white, Ink, 28);
 			UIClickSound.Add(back, SeType.Cancel);
 			back.GetComponent<RectTransform>().Place(new Vector2(0, 0.5f), new Vector2(34, 0), new Vector2(170, 72));
-			title = Text(header.transform, "Title", "協力ライブ", 40, Color.white, true);
+			title = Text(header.transform, "Title", L10n.Get("CoopLive", "header.title"), 40, Color.white, true);
 			title.rectTransform.Place(new Vector2(0, 0.5f), new Vector2(234, 0), new Vector2(900, 70));
 			subtitle = Text(header.transform, "RoomCode", string.Empty, 32, new Color32(0x67, 0xDD, 0xCD, 0xFF), true, TextAlignmentOptions.Right);
 			subtitle.rectTransform.Place(new Vector2(1, 0.5f), new Vector2(-34, 0), new Vector2(800, 70));
@@ -274,10 +274,10 @@ namespace Sekai.CoopLive
 			bar.offsetMax = new Vector2(-24, 100);
 			HorizontalLayoutGroup stamps = Horizontal(bar.gameObject, 12);
 			stamps.childForceExpandWidth = true;
-			for (int i = 0; i < CoopStamps.Texts.Length; i++)
+			for (int i = 0; i < CoopStamps.Count; i++)
 			{
 				int id = i;
-				Button stamp = Button(bar, "Stamp" + i, CoopStamps.Texts[i], () => CoopSession.SendStamp(id), Panel, Ink, 24);
+				Button stamp = Button(bar, "Stamp" + i, CoopStamps.Text(i), () => CoopSession.SendStamp(id), Panel, Ink, 24);
 				Size(stamp, height: 80);
 			}
 			return bar;

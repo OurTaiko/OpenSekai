@@ -1059,6 +1059,7 @@ GameObject:
   - component: {fileID: 224722951815217645}
   - component: {fileID: 222924050743934937}
   - component: {fileID: 114215879266689626}
+  - component: {fileID: 7107524505354026598}
   m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
@@ -1189,6 +1190,20 @@ MonoBehaviour:
   wordingKey: 
   maxValueUpToAutoSize: 0
   enableWidthScaleFit: 0
+--- !u!114 &7107524505354026598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1587765826080250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bae688c7ffa6a457a978703e06e375ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.LocalizedText
+  table: Option
+  key: tab.live
 --- !u!1 &1589667821646929
 GameObject:
   m_ObjectHideFlags: 0
@@ -2604,6 +2619,7 @@ GameObject:
   - component: {fileID: 224328299215684997}
   - component: {fileID: 222633296557590524}
   - component: {fileID: 114132862189046193}
+  - component: {fileID: 2744078949577611554}
   m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
@@ -2734,6 +2750,20 @@ MonoBehaviour:
   wordingKey: 
   maxValueUpToAutoSize: 0
   enableWidthScaleFit: 0
+--- !u!114 &2744078949577611554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1969106005120503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bae688c7ffa6a457a978703e06e375ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.LocalizedText
+  table: Common
+  key: close
 --- !u!1 &1977153420339851
 GameObject:
   m_ObjectHideFlags: 0
@@ -2823,6 +2853,7 @@ GameObject:
   - component: {fileID: 224574190619683098}
   - component: {fileID: 222552309709192268}
   - component: {fileID: 114571878917323452}
+  - component: {fileID: 1013730160136313823}
   m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
@@ -2953,6 +2984,20 @@ MonoBehaviour:
   wordingKey: 
   maxValueUpToAutoSize: 0
   enableWidthScaleFit: 0
+--- !u!114 &1013730160136313823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1985305603660343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bae688c7ffa6a457a978703e06e375ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.LocalizedText
+  table: Option
+  key: tab.volume
 --- !u!1 &571064048414362883
 GameObject:
   m_ObjectHideFlags: 0
@@ -3450,6 +3495,7 @@ GameObject:
   - component: {fileID: 6975479258685731504}
   - component: {fileID: 5124656310497293628}
   - component: {fileID: 5255404156234599779}
+  - component: {fileID: 1653282950633414071}
   m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
@@ -3580,6 +3626,20 @@ MonoBehaviour:
   wordingKey: 
   maxValueUpToAutoSize: 0
   enableWidthScaleFit: 0
+--- !u!114 &1653282950633414071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6224298145768162151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bae688c7ffa6a457a978703e06e375ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.LocalizedText
+  table: Option
+  key: tab.additionals
 --- !u!1 &6343558546382089844
 GameObject:
   m_ObjectHideFlags: 0
@@ -3843,6 +3903,7 @@ GameObject:
   - component: {fileID: 3882514276309034868}
   - component: {fileID: 5766758217565459632}
   - component: {fileID: 2982412468122393033}
+  - component: {fileID: 6390296061228126356}
   m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
@@ -3973,6 +4034,20 @@ MonoBehaviour:
   wordingKey: 
   maxValueUpToAutoSize: 0
   enableWidthScaleFit: 0
+--- !u!114 &6390296061228126356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7667660486127736716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bae688c7ffa6a457a978703e06e375ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OpenSekai.Game::Sekai.LocalizedText
+  table: Option
+  key: tab.system
 --- !u!1 &8011219531988551476
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,0 +1,109 @@
+key,zh-Hans,ja,en,comment
+home.title,首页,ホーム,Home,Home screen header
+home.myCharts,自制谱管理,自作譜面管理,My Charts,Home card: local chart manager
+home.coop,协力Live,協力ライブ,Co-op Live,Home card: co-op live
+home.onlineCharts,在线谱面,オンライン譜面,Online Charts,Home card: community chart browser
+tab.recommended,推荐,おすすめ,Featured,Online charts tab (Reddit-style hot ranking); also list header
+tab.ranking,排行榜,ランキング,Ranking,Online charts tab
+tab.new,最新,新着,New,"Online charts tab, list header and search sort option (newest first)"
+tab.search,搜索,検索,Search,"Online charts tab, search button"
+tab.myList,我的列表,マイリスト,My List,Online charts: bookmarked charts button and list header
+ranking.daily,每日,デイリー,Daily,Ranking period toggle: plays in the last 24 hours
+ranking.total,综合,総合,Overall,Ranking period toggle: all-time score
+list.searchResults,搜索结果,検索結果,Results,List header after a search
+list.emptyMyList,我的列表还是空的。\n在谱面详情里点「收藏」加入。,マイリストはまだ空です。\n譜面の詳細で「登録」を押すと追加されます。,My List is empty.\nTap “Add” in a chart's details to add it.,Empty My List; quotes the bookmark button (action.bookmark)
+list.emptySearch,没有符合条件的谱面。,条件に合う譜面がありません。,No charts match your search.,Empty search results
+list.empty,还没有谱面。,譜面がまだありません。,No charts yet.,Empty chart list
+list.loadFailed,无法加载谱面。,譜面を読み込めませんでした。,Could not load charts.,Chart list failed to load
+badge.hasParent,有父谱面,親譜面あり,Has Parent,Badge: chart derived from another chart
+badge.derivativeAllowed,允许二创,二次利用OK,Remix OK,Badge: others may make derived charts from it
+badge.downloaded,已下载,ダウンロード済み,Downloaded,Badge: chart is installed locally
+badge.updateAvailable,有更新,更新あり,Update available,Badge: a newer revision is on the site
+search.backToForm,← 修改条件,← 条件を変更,← Edit Search,Button back to the search form
+search.byId,谱面ID搜索,譜面ID検索,Search by ID,Button and popup title: find a chart by its number
+search.idPlaceholder,谱面 ID（例如 12）,譜面ID（例：12）,Chart ID (e.g. 12),Placeholder of the chart ID field
+search.song,乐曲,楽曲,Song,Search form: text field label
+search.textPlaceholder,从曲名・创作者名・谱师名搜索,曲名・クリエイター名・譜面作者名から探す,"Song, creator or charter name",Search form: text field placeholder
+search.tag,标签,タグ,Tag,Search form: tag field label
+search.tagPlaceholder,从标签搜索,タグから探す,Search by tag,Search form: tag field placeholder
+search.commonTags,常用：{0},よく使われるタグ：{0},Popular: {0},Hint under the tag field; {0} = tag list
+search.tagSeparator,、,、,", ",Separator between tags in search.commonTags (en has a trailing space)
+search.difficulty,难度,難易度,Difficulty,Search form: difficulty label
+search.all,全部,すべて,All,Search form: any difficulty
+search.sortBy,优先显示类别,優先表示カテゴリ,Sort By,Search form: sort label
+sort.popular,人气,人気,Popular,Search sort option
+sort.hard,高难度,高難易度,Hardest,Search sort option: highest level first
+sort.random,随机,ランダム,Random,Search sort option
+search.enterNumber,请输入谱面编号（数字）。,譜面IDを数字で入力してください。,Enter a chart number.,ID search: input is not a number
+search.notFound,找不到谱面 #{0}。,譜面 #{0} が見つかりません。,Chart #{0} not found.,ID search: {0} = chart number
+detail.emptyHint,选择左侧的谱面。,左のリストから譜面を選んでください。,Choose a chart on the left.,Chart window when nothing is selected
+detail.charter,谱师,譜面作者,Charter,Chart window label before the uploader's name
+detail.creditTitle,曲名,曲名,Song,Credit label: song title
+detail.creditSinger,歌手,ボーカル,Vocals,Credit label: singer
+detail.creditComposer,作曲,作曲,Music,Credit label: composer
+detail.creditLyricist,作词,作詞,Lyrics,Credit label: lyricist
+detail.creditArranger,编曲,編曲,Arrangement,Credit label: arranger
+detail.creditTags,标签,タグ,Tags,Credit label: tags
+detail.info,谱面信息,譜面情報,Chart Info,Chart window: info box header
+detail.plays,游玩,プレイ数,Plays,Info box: play count
+detail.votes,得分,評価,Votes,Info box: upvotes minus downvotes
+detail.updated,更新,更新日,Updated,Info box: last update date
+detail.size,大小,サイズ,Size,Info box: download size
+detail.noDescription,（没有简介）,（説明はありません）,(No description),Chart without a description
+action.parent,父谱面,親譜面,Parent,Button: open the chart this one was derived from
+action.webPage,网页,Webページ,Web Page,Button: open the chart's page on the site
+action.bookmark,收藏,登録,Add,Button: add to My List
+action.bookmarked,已收藏,登録中,Added,Button: chart is in My List (tap to remove)
+action.play,游玩,プレイ,Play,Button: play the downloaded chart
+action.update,更新,更新,Update,Button: download the newer revision
+action.download,下载,ダウンロード,Download,Button: download the chart
+preview.play,试听,試聴,Preview,Button: play a 20 s audio preview
+preview.stop,停止,停止,Stop,Button: stop the audio preview
+preview.failed,无法播放试听。,試聴を再生できませんでした。,Could not play the preview.,Audio preview failed
+signIn.forMyList,登录后才能使用我的列表。,マイリストを使うにはログインが必要です。,Sign in to use My List.,Sign-in panel reason
+signIn.forUpvote,登录后才能赞。,高評価するにはログインが必要です。,Sign in to upvote.,Sign-in panel reason
+signIn.forDownvote,登录后才能踩。,低評価するにはログインが必要です。,Sign in to downvote.,Sign-in panel reason
+signIn.forBookmark,登录后才能加入我的列表。,マイリストに登録するにはログインが必要です。,Sign in to add charts to My List.,Sign-in panel reason
+bookmark.added,已加入我的列表。,マイリストに登録しました。,Added to My List.,Status line
+bookmark.removed,已从我的列表移除。,マイリストから削除しました。,Removed from My List.,Status line
+parent.gone,父谱面已经不在了。,親譜面はもう存在しません。,The parent chart no longer exists.,Status line
+parent.showing,正在显示父谱面「{0}」。,親譜面「{0}」を表示しています。,Showing the parent chart “{0}”.,Status line; {0} = chart title
+play.starting,正在开始游玩…,プレイを開始しています…,Starting…,Status line when a downloaded chart starts
+download.progress,正在下载 {0}…,{0} をダウンロード中…,Downloading {0}…,Status line; {0} = chart title
+download.done,已下载，可以在自制谱管理里找到它。,ダウンロードしました。自作譜面管理から遊べます。,Downloaded. You can also find it in My Charts.,Status line after a download
+login.titleSignedIn,OurTaiko 账号,OurTaiko アカウント,OurTaiko Account,Sign-in panel title when signed in
+login.titleSignIn,登录 OurTaiko 账号,OurTaiko アカウントでログイン,Sign In to OurTaiko,Sign-in panel title when signed out
+login.hint,登录后可以给谱面赞踩，并把谱面加入我的列表。,ログインすると、譜面の評価やマイリストへの登録ができます。,Sign in to vote on charts and add them to My List.,Sign-in panel default message
+login.enterCredentials,请输入用户名和密码。,ユーザー名とパスワードを入力してください。,Enter your username and password.,Sign-in panel error
+login.signingIn,正在登录…,ログイン中…,Signing in…,Sign-in panel status
+login.signedOut,已退出登录。,ログアウトしました。,Signed out.,Sign-in panel status
+login.button,登录,ログイン,Sign In,Sign-in button
+login.buttonBusy,登录中…,ログイン中…,Signing In…,Sign-in button while waiting
+login.username,用户名,ユーザー名,Username,Sign-in field label
+login.usernamePlaceholder,OurTaiko 账号的用户名,OurTaiko アカウントのユーザー名,OurTaiko username,Sign-in field placeholder
+login.password,密码,パスワード,Password,Sign-in field label
+login.passwordPlaceholder,密码只发送给 OurTaiko 账号中心,パスワードは OurTaiko アカウントセンターにのみ送信されます,Sent only to the OurTaiko account center,Password field placeholder
+login.forgot,忘记密码,パスワードを忘れた場合,Forgot Password,Link button to the SSO's password reset
+login.register,注册账号,アカウント登録,Register,Link button to the SSO's sign-up
+login.accountCenter,打开账号中心（昵称、头像、密码）,アカウントセンターを開く（ニックネーム・アイコン・パスワード）,"Open Account Center (nickname, avatar, password)",Signed-in panel: link button
+login.signOut,退出登录,ログアウト,Sign Out,Signed-in panel button
+error.responseInvalid,服务器返回的数据无法识别。,サーバーから受け取ったデータを読み取れませんでした。,The server sent data that could not be read.,Error message
+error.responseTooLarge,服务器返回的数据太大。,サーバーから受け取ったデータが大きすぎます。,The server's response is too large.,Error message
+error.network,无法连接到服务器，请检查网络。（{0}）,サーバーに接続できませんでした。通信環境を確認してください。（{0}）,Could not connect to the server. Check your connection. ({0}),Error message; {0} = transport error text
+error.http401,登录已失效，请重新登录。,ログインが無効になりました。もう一度ログインしてください。,Your sign-in is no longer valid. Please sign in again.,Error message (HTTP 401 without a server message)
+error.http403,没有权限。,権限がありません。,You don't have permission.,Error message (HTTP 403)
+error.http404,找不到这份谱面。,譜面が見つかりません。,Chart not found.,Error message (HTTP 404)
+error.http429,操作太频繁，请稍后再试。,操作が多すぎます。しばらくしてからもう一度お試しください。,Too many requests. Please try again later.,Error message (HTTP 429)
+error.http5xx,服务器暂时不可用，请稍后再试。,サーバーが一時的に利用できません。しばらくしてからもう一度お試しください。,The server is temporarily unavailable. Please try again later.,Error message (HTTP 5xx)
+error.httpOther,请求失败（HTTP {0}）。,リクエストに失敗しました（HTTP {0}）。,Request failed (HTTP {0}).,Error message; {0} = HTTP status
+error.loginInvalid,用户名或密码错误，或账号还没有激活。,ユーザー名またはパスワードが違うか、アカウントが有効化されていません。,"Wrong username or password, or the account is not activated yet.",Sign-in error
+error.loginRateLimited,登录尝试太多次，请过一会儿再试。,ログインの試行回数が多すぎます。しばらくしてからもう一度お試しください。,Too many sign-in attempts. Please try again later.,Sign-in error
+error.ssoResponseInvalid,账号中心返回的数据无法识别。,アカウントセンターから受け取ったデータを読み取れませんでした。,The account center sent data that could not be read.,Sign-in error
+error.signInExpired,登录已过期，请重新登录。,ログインの有効期限が切れました。もう一度ログインしてください。,Your sign-in has expired. Please sign in again.,Error message and sign-in panel reason
+error.signInRequired,请先登录 OurTaiko 账号。,先に OurTaiko アカウントでログインしてください。,Please sign in with your OurTaiko account first.,Error message
+error.packagePending,这份谱面正在整理，请稍后再试。,この譜面は準備中です。しばらくしてからもう一度お試しください。,This chart is still being prepared. Please try again later.,Download error
+error.packageInvalid,谱面包里有不正确的文件名。,譜面パッケージに不正なファイル名が含まれています。,The chart package contains an invalid file name.,Download error
+error.importFailed,谱面无法导入。,譜面をインポートできませんでした。,The chart could not be imported.,Download error
+error.filesGone,这份谱面的文件已经不在了。,この譜面のファイルはもう存在しません。,This chart's files are no longer available.,Download error (CDN 404)
+error.downloadFailed,下载失败：{0},ダウンロードに失敗しました：{0},Download failed: {0},Download error; {0} = transport error text
+error.downloadIncomplete,{0} 下载不完整，请重试。,{0} のダウンロードが完了しませんでした。もう一度お試しください。,{0} did not download completely. Please try again.,Download error; {0} = file name

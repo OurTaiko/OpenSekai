@@ -1,0 +1,447 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Wording_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 203fad070bdbc4f939ef41a3a3d4af5d, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 275767469
+    m_Localized: 'Changing the BPM moves some data outside the audio''s length.
+
+      Delete that data and change the BPM?'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 275767487
+    m_Localized: Changes the BPM at the selected timing.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 275767489
+    m_Localized: Changes the scroll speed at the selected timing.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 275767491
+    m_Localized: Changes the chart's time signature at the selected timing.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 275767619
+    m_Localized: "Lyrics: {0}\u3000Music: {1}\u3000Arrangement: {2}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 275767635
+    m_Localized: 'Sets how many grid divisions a bar has.
+
+      Counted in quarter notes.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 275767636
+    m_Localized: Downloading data
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961674
+    m_Localized: Invitation accepted.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961687
+    m_Localized: Invitation declined.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961811
+    m_Localized: "\u203BUse a stable connection. Loading may take a while depending on your connection."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961856
+    m_Localized: 'This chart cannot be posted: it differs too little from the chart it is based on.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961860
+    m_Localized: Exceeds the maximum combo count ({1}/{0})
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961861
+    m_Localized: Below the minimum combo count ({1}/{0})
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961862
+    m_Localized: Not enough tap, flick and hold notes in total ({1}/{0})
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961911
+    m_Localized: 'Invalid note placement or time signature: the chart cannot be posted or test played.
+
+      Please fix the marked places.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961914
+    m_Localized: 'There are no notes after the playback start position,
+
+      so the test play cannot start.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961919
+    m_Localized: 'Make the current position the start of bar 1?
+
+      (Audio at {0} s; now {1} s)
+
+      Notes stay on their bars, so their position
+
+      against the audio changes. Continue?'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279961920
+    m_Localized: End the test play?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279962152
+    m_Localized: 'The live is paused.
+
+      Return to the live?'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279962153
+    m_Localized: 'Quit the live and return home.
+
+      Are you sure?'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155904
+    m_Localized: Retry the live from the start?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156027
+    m_Localized: '{0} to go'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156090
+    m_Localized: Vo. {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156098
+    m_Localized: '{0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156138
+    m_Localized: Starting the test play.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156280
+    m_Localized: Light
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156281
+    m_Localized: 2DMV
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156286
+    m_Localized: 3DMV
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156296
+    m_Localized: Retire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156400
+    m_Localized: Auto Play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156412
+    m_Localized: Back to Editing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156413
+    m_Localized: Back to Test Play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156415
+    m_Localized: Time Signature
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156416
+    m_Localized: Base Combo Count
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156503
+    m_Localized: Cancel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350241
+    m_Localized: Change
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350242
+    m_Localized: Change BPM
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350246
+    m_Localized: Change Speed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350248
+    m_Localized: Change from Base Chart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350249
+    m_Localized: Change Time Signature
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350332
+    m_Localized: Close
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350466
+    m_Localized: Copy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350498
+    m_Localized: Critical
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350510
+    m_Localized: Custom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350555
+    m_Localized: Confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350570
+    m_Localized: Delete
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350668
+    m_Localized: Estimated Difficulty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350677
+    m_Localized: Exchange
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350698
+    m_Localized: EX
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350769
+    m_Localized: Flick
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350807
+    m_Localized: Friend request accepted.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288350808
+    m_Localized: Friend request declined.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544516
+    m_Localized: From Start Position
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544616
+    m_Localized: Grid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544657
+    m_Localized: Home
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544690
+    m_Localized: How to Use
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544710
+    m_Localized: '-'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544711
+    m_Localized: Middle Note
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544835
+    m_Localized: Hold Note
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544902
+    m_Localized: Mirror
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544909
+    m_Localized: Mission Complete
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544946
+    m_Localized: Too many guide notes drawn within a short time
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544947
+    m_Localized: No judged notes for 10 seconds or more
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544948
+    m_Localized: Notes overlap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544949
+    m_Localized: Too many hold notes drawn within a short time
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544950
+    m_Localized: '{1} or more notes within {0} seconds'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544951
+    m_Localized: A time signature is not at the start of a bar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544954
+    m_Localized: Play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544990
+    m_Localized: Quit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544995
+    m_Localized: Again
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544998
+    m_Localized: Save Draft
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292544999
+    m_Localized: Make This Bar 1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292545006
+    m_Localized: NOT FOUND
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738821
+    m_Localized: Note Count
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738825
+    m_Localized: Note Count
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738870
+    m_Localized: OFF
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738874
+    m_Localized: OK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738881
+    m_Localized: ON
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738899
+    m_Localized: Options
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738910
+    m_Localized: Original MV
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738919
+    m_Localized: Paid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738966
+    m_Localized: Player ID
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738992
+    m_Localized: Post
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296739058
+    m_Localized: 1/{0} notes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296739059
+    m_Localized: 1/{0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296739064
+    m_Localized: Rank
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296739133
+    m_Localized: Deleting unneeded data
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296739139
+    m_Localized: Reset
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296739159
+    m_Localized: Retry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296739160
+    m_Localized: Back to Live
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296739179
+    m_Localized: Save
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296739236
+    m_Localized: Select Whole
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296739382
+    m_Localized: Start from Shown Position
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296739386
+    m_Localized: 'Paused.
+
+      Return to the test play?'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296739425
+    m_Localized: Tap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296739434
+    m_Localized: Test Play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296739435
+    m_Localized: Start Test Play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296739454
+    m_Localized: TIPS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296739480
+    m_Localized: Total Combo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296739517
+    m_Localized: Trace
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933150
+    m_Localized: Flip Vertically
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

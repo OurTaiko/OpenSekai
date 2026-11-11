@@ -3,7 +3,13 @@
     "rootNamespace": "OpenSekai.Editor",
     "references": [
         "GUID:0238dc1ec06841dfa94a5e77b9759c7e",
-        "MessagePack.Unity"
+        "MessagePack.Unity",
+        "Unity.Localization",
+        "Unity.Localization.Editor",
+        "Unity.Addressables",
+        "Unity.Addressables.Editor",
+        "Unity.ResourceManager",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [
         "Editor"

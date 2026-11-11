@@ -15,6 +15,8 @@ namespace Sekai.MusicScoreMaker.Common
 	/// </summary>
 	public static class MusicScoreSusExporter
 	{
+		private const string L10nTable = "ChartEditor";
+
 		public sealed class Metadata
 		{
 			public string Title;
@@ -61,7 +63,7 @@ namespace Sekai.MusicScoreMaker.Common
 			Result result = new Result();
 			if (data == null)
 			{
-				result.Warnings.Add("谱面数据为空。");
+				result.Warnings.Add(L10n.Get(L10nTable, "sus.empty"));
 				result.Text = string.Empty;
 				return result;
 			}
@@ -148,7 +150,7 @@ namespace Sekai.MusicScoreMaker.Common
 					int index = idByValue.Count + 1;
 					if (index >= 36 * 36)
 					{
-						warnings.Add("BPM 种类超过 SUS 上限，多出的 BPM 变化没有导出。");
+						warnings.Add(L10n.Get(L10nTable, "sus.tooManyBpms"));
 						break;
 					}
 					id = (Base36Chars[index / 36].ToString() + Base36Chars[index % 36]).ToUpperInvariant();
@@ -261,7 +263,7 @@ namespace Sekai.MusicScoreMaker.Common
 			}
 			if (droppedChildren > 0)
 			{
-				warnings.Add($"{droppedChildren} 个音符连在非长条音符后面，游戏里也不会出现，没有导出。");
+				warnings.Add(L10n.Format(L10nTable, "sus.droppedChildren", droppedChildren));
 			}
 
 			// The converter keys notes by (time, left lane), so notes stacked on the same tick and lane (say a slide
@@ -289,7 +291,7 @@ namespace Sekai.MusicScoreMaker.Common
 			}
 			if (overlapCount > 0)
 			{
-				warnings.Add($"有超过 {MaxSubTickSlot + 1} 个音符叠在同一时刻、同一起始轨道，多出的 {overlapCount} 个导回时会被合并。");
+				warnings.Add(L10n.Format(L10nTable, "sus.sameStartOverlap", MaxSubTickSlot + 1, overlapCount));
 			}
 
 			int unsupportedSingles = 0;
@@ -302,7 +304,7 @@ namespace Sekai.MusicScoreMaker.Common
 			}
 			if (unsupportedSingles > 0)
 			{
-				warnings.Add($"{unsupportedSingles} 个孤立的中继点没有导出。");
+				warnings.Add(L10n.Format(L10nTable, "sus.isolatedRelay", unsupportedSingles));
 			}
 
 			AddSlides(rows, slideChains, warnings);
@@ -366,7 +368,7 @@ namespace Sekai.MusicScoreMaker.Common
 
 		private static void AddSlides(RowSet rows, List<List<MusicScoreNoteBase>> chains, List<string> warnings)
 		{
-			Dictionary<List<MusicScoreNoteBase>, char> longNoByChain = AssignLongNos(chains, warnings, "长条");
+			Dictionary<List<MusicScoreNoteBase>, char> longNoByChain = AssignLongNos(chains, warnings, "sus.tooManyLongNotes");
 			foreach (List<MusicScoreNoteBase> chain in chains)
 			{
 				if (!longNoByChain.TryGetValue(chain, out char longNo))
@@ -423,7 +425,7 @@ namespace Sekai.MusicScoreMaker.Common
 		// away from every playable note (to stay plain), whichever gives the point's own look.
 		private static void AddGuides(RowSet rows, List<List<MusicScoreNoteBase>> chains, Dictionary<(long, int), MusicScoreNoteBase> playablePositions, Dictionary<(long, int), int> playableCounts, List<string> warnings)
 		{
-			Dictionary<List<MusicScoreNoteBase>, char> longNoByChain = AssignLongNos(chains, warnings, "引导线");
+			Dictionary<List<MusicScoreNoteBase>, char> longNoByChain = AssignLongNos(chains, warnings, "sus.tooManyGuides");
 			Dictionary<(long, int), HashSet<int>> usedGuideSlots = new Dictionary<(long, int), HashSet<int>>();
 			int lostStyleCount = 0;
 			int overlapCount = 0;
@@ -496,17 +498,17 @@ namespace Sekai.MusicScoreMaker.Common
 			}
 			if (lostStyleCount > 0)
 			{
-				warnings.Add($"{lostStyleCount} 个引导线节点的颜色或曲线没法用 SUS 表示，导回后可能不同。");
+				warnings.Add(L10n.Format(L10nTable, "sus.guideStyleLost", lostStyleCount));
 			}
 			if (overlapCount > 0)
 			{
-				warnings.Add($"{overlapCount} 个引导线节点和太多别的节点叠在一起，导回时会被合并。");
+				warnings.Add(L10n.Format(L10nTable, "sus.guideOverlap", overlapCount));
 			}
 		}
 
 		// SUS pairs long-note rows by a one-character id, so chains that overlap in time need different ids.
 		// An id is only reused after the previous chain using it has ended, strictly before the next one starts.
-		private static Dictionary<List<MusicScoreNoteBase>, char> AssignLongNos(List<List<MusicScoreNoteBase>> chains, List<string> warnings, string label)
+		private static Dictionary<List<MusicScoreNoteBase>, char> AssignLongNos(List<List<MusicScoreNoteBase>> chains, List<string> warnings, string overflowKey)
 		{
 			Dictionary<List<MusicScoreNoteBase>, char> result = new Dictionary<List<MusicScoreNoteBase>, char>();
 			long[] busyUntil = Enumerable.Repeat(long.MinValue, MaxLongNoCount).ToArray();
@@ -534,7 +536,7 @@ namespace Sekai.MusicScoreMaker.Common
 			}
 			if (skipped > 0)
 			{
-				warnings.Add($"同时存在的{label}超过 {MaxLongNoCount} 条，{skipped} 条没有导出。");
+				warnings.Add(L10n.Format(L10nTable, overflowKey, MaxLongNoCount, skipped));
 			}
 			return result;
 		}
@@ -720,7 +722,7 @@ namespace Sekai.MusicScoreMaker.Common
 				}
 				if (movedCount > 0)
 				{
-					warnings.Add($"{movedCount} 个拍号变化不在小节线上，已移到下一小节开头（音符时间不变）。");
+					warnings.Add(L10n.Format(L10nTable, "sus.timeSignatureMoved", movedCount));
 				}
 			}
 
@@ -864,11 +866,11 @@ namespace Sekai.MusicScoreMaker.Common
 
 				if (_outOfRangeCount > 0)
 				{
-					_warnings.Add($"{_outOfRangeCount} 个音符或事件超出 SUS 的 999 小节范围，没有导出。");
+					_warnings.Add(L10n.Format(L10nTable, "sus.outOfRange", _outOfRangeCount));
 				}
 				if (_collisionCount > 0)
 				{
-					_warnings.Add($"{_collisionCount} 个音符或事件和同类的另一个完全重叠，只导出了一个。");
+					_warnings.Add(L10n.Format(L10nTable, "sus.collision", _collisionCount));
 				}
 			}
 		}

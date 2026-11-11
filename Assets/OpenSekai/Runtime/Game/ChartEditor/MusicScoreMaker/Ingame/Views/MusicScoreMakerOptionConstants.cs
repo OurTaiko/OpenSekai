@@ -1,122 +1,127 @@
 namespace Sekai.MusicScoreMaker.Ingame.Views
 {
+	/// <summary>The editor option dialog's labels (the original's Japanese strings, now in the ChartEditor table).</summary>
 	public static class MusicScoreMakerOptionConstants
 	{
-		public const string SECTION_DISPLAY_SETTINGS = "表示設定";
+		private const string Table = "ChartEditor";
 
-		public const string SECTION_OPERATION_SETTINGS = "操作設定";
+		public static string SECTION_DISPLAY_SETTINGS => L10n.Get(Table, "option.section.display");
 
-		public const string SECTION_AUTO_SAVE_SETTINGS = "自動保存設定";
+		public static string SECTION_OPERATION_SETTINGS => L10n.Get(Table, "option.section.operation");
 
-		public const string SECTION_DISPLAY_LINE_SETTINGS = "表示線設定";
+		public static string SECTION_AUTO_SAVE_SETTINGS => L10n.Get(Table, "option.section.autoSave");
 
-		public const string SECTION_AUDIO_SETTINGS = "音声設定";
+		public static string SECTION_DISPLAY_LINE_SETTINGS => L10n.Get(Table, "option.section.displayLines");
 
-		public const string SECTION_CLOCK_MENU_SETTINGS = "クロックメニュー設定";
+		public static string SECTION_AUDIO_SETTINGS => L10n.Get(Table, "option.section.audio");
 
-		public const string SECTION_SYSTEM = "システム";
+		public static string SECTION_CLOCK_MENU_SETTINGS => L10n.Get(Table, "option.section.clockMenu");
 
-		public const string SETTING_ZOOM_TIMELINE_STEP = "時間軸拡大縮小ステップ値";
+		public static string SECTION_SYSTEM => L10n.Get(Table, "option.section.system");
 
-		public const string SETTING_ZOOM_TIMELINE_MAX = "時間軸拡大最大値";
+		public static string SETTING_ZOOM_TIMELINE_STEP => L10n.Get(Table, "option.zoomTimelineStep");
 
-		public const string SETTING_ZOOM_TIMELINE_MIN = "時間軸拡大最小値";
+		public static string SETTING_ZOOM_TIMELINE_MAX => L10n.Get(Table, "option.zoomTimelineMax");
 
-		public const string SETTING_SCORE_DISPLAY_SCALE_H = "譜面表示スケール（横）";
+		public static string SETTING_ZOOM_TIMELINE_MIN => L10n.Get(Table, "option.zoomTimelineMin");
 
-		public const string SETTING_SCORE_DISPLAY_SCALE_V = "譜面表示スケール（縦）";
+		public static string SETTING_SCORE_DISPLAY_SCALE_H => L10n.Get(Table, "option.scoreDisplayScaleH");
 
-		public const string SETTING_TOOL_WINDOW_CHILD_SCALE = "ツールウィンドウ子要素のスケール";
+		public static string SETTING_SCORE_DISPLAY_SCALE_V => L10n.Get(Table, "option.scoreDisplayScaleV");
 
-		public const string SETTING_LAYOUT_PATTERN = "レイアウトパターン";
+		public static string SETTING_TOOL_WINDOW_CHILD_SCALE => L10n.Get(Table, "option.toolWindowChildScale");
 
-		public const string SETTING_UNDO_STACK_LIMIT = "Undo履歴の最大数";
+		public static string SETTING_LAYOUT_PATTERN => L10n.Get(Table, "option.layoutPattern");
 
-		public const string SETTING_SHOW_FOCUS_TICKS_RATE = "表示範囲内の選択Ticks位置割合";
+		public static string SETTING_UNDO_STACK_LIMIT => L10n.Get(Table, "option.undoStackLimit");
 
-		public const string SETTING_TICKS_PER_SCROLL_STEP = "TICKS_PER_SCROLL_STEP";
+		public static string SETTING_SHOW_FOCUS_TICKS_RATE => L10n.Get(Table, "option.showFocusTicksRate");
 
-		public const string SETTING_ENABLE_SWIPE_SCROLL = "スワイプスクロール有効";
+		public static string SETTING_TICKS_PER_SCROLL_STEP => L10n.Get(Table, "option.ticksPerScrollStep");
 
-		public const string SETTING_AUTO_SAVE_ENABLED = "自動保存ON/OFF";
+		public static string SETTING_ENABLE_SWIPE_SCROLL => L10n.Get(Table, "option.enableSwipeScroll");
 
-		public const string SETTING_AUTO_SAVE_INTERVAL = "自動保存間隔（秒）";
+		public static string SETTING_AUTO_SAVE_ENABLED => L10n.Get(Table, "option.autoSaveEnabled");
 
-		public const string SETTING_SHOW_BAR_LINES = "小節線表示";
+		public static string SETTING_AUTO_SAVE_INTERVAL => L10n.Get(Table, "option.autoSaveInterval");
 
-		public const string SETTING_SHOW_BEAT_LINES = "拍線表示";
+		public static string SETTING_SHOW_BAR_LINES => L10n.Get(Table, "option.showBarLines");
 
-		public const string SETTING_SHOW_QUANTIZE_LINES = "分解能補助線表示";
+		public static string SETTING_SHOW_BEAT_LINES => L10n.Get(Table, "option.showBeatLines");
 
-		public const string SETTING_SHOW_WAVEFORM = "波形表示";
+		public static string SETTING_SHOW_QUANTIZE_LINES => L10n.Get(Table, "option.showQuantizeLines");
 
-		public const string SETTING_PLAY_MUSIC_SE_ENABLED = "楽曲再生時にSEを鳴らす";
+		public static string SETTING_SHOW_WAVEFORM => L10n.Get(Table, "option.showWaveform");
 
-		public const string SETTING_NOTE_EDGE_WIDTH = "ノーツ端判定幅";
+		public static string SETTING_PLAY_MUSIC_SE_ENABLED => L10n.Get(Table, "option.playMusicSe");
 
-		public const string SETTING_ENABLE_INVALID_PLACEMENT_CHECK = "不正配置チェックを有効化";
+		public static string SETTING_NOTE_EDGE_WIDTH => L10n.Get(Table, "option.noteEdgeWidth");
 
-		public const string SETTING_AREA_SELECT_PARTIAL_OVERLAP = "範囲選択で部分一致を許可";
+		public static string SETTING_ENABLE_INVALID_PLACEMENT_CHECK => L10n.Get(Table, "option.invalidPlacementCheck");
 
-		public const string SETTING_NOTE_Y_SCALE_START_THRESHOLD = "ノーツYスケール縮小開始閾値";
+		public static string SETTING_AREA_SELECT_PARTIAL_OVERLAP => L10n.Get(Table, "option.areaSelectPartialOverlap");
 
-		public const string SETTING_NOTE_Y_SCALE_END_THRESHOLD = "ノーツYスケール縮小終了閾値";
+		public static string SETTING_NOTE_Y_SCALE_START_THRESHOLD => L10n.Get(Table, "option.noteYScaleStartThreshold");
 
-		public const string SETTING_NOTE_Y_SCALE_MIN = "ノーツYスケール最小値";
+		public static string SETTING_NOTE_Y_SCALE_END_THRESHOLD => L10n.Get(Table, "option.noteYScaleEndThreshold");
 
-		public const string SETTING_DRAW_SMALLER_TICK_TO_BACK = "tick値が小さいノーツを奥に描画";
+		public static string SETTING_NOTE_Y_SCALE_MIN => L10n.Get(Table, "option.noteYScaleMin");
 
-		public const string SETTING_MAX_CLIPBOARD_CACHE_COUNT = "クリップボードキャッシュ最大数";
+		public static string SETTING_DRAW_SMALLER_TICK_TO_BACK => L10n.Get(Table, "option.drawSmallerTickToBack");
 
-		public const string SETTING_CLOCK_MENU_ADD_NORMAL_NOTE = "通常ノーツ追加";
+		public static string SETTING_MAX_CLIPBOARD_CACHE_COUNT => L10n.Get(Table, "option.maxClipboardCacheCount");
 
-		public const string SETTING_CLOCK_MENU_ADD_LONG_NOTE = "ロングノーツ追加";
+		public static string SETTING_CLOCK_MENU_ADD_NORMAL_NOTE => L10n.Get(Table, "option.clockMenu.addNormalNote");
 
-		public const string SETTING_CLOCK_MENU_ADD_FLICK_NOTE = "フリックノーツ追加";
+		public static string SETTING_CLOCK_MENU_ADD_LONG_NOTE => L10n.Get(Table, "option.clockMenu.addLongNote");
 
-		public const string SETTING_CLOCK_MENU_ADD_FRICTION_NOTE = "トレースノーツ追加";
+		public static string SETTING_CLOCK_MENU_ADD_FLICK_NOTE => L10n.Get(Table, "option.clockMenu.addFlickNote");
 
-		public const string SETTING_CLOCK_MENU_ADD_FRICTION_LONG_NOTE = "トレースロングノーツ追加";
+		public static string SETTING_CLOCK_MENU_ADD_FRICTION_NOTE => L10n.Get(Table, "option.clockMenu.addTraceNote");
 
-		public const string SETTING_CLOCK_MENU_ADD_FRICTION_FLICK_NOTE = "トレースフリックノーツ追加";
+		public static string SETTING_CLOCK_MENU_ADD_FRICTION_LONG_NOTE => L10n.Get(Table, "option.clockMenu.addTraceLongNote");
 
-		public const string SETTING_CLOCK_MENU_ADD_GUIDE_NOTE = "ガイドノーツ追加";
+		public static string SETTING_CLOCK_MENU_ADD_FRICTION_FLICK_NOTE => L10n.Get(Table, "option.clockMenu.addTraceFlickNote");
 
-		public const string SETTING_CLOCK_MENU_FLIP_HORIZONTALLY = "左右反転";
+		public static string SETTING_CLOCK_MENU_ADD_GUIDE_NOTE => L10n.Get(Table, "option.clockMenu.addGuideNote");
 
-		public const string SETTING_CLOCK_MENU_FLIP_VERTICALLY = "上下反転";
+		public static string SETTING_CLOCK_MENU_FLIP_HORIZONTALLY => L10n.Get(Table, "option.clockMenu.flipHorizontally");
 
-		public const string SETTING_CLOCK_MENU_COPY_NOTES = "コピー";
+		public static string SETTING_CLOCK_MENU_FLIP_VERTICALLY => L10n.Get(Table, "option.clockMenu.flipVertically");
 
-		public const string SETTING_CLOCK_MENU_DELETE_NOTE = "削除";
+		public static string SETTING_CLOCK_MENU_COPY_NOTES => L10n.Get(Table, "option.clockMenu.copyNotes");
 
-		public const string SETTING_CLOCK_MENU_EDIT_EVENT_DATA = "イベントデータ編集";
+		public static string SETTING_CLOCK_MENU_DELETE_NOTE => L10n.Get(Table, "option.clockMenu.deleteNote");
 
-		public const string SETTING_CLOCK_MENU_DELETE_EVENT_DATA = "イベントデータ削除";
+		public static string SETTING_CLOCK_MENU_EDIT_EVENT_DATA => L10n.Get(Table, "option.clockMenu.editEventData");
 
-		public const string SETTING_CLOCK_MENU_ADD_BPM = "BPM追加";
+		public static string SETTING_CLOCK_MENU_DELETE_EVENT_DATA => L10n.Get(Table, "option.clockMenu.deleteEventData");
 
-		public const string SETTING_CLOCK_MENU_ADD_TIME_SIGNATURE = "拍子追加";
+		public static string SETTING_CLOCK_MENU_ADD_BPM => L10n.Get(Table, "option.clockMenu.addBpm");
 
-		public const string SETTING_CLOCK_MENU_ADD_HIGH_SPEED = "速度追加";
+		public static string SETTING_CLOCK_MENU_ADD_TIME_SIGNATURE => L10n.Get(Table, "option.clockMenu.addTimeSignature");
 
-		public const string SETTING_CLOCK_MENU_PASTE = "ペースト";
+		public static string SETTING_CLOCK_MENU_ADD_HIGH_SPEED => L10n.Get(Table, "option.clockMenu.addHighSpeed");
 
-		public const string SECTION_CLOCK_MENU_SECTION_SETTINGS = "クロックメニューセクション表示設定";
+		public static string SETTING_CLOCK_MENU_PASTE => L10n.Get(Table, "option.clockMenu.paste");
 
-		public const string SETTING_CLOCK_MENU_SECTION_ADD_NOTE = "ノーツ追加セクションを表示";
+		public static string SECTION_CLOCK_MENU_SECTION_SETTINGS => L10n.Get(Table, "option.section.clockMenuSections");
 
-		public const string SETTING_CLOCK_MENU_SECTION_EDIT_NOTE = "ノーツ編集セクションを表示";
+		public static string SETTING_CLOCK_MENU_SECTION_ADD_NOTE => L10n.Get(Table, "option.clockMenuSection.addNote");
 
-		public const string SETTING_CLOCK_MENU_SECTION_EDIT_EVENT_DATA = "イベントデータ編集セクションを表示";
+		public static string SETTING_CLOCK_MENU_SECTION_EDIT_NOTE => L10n.Get(Table, "option.clockMenuSection.editNote");
 
-		public const string SETTING_CLOCK_MENU_SECTION_ADD_MUSIC_EVENT = "音楽イベント追加セクションを表示";
+		public static string SETTING_CLOCK_MENU_SECTION_EDIT_EVENT_DATA => L10n.Get(Table, "option.clockMenuSection.editEventData");
 
-		public const string SETTING_CLOCK_MENU_SECTION_PASTE = "ペーストセクションを表示";
+		public static string SETTING_CLOCK_MENU_SECTION_ADD_MUSIC_EVENT => L10n.Get(Table, "option.clockMenuSection.addMusicEvent");
 
-		public const string SETTING_RESET_SETTING_DATA = "設定データをリセット";
+		public static string SETTING_CLOCK_MENU_SECTION_PASTE => L10n.Get(Table, "option.clockMenuSection.paste");
 
-		public const string SETTING_OPTION_DIALOG = "オプションダイアログ";
+		public static string SETTING_RESET_SETTING_DATA => L10n.Get(Table, "option.resetSettingData");
+
+		public static string SETTING_CLEAR_CLIPBOARD_CACHE => L10n.Get(Table, "option.clearClipboardCache");
+
+		public static string SETTING_OPTION_DIALOG => L10n.Get(Table, "option.optionDialog");
 
 		public const string FORMAT_FLOAT_3 = "F3";
 
@@ -126,6 +131,6 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 
 		public const string TOGGLE_GROUP_LAYOUT_PATTERN = "layoutPattern";
 
-		public const string PATTERN_NAME_FORMAT = "パターン {0}";
+		public static string PATTERN_NAME_FORMAT => L10n.Get(Table, "option.layoutPatternName");
 	}
 }

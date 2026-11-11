@@ -472,7 +472,7 @@ namespace Sekai.CoopLive
 			scaler.matchWidthOrHeight = 1f;
 			_hud = (RectTransform)canvasGo.transform;
 
-			_waiting = CoopUi.Text(_hud, "Waiting", "等待其他成员加载…", 40, Color.white, true, TextAlignmentOptions.Center);
+			_waiting = CoopUi.Text(_hud, "Waiting", L10n.Get("CoopLive", "live.waitingForLoad"), 40, Color.white, true, TextAlignmentOptions.Center);
 			_waiting.rectTransform.Place(new Vector2(0.5f, 0.5f), new Vector2(0, -260), new Vector2(1200, 80));
 			_waiting.outlineWidth = 0.2f;
 			_waiting.outlineColor = Color.black;

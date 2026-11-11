@@ -252,7 +252,7 @@ namespace Sekai.MusicScoreMaker.Ingame.Views
 				UIElementInfoFactory.CreateText(MusicScoreMakerOptionConstants.SECTION_SYSTEM),
 				UIElementInfoFactory.CreateSlider(MusicScoreMakerOptionConstants.SETTING_MAX_CLIPBOARD_CACHE_COUNT, MusicScoreMakerSettingData.MIN_MAX_CLIPBOARD_CACHE_COUNT, MusicScoreMakerSettingData.MAX_MAX_CLIPBOARD_CACHE_COUNT, SliderValueType.Integer, MusicScoreMakerOptionConstants.FORMAT_INTEGER, () => MusicScoreMakerSettingsManager.MaxClipboardCacheCount, value => MusicScoreMakerSettingsManager.MaxClipboardCacheCount = Mathf.RoundToInt(value)),
 				UIElementInfoFactory.CreateButton(MusicScoreMakerOptionConstants.SETTING_RESET_SETTING_DATA, OnResetButtonClicked),
-				UIElementInfoFactory.CreateButton("クリップボードキャッシュ削除", OnClearClipboardButtonClicked)
+				UIElementInfoFactory.CreateButton(MusicScoreMakerOptionConstants.SETTING_CLEAR_CLIPBOARD_CACHE, OnClearClipboardButtonClicked)
 			});
 
 			return items.ToArray();

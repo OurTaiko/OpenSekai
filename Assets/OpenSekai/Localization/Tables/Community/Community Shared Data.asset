@@ -1,0 +1,460 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Community Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: Community
+  m_TableCollectionNameGuidString: c17d0eba571fd48468c25ec511cfc779
+  m_Entries:
+  - m_Id: 284155904
+    m_Key: home.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155905
+    m_Key: home.myCharts
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155906
+    m_Key: home.coop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155907
+    m_Key: home.onlineCharts
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155908
+    m_Key: tab.recommended
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155909
+    m_Key: tab.ranking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155910
+    m_Key: tab.new
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155911
+    m_Key: tab.search
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155912
+    m_Key: tab.myList
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155913
+    m_Key: ranking.daily
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155914
+    m_Key: ranking.total
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155915
+    m_Key: list.searchResults
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155916
+    m_Key: list.emptyMyList
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155917
+    m_Key: list.emptySearch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155918
+    m_Key: list.empty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155919
+    m_Key: list.loadFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155920
+    m_Key: badge.hasParent
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155921
+    m_Key: badge.derivativeAllowed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155922
+    m_Key: badge.downloaded
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155923
+    m_Key: badge.updateAvailable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155924
+    m_Key: search.backToForm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155925
+    m_Key: search.byId
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155926
+    m_Key: search.idPlaceholder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155927
+    m_Key: search.song
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155928
+    m_Key: search.textPlaceholder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155929
+    m_Key: search.tag
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155930
+    m_Key: search.tagPlaceholder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155931
+    m_Key: search.commonTags
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155932
+    m_Key: search.tagSeparator
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155933
+    m_Key: search.difficulty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155934
+    m_Key: search.all
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155935
+    m_Key: search.sortBy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155936
+    m_Key: sort.popular
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155937
+    m_Key: sort.hard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155938
+    m_Key: sort.random
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155939
+    m_Key: search.enterNumber
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155940
+    m_Key: search.notFound
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155941
+    m_Key: detail.emptyHint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155942
+    m_Key: detail.charter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155943
+    m_Key: detail.creditTitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155944
+    m_Key: detail.creditSinger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155945
+    m_Key: detail.creditComposer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155946
+    m_Key: detail.creditLyricist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155947
+    m_Key: detail.creditArranger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155948
+    m_Key: detail.creditTags
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155949
+    m_Key: detail.info
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155950
+    m_Key: detail.plays
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155951
+    m_Key: detail.votes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155952
+    m_Key: detail.updated
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155953
+    m_Key: detail.size
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155954
+    m_Key: detail.noDescription
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155955
+    m_Key: action.parent
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155956
+    m_Key: action.webPage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155957
+    m_Key: action.bookmark
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155958
+    m_Key: action.bookmarked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155959
+    m_Key: action.play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155960
+    m_Key: action.update
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155961
+    m_Key: action.download
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155962
+    m_Key: preview.play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155963
+    m_Key: preview.stop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155964
+    m_Key: preview.failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155965
+    m_Key: signIn.forMyList
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155966
+    m_Key: signIn.forUpvote
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155967
+    m_Key: signIn.forDownvote
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155968
+    m_Key: signIn.forBookmark
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155969
+    m_Key: bookmark.added
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155970
+    m_Key: bookmark.removed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155971
+    m_Key: parent.gone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155972
+    m_Key: parent.showing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155973
+    m_Key: play.starting
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155974
+    m_Key: download.progress
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155975
+    m_Key: download.done
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155976
+    m_Key: login.titleSignedIn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155977
+    m_Key: login.titleSignIn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155978
+    m_Key: login.hint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155979
+    m_Key: login.enterCredentials
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155980
+    m_Key: login.signingIn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155981
+    m_Key: login.signedOut
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155982
+    m_Key: login.button
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155983
+    m_Key: login.buttonBusy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155984
+    m_Key: login.username
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155985
+    m_Key: login.usernamePlaceholder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155986
+    m_Key: login.password
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155987
+    m_Key: login.passwordPlaceholder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155988
+    m_Key: login.forgot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155989
+    m_Key: login.register
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155990
+    m_Key: login.accountCenter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155991
+    m_Key: login.signOut
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155992
+    m_Key: error.responseInvalid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155993
+    m_Key: error.responseTooLarge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155994
+    m_Key: error.network
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155995
+    m_Key: error.http401
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155996
+    m_Key: error.http403
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155997
+    m_Key: error.http404
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155998
+    m_Key: error.http429
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284155999
+    m_Key: error.http5xx
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156000
+    m_Key: error.httpOther
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156001
+    m_Key: error.loginInvalid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156002
+    m_Key: error.loginRateLimited
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156003
+    m_Key: error.ssoResponseInvalid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156004
+    m_Key: error.signInExpired
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156005
+    m_Key: error.signInRequired
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156006
+    m_Key: error.packagePending
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156007
+    m_Key: error.packageInvalid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156008
+    m_Key: error.importFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156009
+    m_Key: error.filesGone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156010
+    m_Key: error.downloadFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284156011
+    m_Key: error.downloadIncomplete
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 8757538900985512054
+  references:
+    version: 2
+    RefIds:
+    - rid: 8757538900985512054
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1794374561701

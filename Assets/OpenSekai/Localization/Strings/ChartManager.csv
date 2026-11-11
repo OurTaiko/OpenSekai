@@ -1,0 +1,125 @@
+key,zh-Hans,ja,en,comment
+list.localCharts,本地谱面,ローカル譜面,Local Charts,Header tab and list count tab label
+header.newChart,新建谱面,譜面をつくる,New Chart,Header button that opens the create menu
+list.empty.none,还没有本地谱面。\n点击右上角的「新建」或「导入」开始制作。,譜面がまだありません。\n右上の「譜面をつくる」から作成またはインポートしてください。,No charts yet.\nTap New Chart at the top right to create or import one.,List placeholder when there are no local charts
+list.empty.filtered,没有符合条件的谱面。,該当する譜面がありません。,No charts match this filter.,List placeholder when the difficulty filter hides everything
+rail.all,全部,すべて,All,Difficulty filter: all difficulties
+create.hint,请选择谱面的创建方式。,譜面の作成方法を選択してください。,Choose how to create a chart.,Create menu hint
+create.import,导入谱面 (ZIP / 文件夹),譜面をインポート (ZIP / フォルダ),Import Chart (ZIP / Folder),Create menu button
+create.blank,从空白开始制作,はじめからつくる,Start from Scratch,Create menu button: new empty chart
+actions.edit,编辑,編集,Edit,Button: open the chart editor
+actions.play,游玩,プレイ,Play,Button: play the chart
+actions.auto,自动,オート,Auto,Button: auto play the chart
+detail.exportZip,导出ZIP,ZIP出力,Export ZIP,Detail window button
+detail.duplicate,复制,複製,Copy,Detail window button: copy the chart
+detail.delete,删除,削除,Delete,Detail window button
+detail.emptyHint,选择左侧的谱面，或新建一个谱面。,左の一覧から譜面を選ぶか、新しく譜面をつくってください。,"Pick a chart on the left, or create a new one.",Detail window when nothing is selected
+detail.bestResult,最佳成绩,ベスト記録,Best Result,Detail window: best play result header
+detail.noPlayRecord,暂无游玩记录,プレイ記録なし,No plays yet,Detail window: best result when never played
+detail.noDescription,<color=#8F8BB8>（没有简介）</color>,<color=#8F8BB8>（説明なし）</color>,<color=#8F8BB8>(No description)</color>,Detail window: chart has no description
+detail.meta,<color=#9C98C8>谱师</color>  {0}\n<color=#9C98C8>更新</color>  {1},<color=#9C98C8>譜面作者</color>  {0}\n<color=#9C98C8>更新</color>  {1},<color=#9C98C8>Charter</color>  {0}\n<color=#9C98C8>Updated</color>  {1},"Detail window: {0} charter name, {1} last change (yyyy-MM-dd HH:mm)"
+detail.toggle.overview,概要,概要,Overview,Toggle button back to the overview page
+detail.toggle.editInfo,编辑信息,情報編集,Edit Info,Toggle button to the chart info form
+form.title,曲名,曲名,Song Title,Info form field label
+form.scoreTitle,谱面标题,譜面タイトル,Chart Title,Info form field label
+form.noteDesigner,谱师署名,譜面作者,Charter,Info form field label
+form.composer,作曲,作曲,Composer,Info form field label
+form.lyricist,作词,作詞,Lyricist,Info form field label
+form.arranger,编曲,編曲,Arranger,Info form field label
+form.singer,歌手,ボーカル,Vocals,Info form field label
+form.collaborationLabel,联动标签,コラボラベル,Collab Label,Info form field label: collaboration tag shown in the live
+form.description,描述,説明,Description,Info form field label
+form.difficulty,难度,難易度,Difficulty,Info form field label
+form.level,等级,レベル,Level,Info form field label: play level
+form.duration,编辑时长秒,編集時間(秒),Edit Length (s),Info form field label: length of the editor timeline in seconds
+form.filler,前置空白秒,開始オフセット(秒),Offset (s),"Info form field label: audio time of bar 1 (fillerSec), in seconds"
+form.audio,音频,音源,Audio,Info form field label: audio file
+form.jacket,封面,ジャケット,Jacket,Info form field label: jacket image file
+form.score,谱面,譜面,Chart,Info form field label: chart file
+form.select,选择,選択,Select,Info form button: pick a file
+form.save,保存配置,設定を保存,Save Info,Info form button: save manifest.json
+form.hint,修改后点击「保存配置」，游玩前也会自动保存。,変更後は「設定を保存」を押してください。プレイ前にも自動で保存されます。,Tap Save Info after editing. It also saves automatically before playing.,Info form hint
+top.upload,上传,投稿,Upload,Button: upload the chart to Sekai Fanmade
+top.exportSus,导出SUS,SUS出力,Export SUS,Button: export the chart as SUS
+item.missingManifest,缺少配置,設定なし,No Info,Chart status: manifest.json missing
+item.missingScore,缺少谱面,譜面なし,No Chart,Chart status: chart file missing
+item.missingAudio,缺少音频,音源なし,No Audio,Chart status: audio file missing
+item.missingJacket,缺少封面,ジャケットなし,No Jacket,Chart status: jacket image missing
+item.ready,就绪,準備完了,Ready,Chart status: all files present
+status.loaded,已加载 {0} 个谱面。,{0}件の譜面を読み込みました。,Loaded {0} charts.,Status line after refreshing the list
+status.created,已创建谱面。,譜面を作成しました。,Chart created.,Status line
+status.duplicated,已复制谱面。,譜面を複製しました。,Chart duplicated.,Status line
+status.deleted,已删除 {0}。,「{0}」を削除しました。,Deleted {0}.,"Status line, {0} chart title"
+status.loadFailed,无法加载谱面。,譜面を読み込めませんでした。,Couldn't load the chart.,Status line / play error
+status.startingAuto,正在开始自动游玩...,オートプレイを開始しています...,Starting auto play...,Status line
+status.starting,正在开始游玩...,プレイを開始しています...,Starting play...,Status line
+status.pickerBusy,文件选择器已经打开。,ファイル選択画面がすでに開いています。,The file picker is already open.,Status line
+delete.confirm,确定要删除谱面吗？\n\n{0}\n\n这个操作无法撤销。,この譜面を削除します。よろしいですか？\n\n{0}\n\nこの操作は取り消せません。,Delete this chart?\n\n{0}\n\nThis can't be undone.,"Delete confirmation dialog, {0} chart title"
+export.chooseLocation,请选择导出位置...,エクスポート先を選択してください...,Choose where to export...,Status line while the save dialog is open
+export.zipTitle,导出自制谱,自作譜面をエクスポート,Export Custom Chart,Save dialog title (ZIP)
+export.susTitle,导出SUS谱面,SUS譜面をエクスポート,Export SUS Chart,Save dialog title (SUS)
+export.done,已导出：{0},エクスポートしました：{0},Exported: {0},"Status line, {0} file path (and SUS warnings)"
+export.savedInAppFolder,当前平台不支持文件导出，已导出到：{0},この環境ではファイルを書き出せないため、次の場所にエクスポートしました：{0},Can't export files on this platform; saved to: {0},"Status line, {0} file path"
+export.failed,导出失败。,エクスポートに失敗しました。,Export failed.,Status line
+export.failedNoScore,导出失败：没有谱面。,エクスポート失敗：譜面がありません。,Export failed: no chart data.,Status line (SUS)
+export.cancelled,已取消导出。,エクスポートをキャンセルしました。,Export cancelled.,Status line
+export.cancelledOrFailed,导出已取消或失败。,エクスポートがキャンセルされたか、失敗しました。,Export was cancelled or failed.,Status line
+import.zipTitle,导入自制谱ZIP,自作譜面ZIPをインポート,Import Custom Chart ZIP,Open dialog title and status
+import.zipFilter,自制谱ZIP,自作譜面ZIP,Custom chart ZIP,Open dialog file type name
+import.folderTitle,导入自制谱文件夹,自作譜面フォルダをインポート,Import Custom Chart Folder,Folder dialog title
+import.cancelledOrFailed,导入已取消或失败。,インポートがキャンセルされたか、失敗しました。,Import was cancelled or failed.,Status line
+import.unsupported,当前平台暂不支持运行时导入，请手动复制谱面。,この環境ではインポートできません。譜面を手動でコピーしてください。,Importing isn't supported on this platform. Copy the chart in manually.,Status line
+import.done,已导入谱面。,譜面をインポートしました。,Chart imported.,Status line
+import.failed,导入失败。,インポートに失敗しました。,Import failed.,Status line
+import.audio.title,导入音频文件,音源ファイルをインポート,Import Audio File,Open dialog title and status
+import.audio.cancelled,已取消导入音频。,音源のインポートをキャンセルしました。,Audio import cancelled.,Status line
+import.audio.filter,音频文件,音源ファイル,Audio files,Open dialog file type name
+import.audio.done,已导入音频：{0},音源をインポートしました：{0},Audio imported: {0},"Status line, {0} file name"
+import.audio.unsupported,当前平台暂不支持导入音频文件，请手动复制。,この環境では音源ファイルをインポートできません。手動でコピーしてください。,Importing audio isn't supported on this platform. Copy it in manually.,Status line
+import.jacket.title,导入封面文件,ジャケット画像をインポート,Import Jacket Image,Open dialog title and status
+import.jacket.cancelled,已取消导入封面。,ジャケットのインポートをキャンセルしました。,Jacket import cancelled.,Status line
+import.jacket.filter,图片文件,画像ファイル,Image files,Open dialog file type name
+import.jacket.done,已导入封面：{0},ジャケットをインポートしました：{0},Jacket imported: {0},"Status line, {0} file name"
+import.jacket.unsupported,当前平台暂不支持导入封面文件，请手动复制。,この環境ではジャケット画像をインポートできません。手動でコピーしてください。,Importing jackets isn't supported on this platform. Copy it in manually.,Status line
+import.score.title,导入谱面文件,譜面ファイルをインポート,Import Chart File,Open dialog title and status
+import.score.cancelled,已取消导入谱面。,譜面のインポートをキャンセルしました。,Chart import cancelled.,Status line
+import.score.filter,谱面文件,譜面ファイル,Chart files,Open dialog file type name
+import.score.done,已导入谱面：{0},譜面をインポートしました：{0},Chart imported: {0},"Status line, {0} file name"
+import.score.unsupported,当前平台暂不支持导入谱面文件，请手动复制。,この環境では譜面ファイルをインポートできません。手動でコピーしてください。,Importing charts isn't supported on this platform. Copy it in manually.,Status line
+import.video.title,导入2DMV视频,2DMV動画をインポート,Import 2DMV Video,Open dialog title and status
+import.video.cancelled,已取消导入2DMV。,2DMVのインポートをキャンセルしました。,2DMV import cancelled.,Status line
+import.video.filter,MP4视频,MP4動画,MP4 video,Open dialog file type name
+import.video.done,已导入2DMV：{0},2DMVをインポートしました：{0},2DMV imported: {0},"Status line, {0} file name"
+import.video.unsupported,当前平台暂不支持导入2DMV视频，请手动复制。,この環境では2DMV動画をインポートできません。手動でコピーしてください。,Importing 2DMV videos isn't supported on this platform. Copy it in manually.,Status line
+import.unsupportedScoreExtension,不支持的谱面文件扩展名：{0},対応していない譜面ファイルの拡張子です：{0},Unsupported chart file extension: {0},"Import error, {0} extension"
+import.unsupportedExtension,不支持的文件扩展名：{0},対応していないファイルの拡張子です：{0},Unsupported file extension: {0},"Import error, {0} extension"
+import.unsupportedJacketData,不支持的封面图片数据。,対応していないジャケット画像です。,Unsupported jacket image data.,Import error
+import.negativeWaveOffset,#WAVEOFFSET {0} 表示谱面比音频早开始 {1} 秒，偏移不能为负，已设为 0。,#WAVEOFFSET {0} は譜面が音源より {1} 秒早く始まることを意味します。オフセットは負にできないため、0 にしました。,"#WAVEOFFSET {0} starts the chart {1} s before the audio. The offset can't be negative, so it was set to 0.","SUS import warning, {0} WAVEOFFSET, {1} seconds"
+manifest.saved,配置已保存。,設定を保存しました。,Info saved.,Status line
+manifest.saveFailed,保存配置失败。,設定を保存できませんでした。,Couldn't save the info.,Status line
+upload.signInFirst,上传前请先登录 OurTaiko 账号：右上角菜单 › 扩展 › 账号。,アップロードするには OurTaiko アカウントでログインしてください：右上のメニュー › 追加設定 › アカウント。,Sign in with your OurTaiko account before uploading: top-right menu › Extras › Account.,Status line; names the option dialog tab and section
+upload.checking,正在确认社区上的谱面…,オンライン上の譜面を確認しています…,Checking the online chart…,Status line
+upload.failed,上传失败：{0},アップロード失敗：{0},Upload failed: {0},"Status line, {0} server error"
+upload.packFailed,打包失败：{0},譜面をまとめられませんでした：{0},Packing failed: {0},"Status line, {0} IO error"
+upload.confirmReplace,用当前版本更新 Sekai Fanmade 上的「{0}」（#{1}）？\n简介、标签、得分和评论会保留。,Sekai Fanmade の「{0}」（#{1}）を今のバージョンで更新しますか？\n説明・タグ・スコア・コメントはそのまま残ります。,"Update ""{0}"" (#{1}) on Sekai Fanmade with this version?\nIts description, tags, score and comments are kept.","Upload dialog (about three lines), {0} chart title, {1} chart number"
+upload.confirmFromOther,「{0}」是从 Sekai Fanmade 下载的（谱师 {1}），会作为新谱面上传。\n改编别人的谱面前，请确认对方允许二次利用。,「{0}」は Sekai Fanmade からダウンロードした譜面（譜面作者 {1}）なので、新しい譜面としてアップロードされます。\n他の人の譜面を改変する前に、二次利用OKか確認してください。,"""{0}"" was downloaded from Sekai Fanmade (charter: {1}) and goes up as a new chart.\nBefore remixing someone else's chart, check that they allow it.","Upload dialog (about three lines), {0} chart title, {1} uploader nickname"
+upload.confirmNew,把「{0}」上传到 Sekai Fanmade？\n上传后所有人都能下载，请只上传你有权分享的内容。,「{0}」を Sekai Fanmade にアップロードしますか？\n誰でもダウンロードできるようになります。共有する権利のあるものだけをアップロードしてください。,"Upload ""{0}"" to Sekai Fanmade?\nAnyone can download it. Only upload what you have the right to share.","Upload dialog (about three lines), {0} chart title"
+upload.cancelled,已取消上传。,アップロードをキャンセルしました。,Upload cancelled.,Status line
+upload.packing,正在打包谱面…,譜面をまとめています…,Packing the chart…,Status line
+upload.serverChecking,服务器正在检查谱面包…,サーバーで譜面を確認しています…,The server is checking the chart…,Status line
+upload.progress,正在上传 {0}%…,アップロード中 {0}%…,Uploading {0}%…,"Status line, {0} percent"
+upload.done,已上传到 Sekai Fanmade。,Sekai Fanmade にアップロードしました。,Uploaded to Sekai Fanmade.,Status line
+upload.doneWithNumber,已上传到 Sekai Fanmade（#{0}）。,Sekai Fanmade にアップロードしました（#{0}）。,Uploaded to Sekai Fanmade (#{0}).,"Status line, {0} chart number"
+upload.updated,已更新 Sekai Fanmade 上的谱面。,Sekai Fanmade の譜面を更新しました。,Updated the chart on Sekai Fanmade.,Status line
+upload.updatedWithNumber,已更新 Sekai Fanmade 上的谱面（#{0}）。,Sekai Fanmade の譜面を更新しました（#{0}）。,Updated the chart on Sekai Fanmade (#{0}).,"Status line, {0} chart number"
+launch.scoreMissing,找不到谱面文件。,譜面ファイルが見つかりません。,Chart file not found.,Play error
+launch.audioMissing,找不到音频文件。,音源ファイルが見つかりません。,Audio file not found.,Play error
+launch.scoreLoadFailed,无法加载谱面文件。,譜面ファイルを読み込めませんでした。,Couldn't load the chart file.,Play error
+launch.noNotes,没有可游玩的音符。,プレイできるノーツがありません。,The chart has no notes to play.,Play error
+launch.loadingAudio,正在加载音频...,音源を読み込んでいます...,Loading audio...,Status line before a live
+launch.audioLoadFailed,无法加载音频文件。,音源ファイルを読み込めませんでした。,Couldn't load the audio file.,Play error
+launch.bootDataFailed,无法创建游玩启动数据。,ライブの開始データを作成できませんでした。,Couldn't prepare the live.,Play error
+new.title,未命名,無題,Untitled,Default song title of a new chart
+new.scoreTitle,未命名谱面,無題の譜面,Untitled Chart,Default chart title of a new chart
+duplicate.title,副本,コピー,Copy,Chart title of a copy of an untitled chart
+duplicate.titleSuffix,{0} 副本,{0} のコピー,{0} (Copy),"Chart title of a copy, {0} original title"

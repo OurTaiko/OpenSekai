@@ -61,13 +61,13 @@ namespace Sekai
 		public void ShowMusicScoreMakerFullComboSuccessDialog(Action onReturn, Action onRetry, Action onProceedToPublish)
 		{
 			InstantiateIfNeeded();
-			SetActiveDialog(DialogUtility.ShowCommonSubWindowDialog("フルコンボに成功しました", onReturn));
+			SetActiveDialog(DialogUtility.ShowCommonSubWindowDialog(L10n.Get("Live", "testPlay.fullComboSuccess"), onReturn));
 		}
 
 		public void ShowMusicScoreMakerFullComboFailedDialog(Action onReturn, Action onRetry)
 		{
 			InstantiateIfNeeded();
-			SetActiveDialog(DialogUtility.ShowCommonSubWindowDialog("フルコンボに失敗しました", onReturn));
+			SetActiveDialog(DialogUtility.ShowCommonSubWindowDialog(L10n.Get("Live", "testPlay.fullComboFailed"), onReturn));
 		}
 
 		public void ShowPauseDialog(Action onClickResume, Action onClickCancel, Action onClickRetry)

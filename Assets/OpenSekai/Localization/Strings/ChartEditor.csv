@@ -1,0 +1,76 @@
+key,zh-Hans,ja,en,comment
+option.section.display,显示设置,表示設定,Display,Option dialog section header
+option.section.operation,操作设置,操作設定,Controls,Option dialog section header
+option.section.autoSave,自动保存设置,自動保存設定,Auto Save,Option dialog section header
+option.section.displayLines,辅助线设置,表示線設定,Guide Lines,Option dialog section header (bar/beat/grid lines)
+option.section.audio,音频设置,音声設定,Audio,Option dialog section header
+option.section.clockMenu,环形菜单设置,クロックメニュー設定,Clock Menu,Option dialog section header (the radial edit menu)
+option.section.system,系统,システム,System,Option dialog section header
+option.section.clockMenuSections,环形菜单分区显示设置,クロックメニューセクション表示設定,Clock Menu Sections,Option dialog section header
+option.zoomTimelineStep,时间轴缩放步长,時間軸拡大縮小ステップ値,Timeline Zoom Step,Option dialog row label
+option.zoomTimelineMax,时间轴最大缩放,時間軸拡大最大値,Timeline Zoom Max,Option dialog row label
+option.zoomTimelineMin,时间轴最小缩放,時間軸拡大最小値,Timeline Zoom Min,Option dialog row label
+option.scoreDisplayScaleH,谱面显示比例（横）,譜面表示スケール（横）,Chart Scale (Horizontal),Option dialog row label
+option.scoreDisplayScaleV,谱面显示比例（纵）,譜面表示スケール（縦）,Chart Scale (Vertical),Option dialog row label
+option.toolWindowChildScale,工具窗口元素缩放,ツールウィンドウ子要素のスケール,Tool Window Item Scale,Option dialog row label
+option.layoutPattern,布局模式,レイアウトパターン,Layout Pattern,Option dialog row label
+option.layoutPatternName,模式 {0},パターン {0},Pattern {0},Layout pattern choice; {0} = number
+option.undoStackLimit,撤销记录上限,Undo履歴の最大数,Max Undo History,Option dialog row label
+option.showFocusTicksRate,选中位置在显示范围中的比例,表示範囲内の選択Ticks位置割合,Focus Line Position in View,Option dialog row label; where the selected tick sits in the visible range
+option.ticksPerScrollStep,每次滚动的Ticks,TICKS_PER_SCROLL_STEP,Ticks per Scroll Step,Option dialog row label; ja is the original label as is
+option.enableSwipeScroll,启用滑动滚动,スワイプスクロール有効,Swipe Scrolling,Option dialog row label
+option.autoSaveEnabled,自动保存ON/OFF,自動保存ON/OFF,Auto Save ON/OFF,Option dialog row label
+option.autoSaveInterval,自动保存间隔（秒）,自動保存間隔（秒）,Auto Save Interval (s),Option dialog row label
+option.showBarLines,显示小节线,小節線表示,Show Bar Lines,Option dialog row label
+option.showBeatLines,显示拍线,拍線表示,Show Beat Lines,Option dialog row label
+option.showQuantizeLines,显示网格辅助线,分解能補助線表示,Show Grid Lines,Option dialog row label; lines of the quantize grid
+option.showWaveform,显示波形,波形表示,Show Waveform,Option dialog row label
+option.playMusicSe,播放乐曲时播放音效,楽曲再生時にSEを鳴らす,Play SE During Playback,Option dialog row label; note sounds while the song plays
+option.noteEdgeWidth,音符边缘判定宽度,ノーツ端判定幅,Note Edge Grab Width,Option dialog row label; how wide a note edge is for resizing
+option.invalidPlacementCheck,启用违规放置检查,不正配置チェックを有効化,Check Invalid Placement,Option dialog row label
+option.areaSelectPartialOverlap,框选时允许部分重叠,範囲選択で部分一致を許可,Area Select Partial Overlap,Option dialog row label; notes partly inside the box get selected
+option.noteYScaleStartThreshold,音符纵向缩小起始阈值,ノーツYスケール縮小開始閾値,Note Y Shrink Start,Option dialog row label
+option.noteYScaleEndThreshold,音符纵向缩小结束阈值,ノーツYスケール縮小終了閾値,Note Y Shrink End,Option dialog row label
+option.noteYScaleMin,音符纵向最小比例,ノーツYスケール最小値,Note Y Scale Min,Option dialog row label
+option.drawSmallerTickToBack,tick值较小的音符绘制在后面,tick値が小さいノーツを奥に描画,Draw Earlier Notes Behind,Option dialog row label
+option.maxClipboardCacheCount,剪贴板缓存上限,クリップボードキャッシュ最大数,Max Clipboard Cache,Option dialog row label
+option.resetSettingData,重置设置,設定データをリセット,Reset Settings,Option dialog button
+option.clearClipboardCache,清除剪贴板缓存,クリップボードキャッシュ削除,Clear Clipboard Cache,Option dialog button
+option.optionDialog,选项对话框,オプションダイアログ,Options Dialog,Option dialog name (currently unused)
+option.clockMenu.addNormalNote,添加普通音符,通常ノーツ追加,Add Tap Note,Clock menu item name (option setting)
+option.clockMenu.addLongNote,添加长条音符,ロングノーツ追加,Add Hold Note,Clock menu item name (option setting)
+option.clockMenu.addFlickNote,添加滑键音符,フリックノーツ追加,Add Flick Note,Clock menu item name (option setting)
+option.clockMenu.addTraceNote,添加描摹音符,トレースノーツ追加,Add Trace Note,Clock menu item name (option setting)
+option.clockMenu.addTraceLongNote,添加描摹长条音符,トレースロングノーツ追加,Add Trace Hold Note,Clock menu item name (option setting)
+option.clockMenu.addTraceFlickNote,添加描摹滑键音符,トレースフリックノーツ追加,Add Trace Flick Note,Clock menu item name (option setting)
+option.clockMenu.addGuideNote,添加引导线音符,ガイドノーツ追加,Add Guide Note,Clock menu item name (option setting)
+option.clockMenu.flipHorizontally,左右翻转,左右反転,Flip Horizontally,Clock menu item name (option setting)
+option.clockMenu.flipVertically,上下翻转,上下反転,Flip Vertically,Clock menu item name (option setting)
+option.clockMenu.copyNotes,复制,コピー,Copy,Clock menu item name (option setting)
+option.clockMenu.deleteNote,删除,削除,Delete,Clock menu item name (option setting)
+option.clockMenu.editEventData,编辑事件,イベントデータ編集,Edit Event,"Clock menu item name (option setting); BPM, time signature or speed event"
+option.clockMenu.deleteEventData,删除事件,イベントデータ削除,Delete Event,Clock menu item name (option setting)
+option.clockMenu.addBpm,添加BPM,BPM追加,Add BPM,Clock menu item name (option setting)
+option.clockMenu.addTimeSignature,添加拍号,拍子追加,Add Time Signature,Clock menu item name (option setting)
+option.clockMenu.addHighSpeed,添加速度,速度追加,Add Speed Change,Clock menu item name (option setting)
+option.clockMenu.paste,粘贴,ペースト,Paste,Clock menu item name (option setting)
+option.clockMenuSection.addNote,显示添加音符分区,ノーツ追加セクションを表示,Show Add Note Section,Option: show a clock menu section
+option.clockMenuSection.editNote,显示编辑音符分区,ノーツ編集セクションを表示,Show Edit Note Section,Option: show a clock menu section
+option.clockMenuSection.editEventData,显示编辑事件分区,イベントデータ編集セクションを表示,Show Edit Event Section,Option: show a clock menu section
+option.clockMenuSection.addMusicEvent,显示添加乐曲事件分区,音楽イベント追加セクションを表示,Show Add Song Event Section,Option: show a clock menu section
+option.clockMenuSection.paste,显示粘贴分区,ペーストセクションを表示,Show Paste Section,Option: show a clock menu section
+reset.confirm,是否确认重置谱面？将会清空所有音符\n可使用撤销恢复,譜面をリセットしますか？\nすべてのノーツが削除されます。\n（元に戻すで復元できます）,Reset the chart? All notes will be removed.\nYou can undo this.,Confirm dialog of the editor menu Reset
+idSearch.notFound,未找到谱面。,譜面が見つかりませんでした。,Chart not found.,Chart ID search: no chart with that ID
+saveData.overwrite,覆盖,上書き,Overwrite,Save-data dialog button when the file exists
+sus.empty,谱面数据为空。,譜面データが空です。,The chart has no data.,SUS export warning
+sus.tooManyBpms,BPM 种类超过 SUS 上限，多出的 BPM 变化没有导出。,BPMの種類がSUSの上限を超えたため、超えた分のBPM変化はエクスポートされませんでした。,More distinct BPMs than SUS allows; the extra BPM changes were not exported.,SUS export warning
+sus.droppedChildren,{0} 个音符连在非长条音符后面，游戏里也不会出现，没有导出。,ロングノーツ以外につながった{0}個のノーツはゲーム内でも表示されないため、エクスポートされませんでした。,{0} notes attached to non-hold notes were not exported (they never appear in game either).,SUS export warning; {0} = count
+sus.sameStartOverlap,有超过 {0} 个音符叠在同一时刻、同一起始轨道，多出的 {1} 个导回时会被合并。,同じタイミング・同じ開始レーンに{0}個を超えるノーツが重なっています。超えた{1}個はインポートし直すとまとめられます。,More than {0} notes share one time and start lane; the extra {1} will be merged when imported back.,"SUS export warning; {0} = limit, {1} = count"
+sus.isolatedRelay,{0} 个孤立的中继点没有导出。,孤立した中継点{0}個はエクスポートされませんでした。,{0} isolated relay points were not exported.,SUS export warning; {0} = count
+sus.guideStyleLost,{0} 个引导线节点的颜色或曲线没法用 SUS 表示，导回后可能不同。,ガイドの中継点{0}個の色やカーブはSUSで表せないため、インポートし直すと変わる場合があります。,The color or curve of {0} guide points cannot be stored in SUS and may differ when imported back.,SUS export warning; {0} = count
+sus.guideOverlap,{0} 个引导线节点和太多别的节点叠在一起，导回时会被合并。,ガイドの中継点{0}個がほかの点と重なりすぎているため、インポートし直すとまとめられます。,{0} guide points overlap too many others and will be merged when imported back.,SUS export warning; {0} = count
+sus.tooManyLongNotes,同时存在的长条超过 {0} 条，{1} 条没有导出。,同時に存在するロングノーツが{0}本を超えたため、{1}本はエクスポートされませんでした。,More than {0} hold notes at once; {1} were not exported.,"SUS export warning; {0} = limit, {1} = count"
+sus.tooManyGuides,同时存在的引导线超过 {0} 条，{1} 条没有导出。,同時に存在するガイドが{0}本を超えたため、{1}本はエクスポートされませんでした。,More than {0} guides at once; {1} were not exported.,"SUS export warning; {0} = limit, {1} = count"
+sus.timeSignatureMoved,{0} 个拍号变化不在小节线上，已移到下一小节开头（音符时间不变）。,小節線上にない拍子変更{0}個を次の小節の頭に移動しました（ノーツのタイミングは変わりません）。,Moved {0} time signature changes that were off a bar line to the next bar (note timing unchanged).,SUS export warning; {0} = count
+sus.outOfRange,{0} 个音符或事件超出 SUS 的 999 小节范围，没有导出。,SUSの999小節を超える{0}個のノーツやイベントはエクスポートされませんでした。,{0} notes or events past the SUS limit of 999 bars were not exported.,SUS export warning; {0} = count
+sus.collision,{0} 个音符或事件和同类的另一个完全重叠，只导出了一个。,同じ種類のものと完全に重なった{0}個のノーツやイベントは、1つだけエクスポートしました。,{0} notes or events exactly overlapped another of the same kind; only one was exported.,SUS export warning; {0} = count
