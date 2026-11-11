@@ -92,6 +92,12 @@ InitTestScene*.unity*
 # files in platform-specific subfolders, for example:
 # /Assets/AddressableAssetsData/OSX/addressables_content_state.bin
 /[Aa]ssets/AddressableAssetsData/*/*.bin*
+# The .meta of those platform folders (their only content is the ignored .bin)
+/[Aa]ssets/AddressableAssetsData/iOS.meta
+/[Aa]ssets/AddressableAssetsData/Android.meta
+/[Aa]ssets/AddressableAssetsData/OSX.meta
+/[Aa]ssets/AddressableAssetsData/Windows.meta
+/[Aa]ssets/AddressableAssetsData/Linux.meta
 
 # Visual Scripting auto-generated files
 /[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db
