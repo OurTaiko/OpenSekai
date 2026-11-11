@@ -79,6 +79,19 @@ which brings Addressables; Addressables builds its content with every player bui
 - Fonts: every language uses the same TMP fonts. The `FOT-RodinNTLGPro-DB/EB.otf` files are in fact Source Han Sans SC
   Medium / Bold, so Japanese shows Chinese glyph forms for some kanji. Nothing is in an Asset Table yet.
 
+## Dynamic font atlas
+
+Text comes from two dynamic TMP fonts (`Resources/font/FOT-RodinNTLGPro-DB SDF_Dynamic.asset` and `-EB`, the fallbacks
+of the `SDF_Base` fonts every label uses). A dynamic font adds a glyph the first time a text needs it: the rectangle goes
+into the font asset's tables, the picture into the atlas texture. Here the atlas is an imported PNG
+(`FOT-RodinNTLGPro-DB Atlas.png`, `-EB Atlas.png`), which Unity never writes back, so saved tables and the PNG stop
+matching and text disappears in the Editor (after a restart, or after the PNG is imported again by a platform switch).
+
+`Assets/OpenSekai/Editor/DynamicFontAtlas.cs` (after OurTaikoPlay's `UiFontAtlas`) keeps both empty on disk: the two
+PNGs are blank and the font assets have no glyphs. It empties tables and atlas together when Play mode exits, before
+every build and when an atlas PNG is imported, and drops every other save of the two font assets, so they never show up
+in `git status`. If text is missing anyway, run `OpenSekai/Regenerate Font Atlas`.
+
 ## UI sounds
 
 The original game's `CustomButton` / `CustomToggle` play their click sound themselves (`se`: SE_DECIDE1, SE_CANCEL or a named
